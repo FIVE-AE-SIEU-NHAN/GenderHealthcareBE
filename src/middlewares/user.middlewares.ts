@@ -5,6 +5,9 @@ import { capitalize } from 'lodash'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { USERS_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
+import otpServices from '~/services/otp.services'
+import redisService from '~/services/redis.services'
+import { verifyGoogleToken } from '~/utils/google'
 import { verifyToken } from '~/utils/jwt'
 import { validate } from '~/utils/validation'
 
@@ -126,9 +129,76 @@ export const registerValidator = validate(
         },
         trim: true
       },
+      gender: {
+        notEmpty: {
+          errorMessage: USERS_MESSAGES.GENDER_IS_REQUIRED
+        },
+        isString: {
+          errorMessage: USERS_MESSAGES.GENDER_MUST_BE_A_STRING
+        },
+        trim: true,
+        custom: {
+          options: (value) => {
+            // Kiểm tra giá trị gender hợp lệ (male, female, other)
+            const validGenders = ['male', 'female', 'other']
+            if (!validGenders.includes(value.toLowerCase())) {
+              throw new Error(USERS_MESSAGES.GENDER_IS_INVALID)
+            }
+            return true
+          }
+        }
+      },
+      phone_number: {
+        notEmpty: {
+          errorMessage: USERS_MESSAGES.PHONE_NUMBER_IS_REQUIRED
+        },
+        isString: {
+          errorMessage: USERS_MESSAGES.PHONE_NUMBER_MUST_BE_STRING
+        },
+        trim: true,
+        custom: {
+          options: (value) => {
+            const phoneRegex = /(84|0[3|5|7|8|9])+([0-9]{8})\b/g
+            if (!phoneRegex.test(value)) {
+              throw new Error(USERS_MESSAGES.PHONE_NUMBER_IS_INVALID)
+            }
+            return true
+          }
+        }
+      },
       password: passwordSchema,
       confirm_password: confirmPasswordSchema,
-      date_of_birth: dateOfBirthSchema
+      date_of_birth: dateOfBirthSchema,
+      email_verify_token: {
+        trim: true,
+        notEmpty: {
+          errorMessage: USERS_MESSAGES.EMAIL_VERIFY_TOKEN_IS_REQUIRED
+        },
+        custom: {
+          options: async (value: string, { req }) => {
+            const email = req.body.email
+
+            // Check if OTP exists and is valid
+            const result = await otpServices.verifyOTP(email, value)
+            if (!result) {
+              throw new ErrorWithStatus({
+                status: HTTP_STATUS.UNAUTHORIZED,
+                message: USERS_MESSAGES.EMAIL_VERIFY_TOKEN_IS_INVALID
+              })
+            }
+
+            // Check if OTP is expired
+            const isExpired = await redisService.get(`otp:${email}:expired`)
+            if (isExpired) {
+              throw new ErrorWithStatus({
+                status: HTTP_STATUS.UNAUTHORIZED,
+                message: USERS_MESSAGES.EMAIL_VERIFY_TOKEN_IS_EXPIRED
+              })
+            }
+            return true
+          }
+        }
+      }
     },
     ['body']
   )
@@ -195,6 +265,40 @@ export const refreshTokenValidator = validate(
                 message: capitalize((error as JsonWebTokenError).message)
               })
             }
+            return true
+          }
+        }
+      }
+    },
+    ['body']
+  )
+)
+
+export const loginGoogleValidator = validate(
+  checkSchema(
+    {
+      id_token: {
+        notEmpty: {
+          errorMessage: USERS_MESSAGES.ID_TOKEN_IS_REQUIRED
+        },
+        isString: {
+          errorMessage: USERS_MESSAGES.ID_TOKEN_MUST_BE_A_STRING
+        },
+        isEmail: {
+          errorMessage: USERS_MESSAGES.EMAIL_IS_INVALID
+        },
+        trim: true,
+        custom: {
+          options: async (value, { req }) => {
+            const payload = await verifyGoogleToken(value)
+            if (!payload) {
+              throw new ErrorWithStatus({
+                status: HTTP_STATUS.UNAUTHORIZED,
+                message: USERS_MESSAGES.ID_TOKEN_IS_INVALID
+              })
+            }
+
+            ;(req as Request).decode_google_verify_token = payload
             return true
           }
         }

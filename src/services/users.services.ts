@@ -11,6 +11,8 @@ import HTTP_STATUS from '~/constants/httpStatus'
 import { USERS_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
 import RefreshToken from '~/models/RefreshToken.schema'
+import emailServices from './email.services'
+import { result } from 'lodash'
 dotenv.config()
 
 class UsersServices {
@@ -31,25 +33,62 @@ class UsersServices {
   }
 
   async register(payload: RegisterReqBody) {
-    const result = await databaseService.users.insertOne(
+    const user_id = new ObjectId()
+    const result = await databaseServices.users.insertOne(
       new User({
+        _id: user_id,
         ...payload,
-        date_of_birth: new Date(payload.date_of_birth),
-        password: hashPassword(payload.password)
+        password: hashPassword(payload.password),
+        date_of_birth: new Date(payload.date_of_birth)
       })
     )
-    const user_id = result.insertedId.toString()
+
     const [access_token, refresh_token] = await Promise.all([
-      this.signAccessToken(user_id),
-      this.signRefreshToken(user_id)
+      this.signAccessToken(user_id.toString()),
+      this.signRefreshToken(user_id.toString())
     ])
-    return { access_token, refresh_token }
+
+    return {
+      access_token,
+      refresh_token
+    }
   }
 
   async checkEmailExist(email: string) {
     // dùng email lên database tìm user sỡ hữu email đó
     const user = await databaseServices.users.findOne({ email })
-    return Boolean(user)
+    return user && !user.password ? true : false
+  }
+
+  async checkGoogleIdExist(email: string, google_id: string) {
+    // dùng google_id lên database tìm user sỡ hữu google_id đó
+    const user = await databaseServices.users.findOne({ email })
+
+    if (!user) {
+      return {
+        haveAccount: false
+      }
+    }
+
+    // nếu có user thì kiểm tra google_id
+    // nếu có google_id thì trả về true
+    if (user.google_id === google_id) {
+      const user_id = user._id.toString()
+      const [access_token, refresh_token] = await Promise.all([
+        this.signAccessToken(user_id),
+        this.signRefreshToken(user_id)
+      ])
+      return {
+        haveAccount: true,
+        access_token,
+        refresh_token
+      }
+    } else {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.UNPROCESSABLE_ENTITY,
+        message: USERS_MESSAGES.GOOGLE_ID_IS_INCORRECT
+      })
+    }
   }
 
   async login({ email, password }: LoginReqBody) {
@@ -103,6 +142,5 @@ class UsersServices {
   }
 }
 
-// tạo instance
 const usersServices = new UsersServices()
 export default usersServices

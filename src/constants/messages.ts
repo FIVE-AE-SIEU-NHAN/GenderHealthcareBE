@@ -23,6 +23,15 @@ export const USERS_MESSAGES = {
   CONFIRM_PASSWORD_MUST_BE_THE_SAME_AS_PASSWORD: 'Confirm password must be the same as password',
   //dateOfBirth
   DATE_OF_BIRTH_BE_ISO8601: 'Date of birth must be ISO8601',
+  // gender
+  GENDER_IS_REQUIRED: 'Gender is required',
+  GENDER_MUST_BE_A_STRING: 'Gender must be a string',
+  GENDER_IS_INVALID: 'Gender is invalid',
+  // phoneNumber
+  PHONE_NUMBER_IS_REQUIRED: 'Phone number is required',
+  PHONE_NUMBER_MUST_BE_STRING: 'Phone number must be a string',
+  PHONE_NUMBER_IS_INVALID: 'Phone number is invalid',
+
   //user
   EMAIL_OR_PASSWORD_IS_INCORRECT: 'Email or password is incorrect',
   LOGIN_SUCCESS: 'Login successfully',
@@ -33,6 +42,7 @@ export const USERS_MESSAGES = {
   REFRESH_TOKEN_IS_INVALID: 'Refresh Token is invalid',
   EMAIL_VERIFY_TOKEN_IS_REQUIRED: 'Email verify token is required',
   EMAIL_VERIFY_TOKEN_IS_INVALID: 'Email verify token is invalid',
+  EMAIL_VERIFY_TOKEN_IS_EXPIRED: 'Email verify token is expired',
   VERIFY_EMAIL_SUCCESS: 'Verify email is success',
   EMAIL_HAS_BEEN_VERIFY: 'Email has been verified',
   EMAIL_HAS_BEEN_BANNED: 'Email has been banned',
@@ -60,5 +70,13 @@ export const USERS_MESSAGES = {
   USERNAME_IS_INVALID:
     'Username must be a string and length must be 4 - 15, and contain only letters, numbers, and underscores, not only numbers',
   CHANGE_PASSWORD_SUCCESS: 'Change password successfully',
-  REFRESH_TOKEN_SUCCESS: 'Refresh token successfully'
+  REFRESH_TOKEN_SUCCESS: 'Refresh token successfully',
+  GOOGLE_ID_IS_INCORRECT: 'Google id is incorrect',
+  // mail
+  SEND_MAIL_FAIL: 'Send mail fail',
+  SEND_MAIL_SUCCESS: 'Send mail success',
+  // google
+  ID_TOKEN_IS_REQUIRED: 'Id token is required',
+  ID_TOKEN_MUST_BE_A_STRING: 'Id token must be a string',
+  ID_TOKEN_IS_INVALID: 'Id token is invalid'
 } as const //để k ai chỉnh đc
