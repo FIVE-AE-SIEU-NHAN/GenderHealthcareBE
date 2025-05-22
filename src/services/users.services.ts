@@ -57,7 +57,6 @@ class UsersServices {
   async checkEmailExist(email: string) {
     // dùng email lên database tìm user sỡ hữu email đó
     const user = await databaseServices.users.findOne({ email })
-
     return user && !user.password ? true : false
   }
 

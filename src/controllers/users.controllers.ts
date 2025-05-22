@@ -17,6 +17,7 @@ import { Log } from 'mongodb'
 import { UserVerifyStatus } from '~/constants/enums'
 import { verifyGoogleToken } from '~/utils/google'
 
+
 export const registerController = async (
   req: Request<ParamsDictionary, any, RegisterReqBody>,
   res: Response,
@@ -24,7 +25,6 @@ export const registerController = async (
 ) => {
   const isDup = await usersServices.checkEmailExist(req.body.email)
 
-  // Nếu email tồn tại và kho
   if (isDup) {
     throw new ErrorWithStatus({
       status: HTTP_STATUS.UNPROCESSABLE_ENTITY,
