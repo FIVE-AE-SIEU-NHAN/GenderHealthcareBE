@@ -9,6 +9,10 @@ export interface RegisterReqBody {
   password: string
   confirm_password: string
   date_of_birth: string
+  gender: string
+  phone_number: string
+  email_verify_token: string
+  google_id?: string
 }
 
 export interface LoginReqBody {
@@ -16,9 +20,23 @@ export interface LoginReqBody {
   password: string
 }
 
+export interface LoginGoogleReqBody {
+  id_token: string
+}
+
 export interface TokenPayLoad extends JwtPayload {
   user_id: string
   token_type: TokenType
+}
+export interface TokenGoogleVerifyPayload {
+  email: string
+  email_verified: boolean
+  name: string
+  picture?: string
+  locale?: string
+  family_name?: string
+  given_name?: string
+  sub: string
 }
 
 export interface LogOutReqBody {
