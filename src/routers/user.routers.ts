@@ -3,9 +3,9 @@
 import express from 'express'
 import {
   loginController,
-  loginGoogleController,
-  logoutController,
   registerController
+  // loginGoogleController,
+  // logoutController
 } from '~/controllers/users.controllers'
 import {
   accessTokenValidator,
@@ -36,37 +36,37 @@ userRouter.post('/register', registerValidator, wrapAsync(registerController))
  */
 userRouter.post('/login', loginValidator, wrapAsync(loginController))
 
-/**
- * Description: Login with Google
- * Path: /user/login-google
- * Method: POST
- * Body: { id_token: string }
- */
-userRouter.post('/login-google', loginGoogleValidator, wrapAsync(loginGoogleController))
+// /**
+//  * Description: Login with Google
+//  * Path: /user/login-google
+//  * Method: POST
+//  * Body: { id_token: string }
+//  */
+// userRouter.post('/login-google', loginGoogleValidator, wrapAsync(loginGoogleController))
 
-/**
- * Description: Logout
- * Path: /user/logout
- * Method: POST
- * Header: {Authorization: Bearer <access_token>}
- * Body: {refresh_token: string}
- */
-userRouter.post('/logout', accessTokenValidator, refreshTokenValidator, wrapAsync(logoutController))
+// /**
+//  * Description: Logout
+//  * Path: /user/logout
+//  * Method: POST
+//  * Header: {Authorization: Bearer <access_token>}
+//  * Body: {refresh_token: string}
+//  */
+// userRouter.post('/logout', accessTokenValidator, refreshTokenValidator, wrapAsync(logoutController))
 
-/**
- * Description: Send email with token
- * Path: /otp//get-token
- * Method: POST
- * Request body: { email: string }
- */
-userRouter.post('/google-authen', async (req, res) => {
-  const { token } = req.body
-  const payload = await verifyGoogleToken(token)
-  res.status(200).json({
-    message: {
-      payload
-    }
-  })
-})
+// /**
+//  * Description: Send email with token
+//  * Path: /otp//get-token
+//  * Method: POST
+//  * Request body: { email: string }
+//  */
+// userRouter.post('/google-authen', async (req, res) => {
+//   const { token } = req.body
+//   const payload = await verifyGoogleToken(token)
+//   res.status(200).json({
+//     message: {
+//       payload
+//     }
+//   })
+// })
 
 export default userRouter

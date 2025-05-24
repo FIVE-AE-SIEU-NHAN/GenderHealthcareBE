@@ -6,7 +6,6 @@ import HTTP_STATUS from '~/constants/httpStatus'
 import { USERS_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
 import otpServices from '~/services/otp.services'
-import redisService from '~/services/redis.services'
 import { verifyGoogleToken } from '~/utils/google'
 import { verifyToken } from '~/utils/jwt'
 import { validate } from '~/utils/validation'
@@ -174,27 +173,28 @@ export const registerValidator = validate(
         notEmpty: {
           errorMessage: USERS_MESSAGES.EMAIL_VERIFY_TOKEN_IS_REQUIRED
         },
+        // Trong phần email_verify_token
         custom: {
           options: async (value: string, { req }) => {
             const email = req.body.email
 
-            // Check if OTP exists and is valid
+            // Kiểm tra OTP
             const result = await otpServices.verifyOTP(email, value)
-            if (!result) {
-              throw new ErrorWithStatus({
-                status: HTTP_STATUS.UNAUTHORIZED,
-                message: USERS_MESSAGES.EMAIL_VERIFY_TOKEN_IS_INVALID
-              })
+
+            if (!result.valid) {
+              if (result.status === 'expired') {
+                throw new ErrorWithStatus({
+                  status: HTTP_STATUS.UNAUTHORIZED,
+                  message: USERS_MESSAGES.EMAIL_VERIFY_TOKEN_IS_EXPIRED
+                })
+              } else {
+                throw new ErrorWithStatus({
+                  status: HTTP_STATUS.UNAUTHORIZED,
+                  message: USERS_MESSAGES.EMAIL_VERIFY_TOKEN_IS_INVALID
+                })
+              }
             }
 
-            // Check if OTP is expired
-            const isExpired = await redisService.get(`otp:${email}:expired`)
-            if (isExpired) {
-              throw new ErrorWithStatus({
-                status: HTTP_STATUS.UNAUTHORIZED,
-                message: USERS_MESSAGES.EMAIL_VERIFY_TOKEN_IS_EXPIRED
-              })
-            }
             return true
           }
         }

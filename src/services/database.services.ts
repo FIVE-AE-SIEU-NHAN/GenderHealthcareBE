@@ -1,35 +1,48 @@
-import { Collection, Db, MongoClient } from 'mongodb'
+import mysql from 'mysql2/promise'
 import dotenv from 'dotenv'
-import User from '~/models/User.schema'
-import RefreshToken from '~/models/RefreshToken.schema'
+
 dotenv.config()
-const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@genderhealthcarecluster.wvxqp0e.mongodb.net/`
 
 class DatabaseService {
-  private client: MongoClient
-  private db: Db
+  private pool: mysql.Pool
+
   constructor() {
-    this.client = new MongoClient(uri)
-    this.db = this.client.db(process.env.DB_NAME)
+    this.pool = mysql.createPool({
+      host: 'localhost',
+      port: 3307,
+      user: 'root',
+      password: '123456',
+      database: 'GenderForCare',
+      waitForConnections: true,
+      connectionLimit: 10
+    })
   }
+
   async connect() {
     try {
-      await this.client.db('admin').command({ ping: 1 })
-      console.log('Pinged your deployment. You successfully connected to MongoDB!')
+      const [result] = await this.pool.query('SELECT 1 + 1 AS solution')
+      console.log('You successfully connected to MySQL!')
     } catch (error) {
-      console.log(error)
+      console.error('Database connection failed:', error)
       throw error
     }
   }
 
-  get users(): Collection<User> {
-    return this.db.collection(process.env.DB_USERS_COLLECTION as string)
+  getPool() {
+    return this.pool
   }
 
-  get refreshTokens(): Collection<RefreshToken> {
-    return this.db.collection(process.env.DB_REFRESH_TOKENS_COLLECTION as string)
+  async query(sql: string, params?: any[]) {
+    try {
+      const [results] = await this.pool.query(sql, params)
+      return results
+    } catch (error) {
+      throw error
+    }
   }
 }
 
+// Create a singleton instance
 const databaseService = new DatabaseService()
+
 export default databaseService

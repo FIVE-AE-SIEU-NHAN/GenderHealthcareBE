@@ -11,7 +11,7 @@ const client = createClient({
 
 client.on('error', (err) => console.log('Redis Client Error', err))
 
-class RedisService {
+class RedisUtils {
   async connect() {
     try {
       await client.connect()
@@ -56,5 +56,5 @@ class RedisService {
   }
 }
 
-const redisService = new RedisService()
-export default redisService
+const redisUtils = new RedisUtils()
+export default redisUtils

@@ -1,7 +1,6 @@
 import { OTPReqBody } from '~/models/requests/otp.request'
-import { generateOTP } from '~/utils/generateCodeEmail'
-import redis from './redis.services'
-import redisService from './redis.services'
+import { generateOTP } from '~/utils/nanoid'
+import redisService from '~/utils/redis'
 
 class OtpServices {
   async saveOTP({ email }: OTPReqBody) {
@@ -12,12 +11,31 @@ class OtpServices {
 
   async verifyOTP(email: string, otp: string) {
     const key = `${otp}:${email}`
-    const exists = await redisService.exists(key)
-    if (exists) {
-      await redisService.del(key)
-      return true
+
+    // Kiểm tra xem OTP có hết hạn không
+    const isExpired = await redisService.get(`otp:${email}:expired`)
+    if (isExpired) {
+      return {
+        valid: false,
+        status: 'expired'
+      }
     }
-    return false
+
+    // Kiểm tra OTP có tồn tại và đúng không
+    const storedOTP = await redisService.get(key)
+    if (!storedOTP) {
+      return {
+        valid: false,
+        status: 'invalid'
+      }
+    }
+
+    // OTP hợp lệ - xóa OTP sau khi đã sử dụng thành công
+    await redisService.del(key)
+    return {
+      valid: true,
+      status: 'valid'
+    }
   }
 }
 const otpServices = new OtpServices()

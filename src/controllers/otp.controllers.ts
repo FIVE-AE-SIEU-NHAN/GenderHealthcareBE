@@ -4,7 +4,7 @@ import { USERS_MESSAGES } from '~/constants/messages'
 import { OTPReqBody } from '~/models/requests/otp.request'
 import emailServices from '~/services/email.services'
 import otpServices from '~/services/otp.services'
-import { generateOTP } from '~/utils/generateCodeEmail'
+import { generateOTP } from '~/utils/nanoid'
 
 export const getOTPController = async (
   req: Request<ParamsDictionary, any, OTPReqBody>,
