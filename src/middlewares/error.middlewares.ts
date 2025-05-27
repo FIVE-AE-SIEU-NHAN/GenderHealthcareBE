@@ -14,6 +14,7 @@ import { ErrorWithStatus } from '~/models/Errors'
 
 export const defaultErorHandler = (error: any, req: Request, res: Response, next: NextFunction) => {
   // lỗi của toàn bộ hệ thống đổ về đây
+  console.log(error);
   if (error instanceof ErrorWithStatus) {
     res.status(error.status).json(omit(error, ['status']))
   } else {

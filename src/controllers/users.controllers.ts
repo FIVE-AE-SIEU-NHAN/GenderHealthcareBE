@@ -45,7 +45,6 @@ export const loginController = async (
   res: Response,
   next: NextFunction
 ) => {
-  console.log('>>> login')
   const { email, password } = req.body
   // kiểm tra email và password có hợp lệ hay không
   await usersServices.login({ email, password })
