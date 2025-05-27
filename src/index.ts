@@ -1,40 +1,45 @@
 import express from 'express'
-import usersRouter from './routers/user.routers'
-import { defaultErorHandler } from './middlewares/error.middlewares'
-import otpRouter from './routers/otp.routers'
-import redisService from './utils/redis'
 import cors from 'cors'
+import path from 'path'
+
+// Routers
+import usersRouter from './routers/user.routers'
+import otpRouter from './routers/otp.routers'
+import blogRoutes from './routers/blog.routes'
+
+// Middlewares
+import { defaultErorHandler } from './middlewares/error.middlewares'
+
+// Services
+import redisService from './utils/redis'
 import databaseService from './services/database.services'
+
 const app = express()
 const port = 3000
 
-// cấu hình cors
-app.use(
-  cors({
-    origin: 'http://localhost:5173',
-    credentials: true
-  })
-)
+// ===== CORS config =====
+app.use(cors());
+app.use(express.json());
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// kết nối database
+// ===== Connect database + redis =====
 databaseService.connect()
 redisService.connect()
 
-// cấu hình body parser
-app.use(express.json())
-
+// ===== Test route =====
 app.get('/', (req, res) => {
-  res.send('hello world')
+  res.send('Hello Gender Healthcare Backend!')
 })
 
-// user route
+// ===== Routes =====
 app.use('/user', usersRouter)
-// // otp route
 app.use('/otp', otpRouter)
+app.use('/api', blogRoutes) // blog routes go under /api
 
-// // error handler
+// ===== Error handler =====
 app.use(defaultErorHandler)
 
+// ===== Start server =====
 app.listen(port, () => {
-  console.log(`PROJECT GenderHealthcareBE OPEN ON PORT: ${port}`)
+  console.log(`🚀 GenderHealthcareBE is running at http://localhost:${port}`)
 })

@@ -1,18 +1,20 @@
 import mysql from 'mysql2/promise'
+
 import dotenv from 'dotenv'
 
 dotenv.config()
+type Pool = ReturnType<typeof mysql.createPool>
 
 class DatabaseService {
-  private pool: mysql.Pool
+  private pool: Pool
 
   constructor() {
     this.pool = mysql.createPool({
-      host: 'localhost',
-      port: 3307,
-      user: 'root',
-      password: '123456',
-      database: 'GenderForCare',
+      host: process.env.DB_HOST,
+      port: 3306,
+      user: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
       waitForConnections: true,
       connectionLimit: 10
     })
@@ -42,7 +44,6 @@ class DatabaseService {
   }
 }
 
-// Create a singleton instance
 const databaseService = new DatabaseService()
 
 export default databaseService

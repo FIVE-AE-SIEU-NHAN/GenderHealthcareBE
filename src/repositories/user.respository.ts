@@ -14,7 +14,7 @@ export default class UserRepository extends BaseRepository<User> {
       email,
       hashPassword(password)
     ])) as User[]
-
+    console.log("hashPassword", hashPassword(password))
     return results.length > 0 ? results[0] : null
   }
 
