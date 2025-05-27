@@ -1,7 +1,6 @@
 import express from 'express'
 import usersRouter from './routers/user.routers'
 import { defaultErorHandler } from './middlewares/error.middlewares'
-import otpRouter from './routers/otp.routers'
 import redisService from './utils/redis'
 import cors from 'cors'
 import databaseService from './services/database.services'
@@ -29,10 +28,8 @@ app.get('/', (req, res) => {
 
 // user route
 app.use('/user', usersRouter)
-// // otp route
-app.use('/otp', otpRouter)
 
-// // error handler
+// error handler
 app.use(defaultErorHandler)
 
 app.listen(port, () => {

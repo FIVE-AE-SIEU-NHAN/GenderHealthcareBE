@@ -14,6 +14,8 @@ import emailServices from './email.services'
 import { result } from 'lodash'
 import UserRepository from '~/repositories/user.respository'
 import { v4 as ObjectId } from 'uuid'
+import refreshTokenServices from './refreshToken.services'
+import redisUtils from '~/utils/redis'
 dotenv.config()
 
 class UsersServices {
@@ -28,27 +30,37 @@ class UsersServices {
     return signToken({
       payload: { user_id, token_type: TokenType.AccessToken },
       privateKey: process.env.JWT_SECRET_ACCESS_TOKEN as string,
-      options: { expiresIn: '15m' }
+      options: { expiresIn: Number(process.env.ACCESS_TOKEN_EXPIRE_IN) }
     })
   }
+
   private signRefreshToken(user_id: string) {
     return signToken({
       payload: { user_id, token_type: TokenType.RefreshToken },
       privateKey: process.env.JWT_SECRET_REFRESH_TOKEN as string,
-      options: { expiresIn: '100d' }
+      options: { expiresIn: Number(process.env.REFRESH_TOKEN_EXPIRE_IN) }
+    })
+  }
+
+  private signForgotPasswordToken(user_id: string) {
+    return signToken({
+      payload: { user_id, token_type: TokenType.ForgotPasswordToken },
+      privateKey: process.env.JWT_SECRET_FORGOT_PASSWORD_TOKEN as string,
+      options: { expiresIn: Number(process.env.FORGOT_PASSWORD_TOKEN_EXPIRE_IN) }
     })
   }
 
   async register(payload: RegisterReqBody) {
     const user_id = ObjectId()
-
     await this.userRepository.create({
       _id: user_id,
       name: payload.name,
       email: payload.email,
-      date_of_birth: new Date(payload.date_of_birth),
-      password: hashPassword(payload.password),
-      verify: UserVerifyStatus.Verified
+      date_of_birth: new Date(payload.date_of_birth) ? new Date(payload.date_of_birth) : new Date(),
+      gender: payload.gender,
+      password: payload.password ? hashPassword(payload.password) : '',
+      verify: UserVerifyStatus.Verified,
+      google_id: payload.google_id ? payload.google_id : ''
     })
 
     const [access_token, refresh_token] = await Promise.all([
@@ -56,52 +68,114 @@ class UsersServices {
       this.signRefreshToken(user_id.toString())
     ])
 
+    await refreshTokenServices.createRefreshToken(user_id, refresh_token)
+
     return {
       access_token,
-      refresh_token,
-      message: 'Chưa lưu refresh token vào db'
+      refresh_token
+    }
+  }
+
+  async updatePasswordByEmail(email: string, password: string) {
+    await this.userRepository.updatePassword(email, hashPassword(password))
+    const user = await this.userRepository.findByEmail(email)
+    // Tạo token để đăng nhập
+    const user_id = user!._id!
+    const [access_token, refresh_token] = await Promise.all([
+      this.signAccessToken(user_id),
+      this.signRefreshToken(user_id)
+    ])
+
+    await refreshTokenServices.createRefreshToken(user_id, refresh_token)
+
+    return {
+      access_token,
+      refresh_token
     }
   }
 
   async checkEmailExist(email: string) {
     const user = await this.userRepository.checkEmailExist(email)
+
+    // Trường hợp không có tài khoản
     if (!user) {
-      return false
+      return {
+        haveAccount: false,
+        havePassword: false
+      }
     }
 
+    // Trường hợp có tài khoản nhưng chưa có password (chỉ có Google ID)
     if (!user.password && user.google_id) {
-      return true
+      return {
+        haveAccount: true,
+        havePassword: false
+      }
+    }
+
+    // Trường hợp có tài khoản và đã có password
+    return {
+      haveAccount: true,
+      havePassword: true
     }
   }
 
-  // async checkGoogleIdExist(email: string, google_id: string) {
-  //   // dùng google_id lên database tìm user sỡ hữu google_id đó
-  //   const user = await databaseServices.users.findOne({ email })
-  //   if (!user) {
-  //     return {
-  //       haveAccount: false
-  //     }
-  //   }
-  //   // nếu có user thì kiểm tra google_id
-  //   // nếu có google_id thì trả về true
-  //   if (user.google_id === google_id) {
-  //     const user_id = user._id.toString()
-  //     const [access_token, refresh_token] = await Promise.all([
-  //       this.signAccessToken(user_id),
-  //       this.signRefreshToken(user_id)
-  //     ])
-  //     return {
-  //       haveAccount: true,
-  //       access_token,
-  //       refresh_token
-  //     }
-  //   } else {
-  //     throw new ErrorWithStatus({
-  //       status: HTTP_STATUS.UNPROCESSABLE_ENTITY,
-  //       message: USERS_MESSAGES.GOOGLE_ID_IS_INCORRECT
-  //     })
-  //   }
-  // }
+  async loginWithGoogleId(email: string, google_id: string) {
+    // Tìm user bằng email
+    const user = await this.userRepository.checkEmailExist(email)
+
+    // CASE 1: Không tìm thấy tài khoản với email này
+    if (!user) {
+      return {
+        haveAccount: false
+      }
+    }
+
+    // CASE 2: Tìm thấy tài khoản với email này và chưa có Google ID
+    if (!user.google_id) {
+      // Cập nhật Google ID vào tài khoản hiện có
+      await this.userRepository.updateGoogleId(email, google_id)
+
+      // Tạo token để đăng nhập
+      const [access_token, refresh_token] = await Promise.all([
+        this.signAccessToken(user._id!),
+        this.signRefreshToken(user._id!)
+      ])
+
+      await refreshTokenServices.createRefreshToken(user._id!, refresh_token)
+
+      return {
+        haveAccount: true,
+        googleIDIsValid: true,
+        access_token,
+        refresh_token
+      }
+    }
+
+    // CASE 3: Tìm thấy tài khoản với email này và đã có Google ID
+    if (user.google_id === google_id) {
+      // Google ID khớp với ID được lưu trong DB
+      const [access_token, refresh_token] = await Promise.all([
+        this.signAccessToken(user._id!),
+        this.signRefreshToken(user._id!)
+      ])
+
+      await refreshTokenServices.createRefreshToken(user._id!, refresh_token)
+
+      return {
+        haveAccount: true,
+        googleIDIsValid: true,
+        access_token,
+        refresh_token
+      }
+    } else {
+      // Google ID không khớp với ID được lưu trong DB
+      return {
+        haveAccount: true,
+        googleIDIsValid: false
+      }
+    }
+  }
 
   async login({ email, password }: LoginReqBody) {
     // dùng email và password để tìm user
@@ -119,36 +193,38 @@ class UsersServices {
       this.signRefreshToken(user_id)
     ])
 
-    // await databaseService.refreshTokens.insertOne(
-    //   new RefreshToken({ user_id: new ObjectId(user_id), token: refresh_token })
-    // )
+    await refreshTokenServices.createRefreshToken(user_id, refresh_token)
 
     return {
       access_token,
-      refresh_token,
-      message: 'Chưa lưu refresh token vào db'
+      refresh_token
     }
   }
 
-  // async checkRefreshToken({ user_id, refresh_token }: { user_id: string; refresh_token: string }) {
-  //   const refreshToken = await databaseServices.refreshTokens.findOne({
-  //     user_id: new ObjectId(user_id),
-  //     token: refresh_token
-  //   })
-  //   if (!refreshToken) {
-  //     throw new ErrorWithStatus({
-  //       status: HTTP_STATUS.UNAUTHORIZED, //401
-  //       message: USERS_MESSAGES.REFRESH_TOKEN_IS_INVALID
-  //     })
-  //   }
-  //   return refreshToken
-  // }
-  // async logout(refresh_token: string) {
-  //   await databaseService.refreshTokens.deleteOne({ token: refresh_token })
-  //   return {
-  //     message: USERS_MESSAGES.LOGOUT_SUCCESS
-  //   }
-  // }
+  async logout(refresh_token: string) {
+    await refreshTokenServices.deleteRefreshToken(refresh_token)
+    return {
+      message: USERS_MESSAGES.LOGOUT_SUCCESS
+    }
+  }
+
+  async forgotPassword(email: string) {
+    const user = await this.userRepository.checkEmailExist(email)
+
+    // lấy user_id tạo mã forgot_password_token
+    const user_id = user._id
+    const forgot_password_token = await this.signForgotPasswordToken(user_id!)
+    // lưu vào database
+
+    await redisUtils.saveForgotPasswordToken(user_id!, forgot_password_token)
+
+    // gửi mail
+    await emailServices.sendForgotPasswordEmail(email, forgot_password_token)
+  }
+
+  async resetPassword({ user_id, password }: { user_id: string; password: string }) {
+    await this.userRepository.updatePasswordById(user_id, hashPassword(password))
+  }
 }
 
 const usersServices = new UsersServices()

@@ -2,20 +2,30 @@
 //khai báo
 import express from 'express'
 import {
+  getOTPController,
   loginController,
-  registerController
-  // loginGoogleController,
-  // logoutController
+  registerController,
+  loginGoogleController,
+  logoutController,
+  forgotPasswordController,
+  resetPasswordController,
+  changePasswordController
 } from '~/controllers/users.controllers'
 import {
   accessTokenValidator,
+  changePasswordValidator,
+  forgotPasswordTokenValidator,
+  forgotPasswordValidator,
+  getOTPValidator,
   loginGoogleValidator,
   loginValidator,
   refreshTokenValidator,
-  registerValidator
+  registerValidator,
+  resetPasswordValidator
 } from '~/middlewares/user.middlewares'
 import { verifyGoogleToken } from '~/utils/google'
 import { wrapAsync } from '~/utils/handler'
+import { verifyToken } from '~/utils/jwt'
 
 //tạo router
 const userRouter = express.Router()
@@ -29,6 +39,14 @@ const userRouter = express.Router()
 userRouter.post('/register', registerValidator, wrapAsync(registerController))
 
 /**
+ * Description: Send email with token
+ * Path: /otp/get-otp
+ * Method: POST
+ * Request body: { email: string }
+ */
+userRouter.post('/get-otp', getOTPValidator, wrapAsync(getOTPController))
+
+/**
  * Description: Login user
  * Path: /user/login
  * Method: POST
@@ -36,37 +54,48 @@ userRouter.post('/register', registerValidator, wrapAsync(registerController))
  */
 userRouter.post('/login', loginValidator, wrapAsync(loginController))
 
-// /**
-//  * Description: Login with Google
-//  * Path: /user/login-google
-//  * Method: POST
-//  * Body: { id_token: string }
-//  */
-// userRouter.post('/login-google', loginGoogleValidator, wrapAsync(loginGoogleController))
+/**
+ * Description: Login with Google
+ * Path: /user/login-google
+ * Method: POST
+ * Body: { id_token: string }
+ */
+userRouter.post('/login-google', loginGoogleValidator, wrapAsync(loginGoogleController))
 
-// /**
-//  * Description: Logout
-//  * Path: /user/logout
-//  * Method: POST
-//  * Header: {Authorization: Bearer <access_token>}
-//  * Body: {refresh_token: string}
-//  */
-// userRouter.post('/logout', accessTokenValidator, refreshTokenValidator, wrapAsync(logoutController))
+/**
+ * Description: Logout
+ * Path: /user/logout
+ * Method: POST
+ * Header: {Authorization: Bearer <access_token>}
+ * Body: {refresh_token: string}
+ */
+userRouter.post('/logout', accessTokenValidator, refreshTokenValidator, wrapAsync(logoutController))
 
-// /**
-//  * Description: Send email with token
-//  * Path: /otp//get-token
-//  * Method: POST
-//  * Request body: { email: string }
-//  */
-// userRouter.post('/google-authen', async (req, res) => {
-//   const { token } = req.body
-//   const payload = await verifyGoogleToken(token)
-//   res.status(200).json({
-//     message: {
-//       payload
-//     }
-//   })
-// })
+/**
+ * Description: Forgot password
+ * Path: /user/forgot-password
+ * Method: POST
+ * Body: { email: string }
+ */
+userRouter.post('/forgot-password', forgotPasswordValidator, wrapAsync(forgotPasswordController))
+
+/**
+ * Description: Reset password
+ * Path: /user/reset-password
+ * Method: POST
+ * Body: { token: string, newPassword: string, confirmNewPassword: string }
+ */
+userRouter.post(
+  '/reset-password',
+  resetPasswordValidator,
+  forgotPasswordTokenValidator,
+  wrapAsync(resetPasswordController)
+)
+
+userRouter.put('/change-password', accessTokenValidator, changePasswordValidator, wrapAsync(changePasswordController))
+
+// route tao access token moi
+// phân quyền api cho phép truy cập
+// tao router + middleware moi cho logout kh quan tam access token vaf refresh token het han
 
 export default userRouter

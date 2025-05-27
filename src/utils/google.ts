@@ -8,6 +8,5 @@ export const verifyGoogleToken = async (token: string): Promise<TokenGoogleVerif
     audience: process.env.GOOGLE_CLIENT_ID
   })
   const payload = ticket.getPayload()
-  console.log('>>> payload', payload)
   return payload as TokenGoogleVerifyPayload
 }

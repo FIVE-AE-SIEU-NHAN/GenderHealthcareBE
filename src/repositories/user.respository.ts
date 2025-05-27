@@ -14,7 +14,6 @@ export default class UserRepository extends BaseRepository<User> {
       email,
       hashPassword(password)
     ])) as User[]
-
     return results.length > 0 ? results[0] : null
   }
 
@@ -23,9 +22,20 @@ export default class UserRepository extends BaseRepository<User> {
     return results[0]
   }
 
-  async updatePassword(id: number, password: string): Promise<any> {
-    return await databaseService.query(`UPDATE ${this.tableName} SET password = ? WHERE id = ?`, [password, id])
+  async updateGoogleId(email: string, google_id: string): Promise<any> {
+    return await databaseService.query(`UPDATE ${this.tableName} SET google_id = ? WHERE email = ?`, [google_id, email])
   }
 
-  // Các phương thức đặc thù khác...
+  async updatePassword(email: string, password: string): Promise<any> {
+    return await databaseService.query(`UPDATE ${this.tableName} SET password = ? WHERE email = ?`, [password, email])
+  }
+
+  async updatePasswordById(user_id: string, password: string): Promise<any> {
+    return await databaseService.query(`UPDATE ${this.tableName} SET password = ? WHERE _id = ?`, [password, user_id])
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    const results = (await databaseService.query(`SELECT * FROM ${this.tableName} WHERE email = ?`, [email])) as User[]
+    return results.length > 0 ? results[0] : null
+  }
 }

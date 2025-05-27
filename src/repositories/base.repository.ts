@@ -32,7 +32,6 @@ export default abstract class BaseRepository<T> {
         INSERT INTO ${this.tableName} (${keys.join(', ')})
         VALUES (${placeholders})
       `
-
       return await databaseService.query(query, values)
     } catch (error: MysqlError | any) {
       throw new ErrorWithStatus({

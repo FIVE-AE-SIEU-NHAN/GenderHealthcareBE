@@ -8,11 +8,11 @@ class DatabaseService {
 
   constructor() {
     this.pool = mysql.createPool({
-      host: 'localhost',
-      port: 3307,
-      user: 'root',
-      password: '123456',
-      database: 'GenderForCare',
+      host: process.env.DB_HOST,
+      port: 3306,
+      user: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
       waitForConnections: true,
       connectionLimit: 10
     })
@@ -20,7 +20,7 @@ class DatabaseService {
 
   async connect() {
     try {
-      const [result] = await this.pool.query('SELECT 1 + 1 AS solution')
+      await this.pool.query('SELECT 1 + 1 AS solution')
       console.log('You successfully connected to MySQL!')
     } catch (error) {
       console.error('Database connection failed:', error)

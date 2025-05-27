@@ -37,7 +37,7 @@ export default class User {
     this.name = user.name || '' // nếu người dùng tạo mà k truyền ta sẽ để rỗng
     this.email = user.email
     this.date_of_birth = user.date_of_birth || new Date()
-    this.gender = user.gender || 'lgbt'
+    this.gender = user.gender || 'other'
     this.password = user.password || ''
     this.created_at = user.created_at || date
     this.updated_at = user.updated_at || date

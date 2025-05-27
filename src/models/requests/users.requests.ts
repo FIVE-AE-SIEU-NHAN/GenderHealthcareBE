@@ -81,3 +81,22 @@ export interface ChangePasswordReqBody {
 export interface RefreshTokenReqBody {
   refresh_token: string
 }
+
+export interface OTPReqBody {
+  email: string
+}
+export interface ForgotPasswordReqBody {
+  email: string
+}
+
+export interface ResetPasswordReqBody {
+  password: string
+  confirm_password: string
+  forgot_password_token: string
+}
+
+export interface ChangePasswordReqBody {
+  old_password: string
+  password: string
+  confirm_password: string
+}

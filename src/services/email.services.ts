@@ -11,7 +11,9 @@ class EmailServices {
 
   constructor() {
     this.transporter = nodemailer.createTransport({
-      service: 'gmail',
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false, // dùng TLS
       auth: {
         user: process.env.EMAIL_USERNAME,
         pass: process.env.EMAIL_PASSWORD
@@ -55,6 +57,59 @@ class EmailServices {
               </div>
               <p>LƯU Ý KHÔNG CHIA SẺ MÃ VỚI BẤT KỲ AI.</p>
               <p>Mã xác thực sẽ hết hạn sau 2 phút vì lý do bảo mật.</p>
+              <p>Trân trọng,<br>Gender Healthcare Team</p>
+            </div>
+            <div style="text-align: center; margin-top: 20px; color: #666; font-size: 12px;">
+              <p>Đây là email tự động, vui lòng không trả lời.</p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `
+      })
+      return info
+    } catch (error) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.NOT_FOUND, //404
+        message: USERS_MESSAGES.SEND_MAIL_FAIL
+      })
+    }
+  }
+
+  async sendForgotPasswordEmail(email: string, forgot_password_token: string) {
+    try {
+      const info = await this.transporter.sendMail({
+        from: process.env.EMAIL_USERNAME,
+        to: email,
+        subject: '[ Gender4Care ] Reset your password',
+        text: 'Please reset your password by clicking the link below:',
+        html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+        </head>
+        <body style="margin: 0; padding: 0; background-color: #f9f9f9;">
+          <div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif; padding: 20px;">
+            <div style="background-color: #1977cc; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0;">
+              <h1 style="margin: 0;">Đổi Mật Khẩu Tài Khoản</h1>
+            </div>
+            <div style="background-color: white; padding: 20px; border-radius: 0 0 5px 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+              <h2>Xin chào!</h2>
+              <br>Để hoàn thành yêu cầu của bạn với trang <span style="font-weight: bold; color: #1977cc;"> Đổi mật khẩu tài khoản Gender4Care </span>, vui lòng ấn vào nút <span style="font-weight: bold; font-style: italic;">Đổi Mật Khẩu</span> bên dưới:</p>
+              <div style="text-align: center;">
+                <a href="http://localhost:5173/reset-password/?forgot_password_token=${forgot_password_token}" 
+                   style="background-color: #1977cc;
+                          color: white !important;
+                          padding: 15px 30px;
+                          text-decoration: none;
+                          border-radius: 5px;
+                          display: inline-block;
+                          margin: 20px 0;
+                          font-weight: bold;">
+                  Đổi Mật Khẩu
+                </a>
+              </div>
               <p>Trân trọng,<br>Gender Healthcare Team</p>
             </div>
             <div style="text-align: center; margin-top: 20px; color: #666; font-size: 12px;">
