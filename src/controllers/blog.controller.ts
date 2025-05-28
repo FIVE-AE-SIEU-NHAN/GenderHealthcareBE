@@ -1,20 +1,23 @@
 import { Request, Response } from 'express';
-import databaseServices from '../services/database.services'
-import { Blog } from '../types/blog.d';
+import databaseServices from '../services/database.services';
 
-// Lấy tất cả blog cùng tên user từ bảng Users
+// Lấy tất cả blogs và tên người tạo từ bảng Users
 export const getAllBlogs = async (req: Request, res: Response) => {
-    try {
-      const blogs = await databaseServices.query('SELECT * FROM blogs ORDER BY createdAt DESC');
-      console.log('Blogs from DB:', blogs);
-      res.json(blogs);
-    } catch (error) {
-      console.error('Error fetching blogs:', error);
-      res.status(500).json({ message: 'Server error' });
-    }
-  };
+  try {
+    const blogs = await databaseServices.query(`
+      SELECT blogs.*, Users.name AS authorName
+      FROM blogs
+      INNER JOIN Users ON blogs.userId = Users._id
+      ORDER BY blogs.createdAt DESC
+    `);
+    res.json(blogs);
+  } catch (error) {
+    console.error('Error fetching blogs:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
 
-// Tạo blog
+// Tạo blog mới
 export const createBlog = async (req: Request, res: Response) => {
   try {
     const { userId, title, content } = req.body;

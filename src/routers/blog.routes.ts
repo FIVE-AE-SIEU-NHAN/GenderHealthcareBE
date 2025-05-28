@@ -1,6 +1,5 @@
 import express from 'express';
 import multer from 'multer';
-import path from 'path';
 import { getAllBlogs, createBlog } from '../controllers/blog.controller';
 
 const router = express.Router();
