@@ -16,8 +16,8 @@ export default abstract class BaseRepository<T> {
     return (await databaseService.query(`SELECT * FROM ${this.tableName}`)) as T[]
   }
 
-  async findById(id: number): Promise<T | null> {
-    const results = (await databaseService.query(`SELECT * FROM ${this.tableName} WHERE id = ?`, [id])) as T[]
+  async findById(id: string): Promise<T | null> {
+    const results = (await databaseService.query(`SELECT * FROM ${this.tableName} WHERE _id = ?`, [id])) as T[]
 
     return results.length > 0 ? results[0] : null
   }

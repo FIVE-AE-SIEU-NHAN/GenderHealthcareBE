@@ -225,6 +225,28 @@ class UsersServices {
   async resetPassword({ user_id, password }: { user_id: string; password: string }) {
     await this.userRepository.updatePasswordById(user_id, hashPassword(password))
   }
+
+  async changePassword({
+    user_id,
+    old_password,
+    password
+  }: {
+    user_id: string
+    old_password: string
+    password: string
+  }) {
+    // kiểm tra mật khẩu cũ có đúng không
+    const user = await this.userRepository.findById(user_id)
+    if (!user || !user.password || user.password !== hashPassword(old_password)) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.UNPROCESSABLE_ENTITY,
+        message: USERS_MESSAGES.OLD_PASSWORD_IS_INCORRECT
+      })
+    }
+
+    // cập nhật mật khẩu mới
+    await this.userRepository.updatePasswordById(user_id, hashPassword(password))
+  }
 }
 
 const usersServices = new UsersServices()

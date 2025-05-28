@@ -206,10 +206,10 @@ export const changePasswordController = async (
   next: NextFunction
 ) => {
   // const { user_id } = req.decode_authorization as TokenPayLoad
-  // const { old_password, password } = req.body
+  const user_id = '741f6e19-a85b-4774-b2c9-1f68455813b1'
+  const { old_password, password } = req.body
 
-  // await usersServices.changePassword({ user_id, old_password, password })
-  // // thành công
+  await usersServices.changePassword({ user_id, old_password, password })
   res.status(HTTP_STATUS.OK).json({
     message: USERS_MESSAGES.CHANGE_PASSWORD_SUCCESS
   })

@@ -91,8 +91,19 @@ userRouter.post(
   forgotPasswordTokenValidator,
   wrapAsync(resetPasswordController)
 )
+/**
+ * Description: Change password
+ * Path: /user/change-password
+ * Method: PUT
+ * Header: {Authorization: Bearer <access_token>}
+ * Body: { oldPassword: string, newPassword: string, confirmNewPassword: string }
+ */
 
-userRouter.put('/change-password', accessTokenValidator, changePasswordValidator, wrapAsync(changePasswordController))
+userRouter.put(
+  '/change-password',
+  /*accessTokenValidator, */ changePasswordValidator,
+  wrapAsync(changePasswordController)
+)
 
 // route tao access token moi
 // phân quyền api cho phép truy cập

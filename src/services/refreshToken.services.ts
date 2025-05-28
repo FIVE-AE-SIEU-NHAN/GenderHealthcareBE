@@ -22,7 +22,6 @@ class RefreshTokenServices {
   }
 
   async checkRefreshTokenExist(refresh_token: string) {
-    console.log('25.rf.services.ts', refresh_token)
     const refreshToken = await this.refreshTokenRepository.checkRefreshTokenExist(refresh_token)
     if (!refreshToken) {
       throw new ErrorWithStatus({
