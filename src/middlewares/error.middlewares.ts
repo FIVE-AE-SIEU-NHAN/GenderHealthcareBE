@@ -9,7 +9,7 @@
 
 import { omit } from 'lodash'
 import HTTP_STATUS from '~/constants/httpStatus'
-import { Request, Response, NextFunction } from 'express'
+import e, { Request, Response, NextFunction } from 'express'
 import { ErrorWithStatus } from '~/models/Errors'
 
 export const defaultErorHandler = (error: any, req: Request, res: Response, next: NextFunction) => {

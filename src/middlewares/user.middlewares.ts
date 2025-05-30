@@ -5,8 +5,7 @@ import { capitalize } from 'lodash'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { USERS_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
-import otpServices from '~/services/otp.services'
-import redisService from '~/services/redis.services'
+import redisUtils from '~/utils/redis'
 import { verifyGoogleToken } from '~/utils/google'
 import { verifyToken } from '~/utils/jwt'
 import { validate } from '~/utils/validation'
@@ -98,6 +97,33 @@ const confirmPasswordSchema: ParamSchema = {
   }
 }
 
+const forgotPasswordTokenSchema: ParamSchema = {
+  notEmpty: {
+    errorMessage: USERS_MESSAGES.FORGOT_PASSWORD_TOKEN_IS_INVALID
+  },
+  custom: {
+    options: async (value, { req }) => {
+      try {
+        const decode_forgot_password_token = await verifyToken({
+          token: value,
+          privateKey: process.env.JWT_SECRET_FORGOT_PASSWORD_TOKEN as string
+        })
+        const result = await redisUtils.verifyForgotPasswordToken(decode_forgot_password_token.user_id, value)
+        if (!result) {
+          throw new Error(USERS_MESSAGES.FORGOT_PASSWORD_TOKEN_IS_INVALID)
+        }
+        ;(req as Request).decode_forgot_password_token = decode_forgot_password_token
+      } catch (error) {
+        throw new ErrorWithStatus({
+          status: HTTP_STATUS.UNAUTHORIZED,
+          message: (error as JsonWebTokenError).message
+        })
+      }
+      return true
+    }
+  }
+}
+
 export const loginValidator = validate(
   checkSchema(
     {
@@ -111,6 +137,37 @@ export const loginValidator = validate(
         trim: true
       },
       password: passwordSchema
+    },
+    ['body']
+  )
+)
+
+export const loginGoogleValidator = validate(
+  checkSchema(
+    {
+      id_token: {
+        notEmpty: {
+          errorMessage: USERS_MESSAGES.ID_TOKEN_IS_REQUIRED
+        },
+        isString: {
+          errorMessage: USERS_MESSAGES.ID_TOKEN_MUST_BE_A_STRING
+        },
+        trim: true,
+        custom: {
+          options: async (value, { req }) => {
+            const payload = await verifyGoogleToken(value)
+            if (!payload) {
+              throw new ErrorWithStatus({
+                status: HTTP_STATUS.UNAUTHORIZED,
+                message: USERS_MESSAGES.ID_TOKEN_IS_INVALID
+              })
+            }
+
+            ;(req as Request).decode_google_verify_token = payload
+            return true
+          }
+        }
+      }
     },
     ['body']
   )
@@ -174,30 +231,39 @@ export const registerValidator = validate(
         notEmpty: {
           errorMessage: USERS_MESSAGES.EMAIL_VERIFY_TOKEN_IS_REQUIRED
         },
+        // Trong phần email_verify_token
         custom: {
           options: async (value: string, { req }) => {
             const email = req.body.email
 
-            // Check if OTP exists and is valid
-            const result = await otpServices.verifyOTP(email, value)
+            // Kiểm tra OTP
+            const result = await redisUtils.verifyOTP(email, value)
             if (!result) {
               throw new ErrorWithStatus({
                 status: HTTP_STATUS.UNAUTHORIZED,
                 message: USERS_MESSAGES.EMAIL_VERIFY_TOKEN_IS_INVALID
               })
             }
-
-            // Check if OTP is expired
-            const isExpired = await redisService.get(`otp:${email}:expired`)
-            if (isExpired) {
-              throw new ErrorWithStatus({
-                status: HTTP_STATUS.UNAUTHORIZED,
-                message: USERS_MESSAGES.EMAIL_VERIFY_TOKEN_IS_EXPIRED
-              })
-            }
             return true
           }
         }
+      }
+    },
+    ['body']
+  )
+)
+
+export const getOTPValidator = validate(
+  checkSchema(
+    {
+      email: {
+        notEmpty: {
+          errorMessage: USERS_MESSAGES.EMAIL_IS_REQUIRED
+        },
+        isEmail: {
+          errorMessage: USERS_MESSAGES.EMAIL_IS_INVALID
+        },
+        trim: true
       }
     },
     ['body']
@@ -213,27 +279,23 @@ export const accessTokenValidator = validate(
         },
         custom: {
           options: async (value, { req }) => {
-            // value này 'Bearer <access_token>'
             const access_token = value.split(' ')[1]
-            if (!access_token) {
-              throw new ErrorWithStatus({
-                status: HTTP_STATUS.UNAUTHORIZED, //401
-                message: USERS_MESSAGES.ACCESS_TOKEN_IS_REQUIRED
-              })
-            }
+            console.log('Received token:', access_token) // Log token nhận được
+
             try {
               const decode_authorization = await verifyToken({
                 token: access_token,
                 privateKey: process.env.JWT_SECRET_ACCESS_TOKEN as string
               })
+              console.log('Decoded token:', decode_authorization) // Log decoded token
               ;(req as Request).decode_authorization = decode_authorization
             } catch (error) {
+              console.log('Token error:', error) // Log detailed error
               throw new ErrorWithStatus({
                 status: HTTP_STATUS.UNAUTHORIZED,
                 message: capitalize((error as JsonWebTokenError).message)
               })
             }
-            // nếu oke hết thì
             return true
           }
         }
@@ -258,7 +320,6 @@ export const refreshTokenValidator = validate(
                 privateKey: process.env.JWT_SECRET_REFRESH_TOKEN as string
               })
               ;(req as Request).decode_refresh_token = decode_refresh_token
-              console.log('>>>>> decode_refresh_token', decode_refresh_token.user_id)
             } catch (error) {
               throw new ErrorWithStatus({
                 status: HTTP_STATUS.UNAUTHORIZED,
@@ -274,35 +335,48 @@ export const refreshTokenValidator = validate(
   )
 )
 
-export const loginGoogleValidator = validate(
+export const forgotPasswordValidator = validate(
   checkSchema(
     {
-      id_token: {
+      email: {
         notEmpty: {
-          errorMessage: USERS_MESSAGES.ID_TOKEN_IS_REQUIRED
-        },
-        isString: {
-          errorMessage: USERS_MESSAGES.ID_TOKEN_MUST_BE_A_STRING
+          errorMessage: USERS_MESSAGES.EMAIL_IS_REQUIRED
         },
         isEmail: {
           errorMessage: USERS_MESSAGES.EMAIL_IS_INVALID
         },
-        trim: true,
-        custom: {
-          options: async (value, { req }) => {
-            const payload = await verifyGoogleToken(value)
-            if (!payload) {
-              throw new ErrorWithStatus({
-                status: HTTP_STATUS.UNAUTHORIZED,
-                message: USERS_MESSAGES.ID_TOKEN_IS_INVALID
-              })
-            }
-
-            ;(req as Request).decode_google_verify_token = payload
-            return true
-          }
-        }
+        trim: true
       }
+    },
+    ['body']
+  )
+)
+
+export const forgotPasswordTokenValidator = validate(
+  checkSchema(
+    {
+      forgot_password_token: forgotPasswordTokenSchema
+    },
+    ['body']
+  )
+)
+
+export const resetPasswordValidator = validate(
+  checkSchema(
+    {
+      password: passwordSchema,
+      confirm_password: confirmPasswordSchema
+    },
+    ['body']
+  )
+)
+
+export const changePasswordValidator = validate(
+  checkSchema(
+    {
+      old_password: passwordSchema,
+      password: passwordSchema,
+      confirm_password: confirmPasswordSchema
     },
     ['body']
   )
