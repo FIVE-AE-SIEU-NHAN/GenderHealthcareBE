@@ -13,7 +13,6 @@ interface UserType {
   forgot_password_token?: string
   google_id?: string
   verify?: UserVerifyStatus
-
   role?: USER_ROLE
 }
 
@@ -29,7 +28,6 @@ export default class User {
   forgot_password_token: string
   google_id: string
   verify: UserVerifyStatus
-
   role: USER_ROLE
   constructor(user: UserType) {
     const date = new Date() //tạo này cho ngày created_at updated_at bằng nhau
@@ -44,7 +42,6 @@ export default class User {
     this.forgot_password_token = user.forgot_password_token || ''
     this.google_id = user.google_id || ''
     this.verify = user.verify || UserVerifyStatus.Unverified
-
     this.role = user.role || USER_ROLE.User
   }
 }

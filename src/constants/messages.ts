@@ -32,6 +32,7 @@ export const USERS_MESSAGES = {
   PHONE_NUMBER_IS_REQUIRED: 'Phone number is required',
   PHONE_NUMBER_MUST_BE_STRING: 'Phone number must be a string',
   PHONE_NUMBER_IS_INVALID: 'Phone number is invalid',
+
   //user
   EMAIL_OR_PASSWORD_IS_INCORRECT: 'Email or password is incorrect',
   LOGIN_SUCCESS: 'Login successfully',

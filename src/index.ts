@@ -25,6 +25,11 @@ app.use(express.json())
 app.get('/', (req, res) => {
   res.send('hello world')
 })
+app.use('/user', usersRouter)
+app.use('/email', emailRouter)
+
+// error handler
+app.use(defaultErorHandler)
 
 // user route
 app.use('/user', usersRouter)

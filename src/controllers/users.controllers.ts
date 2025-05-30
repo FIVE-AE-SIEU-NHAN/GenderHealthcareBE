@@ -23,6 +23,7 @@ import emailServices from '~/services/email.services'
 import redisUtils from '~/utils/redis'
 import refreshTokenServices from '~/services/refreshToken.services'
 
+
 export const registerController = async (
   req: Request<ParamsDictionary, any, RegisterReqBody>,
   res: Response,
