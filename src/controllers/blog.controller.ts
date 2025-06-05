@@ -1,85 +1,56 @@
-import { Request, Response } from 'express';
-import databaseServices from '../services/database.services';
+import { Request, Response, NextFunction } from 'express';
+import * as blogService from '../services/blog.service';
 
-// Kiểu blog đơn giản
-interface Blog {
-  id: number;
-  userId: number;
-  title: string;
-  content: string;
-  mainImage: string; // đổi tên nếu cần
-  summary?: string;
-  subImage?: string;
-  section1?: string;
-  section2?: string;
-  createdAt: Date;
-  authorName?: string;
-}
-
-// Lấy tất cả blog
-export const getAllBlogs = async (req: Request, res: Response) => {
+export const getAllBlogs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const result = await databaseServices.query(
-      `
-      SELECT blogs.*, Users.name AS authorName
-      FROM blogs
-      INNER JOIN Users ON blogs.userId = Users._id
-      ORDER BY blogs.createdAt DESC
-    `
-    );
-
-    const blogs = result as Blog[]; // ép kiểu
-    res.json(blogs);
+    const blogs = await blogService.getAllBlogs();
+    res.json(blogs); // KHÔNG return
   } catch (error) {
-    console.error('Lỗi khi lấy tất cả blog:', error);
-    res.status(500).json({ message: 'Lỗi server' });
+    next(error);
   }
 };
 
-export const getBlogById = async (req: Request, res: Response) => {
+export const getBlogById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  const id = Number(req.params.id);
   try {
-    const { id } = req.params;
-
-    const result = await databaseServices.query(
-      `
-      SELECT blogs.*, Users.name AS authorName
-      FROM blogs
-      INNER JOIN Users ON blogs.userId = Users._id
-      WHERE blogs.id = ?
-    `,
-      [id]
-    );
-
-    const blogList = result as Blog[];
-
-    if (!blogList || blogList.length === 0) {
-      return res.status(404).json({ message: 'Không tìm thấy blog' });
+    const blog = await blogService.getBlogById(id);
+    if (!blog) {
+      res.status(404).json({ message: 'Blog not found' });
+      return; // Cần return để ngăn tiếp tục chạy
     }
-
-    res.json(blogList[0]);
+    res.json(blog);
   } catch (error) {
-    console.error('Lỗi khi lấy blog theo ID:', error);
-    res.status(500).json({ message: 'Lỗi server' });
+    next(error);
   }
 };
-// Tạo blog
-export const createBlog = async (req: Request, res: Response) => {
+
+export const createBlog = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { userId, title, content } = req.body;
-    const image = req.file?.filename;
-
-    if (!userId || !title || !content || !image) {
-      return res.status(400).json({ message: 'Thiếu thông tin bắt buộc' });
-    }
-
-    await databaseServices.query(
-      'INSERT INTO blogs (userId, title, content, image, createdAt) VALUES (?, ?, ?, ?, NOW())',
-      [userId, title, content, image]
-    );
-
-    res.status(201).json({ message: 'Tạo blog thành công' });
+    const data = req.body;
+    const newBlog = await blogService.createBlog(data);
+    res.status(201).json(newBlog);
   } catch (error) {
-    console.error('Lỗi khi tạo blog:', error);
-    res.status(500).json({ message: 'Lỗi server', error });
+    next(error);
+  }
+};
+
+export const updateBlog = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  const id = Number(req.params.id);
+  try {
+    const data = req.body;
+    const updatedBlog = await blogService.updateBlog(id, data);
+    res.json(updatedBlog);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteBlog = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  const id = Number(req.params.id);
+  try {
+    await blogService.deleteBlog(id);
+    res.json({ message: 'Blog deleted successfully' });
+  } catch (error) {
+    next(error);
   }
 };

@@ -17,6 +17,8 @@ import {
 import { verifyGoogleToken } from '~/utils/google'
 import { wrapAsync } from '~/utils/handler'
 
+import { USER_ROLE } from '~/constants/enums'
+import * as bookingController from '~/controllers/booking.controller'
 //tạo router
 const userRouter = express.Router()
 
@@ -27,6 +29,8 @@ const userRouter = express.Router()
  * Body: { name: string, email: string, password: string, confirmPassword: string, dob: string }
  */
 userRouter.post('/register', registerValidator, wrapAsync(registerController))
+
+
 
 /**
  * Description: Login user

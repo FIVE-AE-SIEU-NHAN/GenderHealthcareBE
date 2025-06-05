@@ -10,6 +10,19 @@ import { verifyGoogleToken } from '~/utils/google'
 import { verifyToken } from '~/utils/jwt'
 import { validate } from '~/utils/validation'
 
+
+
+declare global {
+  namespace Express {
+    interface Request {
+      user?: {
+        role?: string;
+        [key: string]: any;
+      };
+    }
+  }
+}
+
 const nameSchema: ParamSchema = {
   notEmpty: {
     errorMessage: USERS_MESSAGES.NAME_IS_REQUIRED
@@ -307,3 +320,4 @@ export const loginGoogleValidator = validate(
     ['body']
   )
 )
+

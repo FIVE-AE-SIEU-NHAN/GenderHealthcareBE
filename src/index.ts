@@ -34,10 +34,12 @@ app.get('/', (req, res) => {
 // ===== Routes =====
 app.use('/user', usersRouter)
 app.use('/otp', otpRouter)
-app.use('/api', blogRoutes) // blog routes go under /api
+app.use('/api/blogs', blogRoutes);
 
 // ===== Error handler =====
 app.use(defaultErorHandler)
+
+
 
 // ===== Start server =====
 app.listen(port, () => {

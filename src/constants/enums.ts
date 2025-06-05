@@ -4,9 +4,12 @@ export enum UserVerifyStatus {
   Banned // bị khóa
 }
 export enum USER_ROLE {
-  Admin, //0
-  Staff, //1
-  User //2
+  Admin = 0, 
+  Guest = 1, 
+  Staff = 2,
+  Consultant = 3,
+  Manager = 4,
+  Customer = 5,
 }
 export enum TokenType {
   AccessToken, // 0

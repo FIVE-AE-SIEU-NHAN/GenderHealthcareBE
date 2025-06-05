@@ -60,10 +60,7 @@ export const loginController = async (
 // ) => {
 //   const { email, name, sub: google_id } = req.decode_google_verify_token!
 
-//   // kiểm tra email có tồn tại trong db hay không
-//   const { haveAccount, access_token, refresh_token } = await usersServices.checkGoogleIdExist(email, google_id)
-
-//   // Nếu email không tồn tại, tạo tài khoản mới
+//  3
 //   if (!haveAccount) {
 //     const result = await usersServices.register({
 //       email,
