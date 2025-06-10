@@ -3,7 +3,7 @@ import usersRouter from './routers/user.routers'
 import { defaultErorHandler } from './middlewares/error.middlewares'
 import redisService from './utils/redis'
 import cors from 'cors'
-import databaseService from './services/database.services'
+import prismaService from './services/prisma.services'
 const app = express()
 const port = 3000
 
@@ -16,7 +16,7 @@ app.use(
 )
 
 // kết nối database
-databaseService.connect()
+prismaService.connect()
 redisService.connect()
 
 // cấu hình body parser

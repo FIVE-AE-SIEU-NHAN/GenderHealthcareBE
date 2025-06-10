@@ -1,10 +1,8 @@
-import databaseServices from './database.services'
-import { LoginReqBody, RegisterReqBody } from '~/models/requests/users.requests'
+import { LoginReqBody, RegisterReqBody, UpdateProfileReqBody } from '~/models/requests/users.requests'
 import { hashPassword } from '~/utils/crypto'
 import { signToken } from '~/utils/jwt'
-import { TokenType, UserVerifyStatus } from '~/constants/enums'
+import { TokenType, USER_ROLE, UserVerifyStatus } from '~/constants/enums'
 import dotenv from 'dotenv'
-import databaseService from './database.services'
 import User from '~/models/User.schema'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { USERS_MESSAGES } from '~/constants/messages'
@@ -30,7 +28,8 @@ class UsersServices {
     return signToken({
       payload: { user_id, token_type: TokenType.AccessToken },
       privateKey: process.env.JWT_SECRET_ACCESS_TOKEN as string,
-      options: { expiresIn: Number(process.env.ACCESS_TOKEN_EXPIRE_IN) }
+      // options: { expiresIn: Number(process.env.ACCESS_TOKEN_EXPIRE_IN) }
+      options: { expiresIn: '1m' }
     })
   }
 
@@ -52,38 +51,25 @@ class UsersServices {
 
   async register(payload: RegisterReqBody) {
     const user_id = ObjectId()
-    await this.userRepository.create({
-      _id: user_id,
+    await this.userRepository.createUser({
+      id: user_id,
       name: payload.name,
       email: payload.email,
-      date_of_birth: new Date(payload.date_of_birth) ? new Date(payload.date_of_birth) : new Date(),
+      date_of_birth: payload.date_of_birth ? new Date(payload.date_of_birth) : new Date(),
       gender: payload.gender,
-      password: payload.password ? hashPassword(payload.password) : '',
+      password: payload.password ? await hashPassword(payload.password) : '',
+      phone_number: payload.phone_number,
+      created_at: new Date(),
+      updated_at: new Date(),
+      forgot_password_token: '',
+      google_id: payload.google_id ?? '',
       verify: UserVerifyStatus.Verified,
-      google_id: payload.google_id ? payload.google_id : ''
+      role: USER_ROLE.User
     })
 
     const [access_token, refresh_token] = await Promise.all([
       this.signAccessToken(user_id.toString()),
       this.signRefreshToken(user_id.toString())
-    ])
-
-    await refreshTokenServices.createRefreshToken(user_id, refresh_token)
-
-    return {
-      access_token,
-      refresh_token
-    }
-  }
-
-  async updatePasswordByEmail(email: string, password: string) {
-    await this.userRepository.updatePassword(email, hashPassword(password))
-    const user = await this.userRepository.findByEmail(email)
-    // Tạo token để đăng nhập
-    const user_id = user!._id!
-    const [access_token, refresh_token] = await Promise.all([
-      this.signAccessToken(user_id),
-      this.signRefreshToken(user_id)
     ])
 
     await refreshTokenServices.createRefreshToken(user_id, refresh_token)
@@ -120,6 +106,27 @@ class UsersServices {
     }
   }
 
+  async updateUserByEmail(email: string, payload: RegisterReqBody) {
+    await this.userRepository.updateUserHaveGoogleId(email, {
+      ...payload,
+      password: hashPassword(payload.password)
+    })
+    const user = await this.userRepository.findUserByEmail(email)
+    // Tạo token để đăng nhập
+    const user_id = user!.id
+    const [access_token, refresh_token] = await Promise.all([
+      this.signAccessToken(user_id),
+      this.signRefreshToken(user_id)
+    ])
+
+    await refreshTokenServices.createRefreshToken(user_id, refresh_token)
+
+    return {
+      access_token,
+      refresh_token
+    }
+  }
+
   async loginWithGoogleId(email: string, google_id: string) {
     // Tìm user bằng email
     const user = await this.userRepository.checkEmailExist(email)
@@ -138,11 +145,11 @@ class UsersServices {
 
       // Tạo token để đăng nhập
       const [access_token, refresh_token] = await Promise.all([
-        this.signAccessToken(user._id!),
-        this.signRefreshToken(user._id!)
+        this.signAccessToken(user.id),
+        this.signRefreshToken(user.id)
       ])
 
-      await refreshTokenServices.createRefreshToken(user._id!, refresh_token)
+      await refreshTokenServices.createRefreshToken(user.id, refresh_token)
 
       return {
         haveAccount: true,
@@ -156,11 +163,11 @@ class UsersServices {
     if (user.google_id === google_id) {
       // Google ID khớp với ID được lưu trong DB
       const [access_token, refresh_token] = await Promise.all([
-        this.signAccessToken(user._id!),
-        this.signRefreshToken(user._id!)
+        this.signAccessToken(user.id),
+        this.signRefreshToken(user.id)
       ])
 
-      await refreshTokenServices.createRefreshToken(user._id!, refresh_token)
+      await refreshTokenServices.createRefreshToken(user.id, refresh_token)
 
       return {
         haveAccount: true,
@@ -186,8 +193,8 @@ class UsersServices {
         message: USERS_MESSAGES.EMAIL_OR_PASSWORD_IS_INCORRECT
       })
     }
-    // nếu có user thì tạo at và rf
-    const user_id = user._id!
+    // nếu có user thì tạo access_token và refresh_token
+    const user_id = user.id!
     const [access_token, refresh_token] = await Promise.all([
       this.signAccessToken(user_id),
       this.signRefreshToken(user_id)
@@ -209,10 +216,10 @@ class UsersServices {
   }
 
   async forgotPassword(email: string) {
-    const user = await this.userRepository.checkEmailExist(email)
+    const user = await this.userRepository.getUserByEmail(email)
 
     // lấy user_id tạo mã forgot_password_token
-    const user_id = user._id
+    const user_id = user?.id
     const forgot_password_token = await this.signForgotPasswordToken(user_id!)
     // lưu vào database
 
@@ -222,7 +229,7 @@ class UsersServices {
     await emailServices.sendForgotPasswordEmail(email, forgot_password_token)
   }
 
-  async resetPassword({ user_id, password }: { user_id: string; password: string }) {
+  async resetPassword(user_id: string, password: string) {
     await this.userRepository.updatePasswordById(user_id, hashPassword(password))
   }
 
@@ -236,7 +243,7 @@ class UsersServices {
     password: string
   }) {
     // kiểm tra mật khẩu cũ có đúng không
-    const user = await this.userRepository.findById(user_id)
+    const user = await this.userRepository.findUserById(user_id)
     if (!user || !user.password || user.password !== hashPassword(old_password)) {
       throw new ErrorWithStatus({
         status: HTTP_STATUS.UNPROCESSABLE_ENTITY,
@@ -246,6 +253,24 @@ class UsersServices {
 
     // cập nhật mật khẩu mới
     await this.userRepository.updatePasswordById(user_id, hashPassword(password))
+  }
+
+  async getProfile(user_id: string) {
+    return await this.userRepository.findUserById(user_id)
+  }
+
+  async updateProfile(user_id: string, payload: UpdateProfileReqBody) {
+    const user = await this.userRepository.findUserById(user_id)
+    if (!user) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.NOT_FOUND,
+        message: USERS_MESSAGES.USER_NOT_FOUND
+      })
+    }
+
+    const userInfor = await this.userRepository.updateUserProfile(user_id, payload)
+
+    return userInfor
   }
 }
 

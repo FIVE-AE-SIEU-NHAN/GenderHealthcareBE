@@ -32,9 +32,9 @@ export default class User {
 
   role: USER_ROLE
   constructor(user: UserType) {
-    const date = new Date() //tạo này cho ngày created_at updated_at bằng nhau
-    this._id = user._id || ObjectId() // tự tạo id
-    this.name = user.name || '' // nếu người dùng tạo mà k truyền ta sẽ để rỗng
+    const date = new Date()
+    this._id = user._id || ObjectId()
+    this.name = user.name || ''
     this.email = user.email
     this.date_of_birth = user.date_of_birth || new Date()
     this.gender = user.gender || 'other'

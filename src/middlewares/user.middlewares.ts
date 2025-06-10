@@ -280,17 +280,14 @@ export const accessTokenValidator = validate(
         custom: {
           options: async (value, { req }) => {
             const access_token = value.split(' ')[1]
-            console.log('Received token:', access_token) // Log token nhận được
 
             try {
               const decode_authorization = await verifyToken({
                 token: access_token,
                 privateKey: process.env.JWT_SECRET_ACCESS_TOKEN as string
               })
-              console.log('Decoded token:', decode_authorization) // Log decoded token
               ;(req as Request).decode_authorization = decode_authorization
             } catch (error) {
-              console.log('Token error:', error) // Log detailed error
               throw new ErrorWithStatus({
                 status: HTTP_STATUS.UNAUTHORIZED,
                 message: capitalize((error as JsonWebTokenError).message)
@@ -377,6 +374,55 @@ export const changePasswordValidator = validate(
       old_password: passwordSchema,
       password: passwordSchema,
       confirm_password: confirmPasswordSchema
+    },
+    ['body']
+  )
+)
+
+export const updateProfileValidator = validate(
+  checkSchema(
+    {
+      name: {
+        optional: true,
+        ...nameSchema
+      },
+      date_of_birth: {
+        optional: true,
+        ...dateOfBirthSchema
+      },
+      gender: {
+        optional: true,
+        isString: {
+          errorMessage: USERS_MESSAGES.GENDER_MUST_BE_A_STRING
+        },
+        trim: true,
+        custom: {
+          options: (value) => {
+            // Kiểm tra giá trị gender hợp lệ (male, female, other)
+            const validGenders = ['male', 'female', 'other']
+            if (!validGenders.includes(value.toLowerCase())) {
+              throw new Error(USERS_MESSAGES.GENDER_IS_INVALID)
+            }
+            return true
+          }
+        }
+      },
+      phone_number: {
+        optional: true,
+        isString: {
+          errorMessage: USERS_MESSAGES.PHONE_NUMBER_MUST_BE_STRING
+        },
+        trim: true,
+        custom: {
+          options: (value) => {
+            const phoneRegex = /(84|0[3|5|7|8|9])+([0-9]{8})\b/g
+            if (!phoneRegex.test(value)) {
+              throw new Error(USERS_MESSAGES.PHONE_NUMBER_IS_INVALID)
+            }
+            return true
+          }
+        }
+      }
     },
     ['body']
   )

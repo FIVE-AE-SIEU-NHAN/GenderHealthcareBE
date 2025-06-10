@@ -100,3 +100,14 @@ export interface ChangePasswordReqBody {
   password: string
   confirm_password: string
 }
+
+export interface RefreshTokenReqBody {
+  refresh_token: string
+}
+
+export interface UpdateProfileReqBody {
+  name?: string
+  date_of_birth?: string
+  gender?: string
+  phone_number?: string
+}
