@@ -23,11 +23,11 @@ export interface LoginReqBody {
 export interface LoginGoogleReqBody {
   id_token: string
 }
-
 export interface TokenPayLoad extends JwtPayload {
   user_id: string
   token_type: TokenType
 }
+
 export interface TokenGoogleVerifyPayload {
   email: string
   email_verified: boolean

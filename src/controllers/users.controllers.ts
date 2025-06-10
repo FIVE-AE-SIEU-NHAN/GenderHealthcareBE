@@ -40,6 +40,7 @@ export const getOTPController = async (
   })
 }
 
+
 export const registerController = async (
   req: Request<ParamsDictionary, any, RegisterReqBody>,
   res: Response,
