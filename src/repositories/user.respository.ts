@@ -1,41 +1,110 @@
-import BaseRepository from './base.repository'
-import User from '../models/User.schema'
-import databaseService from '../services/database.services'
+import { Users as User } from '@prisma/client'
+import { RegisterReqBody, UpdateProfileReqBody } from '~/models/requests/users.requests'
+import { prisma } from '~/services/client'
 import { hashPassword } from '~/utils/crypto'
+class UserRepository {
+  private model = prisma.users
 
-export default class UserRepository extends BaseRepository<User> {
-  constructor() {
-    super('Users')
+  async checkEmailExist(email: string) {
+    return await this.model.findUnique({ where: { email } })
   }
 
-  // Các phương thức đặc biệt cho bảng Users
+  async updateUserHaveGoogleId(email: string, userData: RegisterReqBody) {
+    return this.model.update({
+      where: { email },
+      data: {
+        name: userData.name,
+        password: userData.password,
+        gender: userData.gender,
+        phone_number: userData.phone_number,
+        date_of_birth: new Date(userData.date_of_birth),
+        updated_at: new Date()
+      }
+    })
+  }
+
   async checkLogin(email: string, password: string): Promise<User | null> {
-    const results = (await databaseService.query(`SELECT * FROM ${this.tableName} WHERE email = ? AND password = ?`, [
-      email,
-      hashPassword(password)
-    ])) as User[]
-    return results.length > 0 ? results[0] : null
+    const hashedPassword = hashPassword(password)
+    return this.model.findFirst({
+      where: {
+        email,
+        password: hashedPassword
+      }
+    })
   }
 
-  async checkEmailExist(email: string): Promise<User> {
-    const results = (await databaseService.query(`SELECT * FROM ${this.tableName} WHERE email = ?`, [email])) as User[]
-    return results[0]
+  async createUser(userData: User): Promise<User> {
+    return this.model.create({ data: userData })
   }
 
-  async updateGoogleId(email: string, google_id: string): Promise<any> {
-    return await databaseService.query(`UPDATE ${this.tableName} SET google_id = ? WHERE email = ?`, [google_id, email])
+  async getUserByEmail(email: string): Promise<User | null> {
+    return this.model.findUnique({ where: { email } })
   }
 
-  async updatePassword(email: string, password: string): Promise<any> {
-    return await databaseService.query(`UPDATE ${this.tableName} SET password = ? WHERE email = ?`, [password, email])
+  async updatePasswordById(user_id: string, password: string) {
+    return this.model.update({
+      where: { id: user_id },
+      data: { password }
+    })
   }
 
-  async updatePasswordById(user_id: string, password: string): Promise<any> {
-    return await databaseService.query(`UPDATE ${this.tableName} SET password = ? WHERE _id = ?`, [password, user_id])
+  async findUserById(
+    id: string
+  ): Promise<Pick<
+    User,
+    'id' | 'email' | 'name' | 'google_id' | 'date_of_birth' | 'gender' | 'password' | 'phone_number'
+  > | null> {
+    return this.model.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        date_of_birth: true,
+        gender: true,
+        password: true,
+        phone_number: true,
+        google_id: true
+      }
+    })
   }
 
-  async findByEmail(email: string): Promise<User | null> {
-    const results = (await databaseService.query(`SELECT * FROM ${this.tableName} WHERE email = ?`, [email])) as User[]
-    return results.length > 0 ? results[0] : null
+  async findUserByEmail(email: string): Promise<User | null> {
+    return this.model.findUnique({ where: { email } })
+  }
+
+  async updateGoogleId(email: string, google_id: string) {
+    return this.model.update({
+      where: { email },
+      data: { google_id }
+    })
+  }
+
+  async updateUserProfile(
+    user_id: string,
+    payload: UpdateProfileReqBody
+  ): Promise<Pick<
+    User,
+    'id' | 'email' | 'name' | 'google_id' | 'date_of_birth' | 'gender' | 'password' | 'phone_number'
+  > | null> {
+    return this.model.update({
+      where: { id: user_id },
+      data: {
+        ...payload,
+        updated_at: new Date()
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        date_of_birth: true,
+        gender: true,
+        password: true,
+        phone_number: true,
+        google_id: true
+      }
+    })
   }
 }
+
+export default UserRepository

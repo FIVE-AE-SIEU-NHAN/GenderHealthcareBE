@@ -1,9 +1,6 @@
-// file này lưu hàm giúp mình ký ra 1 token bằng jwt
-
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
 import { TokenPayLoad } from '~/models/requests/users.requests'
-// import { TokenPayLoad } from '~/models/requests/users.requests'
 dotenv.config()
 
 export const signToken = ({

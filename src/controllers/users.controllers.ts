@@ -10,9 +10,11 @@ import {
   LoginReqBody,
   LogOutReqBody,
   OTPReqBody,
+  RefreshTokenReqBody,
   RegisterReqBody,
   ResetPasswordReqBody,
   TokenPayLoad,
+  UpdateProfileReqBody,
   VerifyEmailReqQuery
 } from '~/models/requests/users.requests'
 import usersServices from '~/services/users.services'
@@ -22,6 +24,21 @@ import { verifyGoogleToken } from '~/utils/google'
 import emailServices from '~/services/email.services'
 import redisUtils from '~/utils/redis'
 import refreshTokenServices from '~/services/refreshToken.services'
+import { omit } from 'lodash'
+
+export const getOTPController = async (
+  req: Request<ParamsDictionary, any, OTPReqBody>,
+  res: Response,
+  next: NextFunction
+) => {
+  const otp = await redisUtils.saveOTP(req.body)
+
+  await emailServices.sendVerificationEmail(req.body.email, otp)
+
+  res.status(200).json({
+    message: USERS_MESSAGES.SEND_MAIL_SUCCESS
+  })
+}
 
 
 export const registerController = async (
@@ -45,7 +62,7 @@ export const registerController = async (
 
   // Nếu có tài khoản nhưng chưa có password → update password
   if (!havePassword) {
-    const result = await usersServices.updatePasswordByEmail(req.body.email, req.body.password)
+    const result = await usersServices.updateUserByEmail(req.body.email, req.body)
     res.status(HTTP_STATUS.OK).json({
       message: USERS_MESSAGES.REGISTER_SUCCESS,
       result
@@ -57,20 +74,6 @@ export const registerController = async (
   throw new ErrorWithStatus({
     status: HTTP_STATUS.UNPROCESSABLE_ENTITY,
     message: USERS_MESSAGES.EMAIL_ALREADY_EXISTS
-  })
-}
-
-export const getOTPController = async (
-  req: Request<ParamsDictionary, any, OTPReqBody>,
-  res: Response,
-  next: NextFunction
-) => {
-  const otp = await redisUtils.saveOTP(req.body)
-
-  await emailServices.sendVerificationEmail(req.body.email, otp)
-
-  res.status(200).json({
-    message: USERS_MESSAGES.SEND_MAIL_SUCCESS
   })
 }
 
@@ -195,7 +198,7 @@ export const resetPasswordController = async (
   const { password } = req.body
   const { user_id } = req.decode_forgot_password_token as TokenPayLoad
   // cập nhật mật khẩu mới cho user
-  await usersServices.resetPassword({ user_id, password })
+  await usersServices.resetPassword(user_id, password)
   res.status(HTTP_STATUS.OK).json({
     mesage: USERS_MESSAGES.RESET_PASSWORD_SUCCESS
   })
@@ -206,12 +209,58 @@ export const changePasswordController = async (
   res: Response,
   next: NextFunction
 ) => {
-  // const { user_id } = req.decode_authorization as TokenPayLoad
-  const user_id = '741f6e19-a85b-4774-b2c9-1f68455813b1'
+  const { user_id } = req.decode_authorization as TokenPayLoad
   const { old_password, password } = req.body
 
   await usersServices.changePassword({ user_id, old_password, password })
   res.status(HTTP_STATUS.OK).json({
     message: USERS_MESSAGES.CHANGE_PASSWORD_SUCCESS
+  })
+}
+
+export const refreshTokenController = async (
+  req: Request<ParamsDictionary, any, RefreshTokenReqBody>,
+  res: Response, //
+  next: NextFunction
+) => {
+  const { user_id } = req.decode_refresh_token as TokenPayLoad
+  const { refresh_token } = req.body
+  await refreshTokenServices.checkRefreshToken(user_id, refresh_token)
+
+  const result = await refreshTokenServices.refreshToken(user_id, refresh_token)
+  res.status(HTTP_STATUS.OK).json({
+    message: USERS_MESSAGES.REFRESH_TOKEN_SUCCESS,
+    result
+  })
+}
+
+export const getProfileController = async (req: Request, res: Response, next: NextFunction) => {
+  // const { user_id } = req.decode_authorization as TokenPayLoad
+  const user_id = '1c1d0365-1d64-43d3-894f-d3f69949ebbc'
+  const user = await usersServices.getProfile(user_id)
+  if (!user) {
+    throw new ErrorWithStatus({
+      status: HTTP_STATUS.NOT_FOUND,
+      message: USERS_MESSAGES.USER_NOT_FOUND
+    })
+  }
+  res.status(HTTP_STATUS.OK).json({
+    message: USERS_MESSAGES.GET_PROFILE_SUCCESS,
+    user: omit(user, ['password'])
+  })
+}
+
+export const updateProfileController = async (
+  req: Request<ParamsDictionary, any, UpdateProfileReqBody>,
+  res: Response, //
+  next: NextFunction
+) => {
+  // const { user_id } = req.decode_authorization as TokenPayLoad
+  const user_id = '1c1d0365-1d64-43d3-894f-d3f69949ebbc'
+  const payload = req.body
+  const userInfor = await usersServices.updateProfile(user_id, payload)
+  res.status(HTTP_STATUS.OK).json({
+    message: USERS_MESSAGES.UPDATE_PROFILE_SUCCESS,
+    userInfor
   })
 }
