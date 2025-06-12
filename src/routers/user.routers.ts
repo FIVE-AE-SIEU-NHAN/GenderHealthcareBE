@@ -37,7 +37,6 @@ import { verifyGoogleToken } from '~/utils/google'
 import { wrapAsync } from '~/utils/handler'
 import { verifyToken } from '~/utils/jwt'
 
-//tạo router
 const userRouter = express.Router()
 
 /**
@@ -142,7 +141,7 @@ userRouter.post('/profile' /*, accessTokenValidator*/, wrapAsync(getProfileContr
 userRouter.patch(
   '/profile',
   filterMiddlewares<UpdateProfileReqBody>(['name', 'date_of_birth', 'gender', 'phone_number']),
-  /*accessTokenValidator,*/
+  accessTokenValidator,
   updateProfileValidator,
   wrapAsync(updateProfileController)
 )

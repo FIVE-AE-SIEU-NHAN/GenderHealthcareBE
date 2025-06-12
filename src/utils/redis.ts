@@ -1,6 +1,7 @@
 import { createClient } from 'redis'
 import { generateOTP } from './nanoid'
 import { OTPReqBody } from '~/models/requests/users.requests'
+import { ConsultantProfiles } from '@prisma/client'
 
 const client = createClient({
   username: 'default',
@@ -60,6 +61,22 @@ class RedisUtils {
     // Token hợp lệ - xóa token sau khi đã sử dụng thành công
     await client.del(key)
     return true
+  }
+
+  async getIndexNextConsultant(topic: string, numberOfConsultants: number) {
+    const redisKey = `consultant_answer_index:${topic}`
+
+    // mỗi ngày reset index
+    const ttl = await client.ttl(redisKey)
+    if (ttl === -1) {
+      await client.expire(redisKey, Number(process.env.REDIS_GET_NEXT_CONSULTANT_TTL))
+    }
+    // Tăng chỉ số index trong Redis
+    const indexInRedis = await client.incr(redisKey)
+    // Tính vị trí consultant
+    const index = (indexInRedis - 1) % numberOfConsultants
+
+    return index
   }
 }
 

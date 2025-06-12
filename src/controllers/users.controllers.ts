@@ -14,13 +14,10 @@ import {
   RegisterReqBody,
   ResetPasswordReqBody,
   TokenPayLoad,
-  UpdateProfileReqBody,
-  VerifyEmailReqQuery
+  UpdateProfileReqBody
 } from '~/models/requests/users.requests'
 import usersServices from '~/services/users.services'
 import { ParamsDictionary } from 'express-serve-static-core'
-import { UserVerifyStatus } from '~/constants/enums'
-import { verifyGoogleToken } from '~/utils/google'
 import emailServices from '~/services/email.services'
 import redisUtils from '~/utils/redis'
 import refreshTokenServices from '~/services/refreshToken.services'
@@ -254,8 +251,7 @@ export const updateProfileController = async (
   res: Response, //
   next: NextFunction
 ) => {
-  // const { user_id } = req.decode_authorization as TokenPayLoad
-  const user_id = '1c1d0365-1d64-43d3-894f-d3f69949ebbc'
+  const { user_id } = req.decode_authorization as TokenPayLoad
   const payload = req.body
   const userInfor = await usersServices.updateProfile(user_id, payload)
   res.status(HTTP_STATUS.OK).json({

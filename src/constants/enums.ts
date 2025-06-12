@@ -5,16 +5,13 @@ export enum UserVerifyStatus {
 }
 export enum USER_ROLE {
   Admin, //0
-  Staff, //1
-  User //2
+  Consultant, //1
+  Staff, //2
+  User //3
 }
 export enum TokenType {
   AccessToken, // 0
   RefreshToken, // 1
   ForgotPasswordToken, // 2
   EmailVerificationToken // 3
-}
-export enum MediaType {
-  Image,
-  Video
 }

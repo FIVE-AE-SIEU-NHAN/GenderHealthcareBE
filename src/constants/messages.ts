@@ -68,4 +68,32 @@ export const USERS_MESSAGES = {
   ID_TOKEN_IS_REQUIRED: 'Id token is required',
   ID_TOKEN_MUST_BE_A_STRING: 'Id token must be a string',
   ID_TOKEN_IS_INVALID: 'Id token is invalid'
-} as const //để k ai chỉnh đc
+} as const
+
+export const QUESTIONS_MESSAGES = {
+  TOPIC_IS_REQUIRED: 'Topic is required',
+  TOPIC_IS_INVALID: 'Topic is invalid',
+  QUESTION_IS_REQUIRED: 'Question is required',
+  QUESTION_MUST_BE_A_STRING: 'Question must be a string',
+  QUESTION_LENGTH_MUST_BE_FROM_20_TO_1000: 'Question length must be from 20 to 1000',
+  QUESTION_DO_NOT_HAVE_CONSULTANT_ANSWER: 'Question do not have consultant answer',
+  QUESTION_CREATED_SUCCESSFULLY: 'Question created successfully',
+  PAGE_MUST_BE_A_POSITIVE_INTEGER: 'Page must be a positive integer',
+  LIMIT_MUST_BE_A_POSITIVE_INTEGER_AND_LESS_THAN_100: 'Limit must be a positive integer and less than 100',
+  PAGE_IS_REQUIRED: 'Page is required',
+  LIMIT_IS_REQUIRED: 'Limit is required',
+  ORDER_MUST_BE_ASC_OR_DESC: 'Order must be asc or desc',
+  SORT_IS_REQUIRED: 'Sort is required',
+  GET_CUSTOMER_QUESTIONS_SUCCESSFULLY: 'Get customer questions successfully',
+  GET_CONSULTANT_QUESTIONS_SUCCESSFULLY: 'Get consultant questions successfully',
+  ANSWER_IS_REQUIRED: 'Answer is required',
+  ANSWER_MUST_BE_A_STRING: 'Answer must be a string',
+  ANSWER_LENGTH_MUST_BE_FROM_20_TO_1000: 'Answer length must be from 20 to 1000',
+  ANSWER_QUESTION_SUCCESSFULLY: 'Answer question successfully',
+  QUESTION_ID_IS_REQUIRED: 'Question id is required',
+  ID_MUST_BE_UUID: 'Id must be a UUID',
+  ANSWER_QUESTION_FAILED: 'Answer question failed',
+  ANSWER_MUST_BE_HAVE_OR_NOTYET: 'Answer must be have or notyet',
+  QUESTION_NOT_FOUND: 'Question not found',
+  QUESTION_ALREADY_ANSWERED: 'Question already answered'
+}

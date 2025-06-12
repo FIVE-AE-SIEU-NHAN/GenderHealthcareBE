@@ -4,6 +4,7 @@ import { defaultErorHandler } from './middlewares/error.middlewares'
 import redisService from './utils/redis'
 import cors from 'cors'
 import prismaService from './services/prisma.services'
+import questionRouter from './routers/question.routers'
 const app = express()
 const port = 3000
 
@@ -22,12 +23,8 @@ redisService.connect()
 // cấu hình body parser
 app.use(express.json())
 
-app.get('/', (req, res) => {
-  res.send('hello world')
-})
-
-// user route
 app.use('/user', usersRouter)
+app.use('/question', questionRouter)
 
 // error handler
 app.use(defaultErorHandler)
