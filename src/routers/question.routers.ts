@@ -2,13 +2,20 @@ import { sign } from 'crypto'
 import express from 'express'
 import { TokenType } from '~/constants/enums'
 import {
+  adminQuestionsController,
   answerQuestionsController,
   askQuestionController,
   consultantQuestionsController,
   customerQuestionsController,
-  editAnswerQuestionsController
+  editAnswerQuestionsController,
+  editStateQuestionController
 } from '~/controllers/question.controllers'
-import { answerQuestionValidator, askQuestionValidator, getQuestionValidator } from '~/middlewares/question.middlewares'
+import {
+  answerQuestionValidator,
+  askQuestionValidator,
+  editStateQuestionValidator,
+  getQuestionValidator
+} from '~/middlewares/question.middlewares'
 import { wrapAsync } from '~/utils/handler'
 
 const questionRouter = express.Router()
@@ -67,6 +74,18 @@ questionRouter.patch(
  * Path: question/admin
  * Method: GET
  */
-questionRouter.get('/admin', /*accessTokenValidator, */ getQuestionValidator, wrapAsync(customerQuestionsController))
+questionRouter.get('/admin', /*accessTokenValidator, */ getQuestionValidator, wrapAsync(adminQuestionsController))
+
+/**
+ * Description: Edit a question for admin
+ * Path: question/:id/edit
+ * Method: PATCH
+ * Request body: { is_public: boolean }
+ */
+questionRouter.patch(
+  '/:id/edit',
+  /*accessTokenValidator, */ editStateQuestionValidator,
+  wrapAsync(editStateQuestionController)
+)
 
 export default questionRouter

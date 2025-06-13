@@ -1,6 +1,6 @@
 import { Topic } from '@prisma/client'
 import { checkSchema } from 'express-validator'
-import _ from 'lodash'
+import _, { isBoolean } from 'lodash'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { QUESTIONS_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
@@ -67,7 +67,28 @@ export const getQuestionValidator = validate(
         }
       },
       _sort: {
-        optional: true
+        optional: true,
+        custom: {
+          options: (value) => {
+            const validOrders = [
+              'id',
+              'user_id',
+              'consultant_id',
+              'topic',
+              'question',
+              'answer',
+              'created_at',
+              'answered_at'
+            ]
+            if (!validOrders.includes(value)) {
+              throw new ErrorWithStatus({
+                status: HTTP_STATUS.BAD_REQUEST,
+                message: QUESTIONS_MESSAGES.SORT_FIELD_IS_INVALID
+              })
+            }
+            return true
+          }
+        }
       },
       _order: {
         optional: true,
@@ -147,6 +168,29 @@ export const answerQuestionValidator = validate(
           max: 1000
         },
         errorMessage: QUESTIONS_MESSAGES.ANSWER_LENGTH_MUST_BE_FROM_20_TO_1000
+      }
+    }
+  })
+)
+
+export const editStateQuestionValidator = validate(
+  checkSchema({
+    id: {
+      in: ['params'],
+      notEmpty: {
+        errorMessage: QUESTIONS_MESSAGES.QUESTION_ID_IS_REQUIRED
+      },
+      isUUID: {
+        errorMessage: QUESTIONS_MESSAGES.ID_MUST_BE_UUID
+      }
+    },
+    is_public: {
+      in: 'body',
+      notEmpty: {
+        errorMessage: QUESTIONS_MESSAGES.IS_PUBLIC_IS_REQUIRED
+      },
+      isBoolean: {
+        errorMessage: QUESTIONS_MESSAGES.IS_PUBLIC_IS_BOOLEAN
       }
     }
   })

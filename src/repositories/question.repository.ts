@@ -240,7 +240,7 @@ export default class QuestionRepository {
   async checkQuestionExists(id: string) {
     const question = await this.model.findUnique({
       where: { id },
-      select: { id: true, answer: true }
+      select: { id: true, answer: true, is_public: true }
     })
 
     if (!question) {
@@ -293,14 +293,7 @@ export default class QuestionRepository {
           [_sort || 'created_at']: _order || 'asc'
         },
         skip: _skip,
-        take: limit,
-        select: {
-          id: true,
-          topic: true,
-          question: true,
-          answer: true,
-          created_at: true
-        }
+        take: limit
       })
     }
 
@@ -315,14 +308,7 @@ export default class QuestionRepository {
         [_sort || 'created_at']: _order || 'asc'
       },
       skip: _skip,
-      take: limit,
-      select: {
-        id: true,
-        topic: true,
-        question: true,
-        answer: true,
-        created_at: true
-      }
+      take: limit
     })
   }
 
@@ -354,6 +340,14 @@ export default class QuestionRepository {
         answer: { contains: _answer_like },
         is_public: true
       }
+    })
+  }
+
+  async updateStateQuestion(id: string, is_public: boolean) {
+    console.log(`Updating question ${id} to is_public: ${is_public}`)
+    return this.model.update({
+      where: { id },
+      data: { is_public }
     })
   }
 }

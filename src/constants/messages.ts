@@ -96,5 +96,10 @@ export const QUESTIONS_MESSAGES = {
   ANSWER_MUST_BE_HAVE_OR_NOTYET: 'Answer must be have or notyet',
   QUESTION_NOT_FOUND: 'Question not found',
   QUESTION_ALREADY_ANSWERED: 'Question already answered',
-  GET_ADMIN_QUESTIONS_SUCCESSFULLY: 'Get admin questions successfully'
+  GET_ADMIN_QUESTIONS_SUCCESSFULLY: 'Get admin questions successfully',
+  SORT_FIELD_IS_INVALID: 'Sort field is invalid',
+  IS_PUBLIC_IS_REQUIRED: 'Is public is required',
+  IS_PUBLIC_IS_BOOLEAN: 'Is public must be a boolean',
+  QUESTION_ALREADY_IN_THIS_STATE: 'Question already in this state',
+  QUESTION_UPDATED_SUCCESSFULLY: 'Question updated successfully'
 }

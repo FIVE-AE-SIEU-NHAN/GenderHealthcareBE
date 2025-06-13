@@ -3,7 +3,13 @@ import { ParamsDictionary } from 'express-serve-static-core'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { QUESTIONS_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
-import { AskQuestionReqBody, CustomerQuestionReqQuery } from '~/models/requests/question.requests'
+import {
+  AnswerQuestionReqBody,
+  AskQuestionReqBody,
+  EditReqQuery,
+  EditStateQuestionReqBody,
+  GetQuestionReqQuery
+} from '~/models/requests/question.requests'
 import questionServices from '~/services/question.services'
 import redisUtils from '~/utils/redis'
 
@@ -44,7 +50,7 @@ export const askQuestionController = async (
 }
 
 export const customerQuestionsController = async (
-  req: Request<ParamsDictionary, any, any, CustomerQuestionReqQuery>,
+  req: Request<ParamsDictionary, any, any, GetQuestionReqQuery>,
   res: Response,
   next: NextFunction
 ) => {
@@ -60,7 +66,7 @@ export const customerQuestionsController = async (
 }
 
 export const consultantQuestionsController = async (
-  req: Request<ParamsDictionary, any, any, CustomerQuestionReqQuery>,
+  req: Request<ParamsDictionary, any, any, GetQuestionReqQuery>,
   res: Response,
   next: NextFunction
 ) => {
@@ -76,7 +82,7 @@ export const consultantQuestionsController = async (
 }
 
 export const answerQuestionsController = async (
-  req: Request<ParamsDictionary, any, any, CustomerQuestionReqQuery>,
+  req: Request<ParamsDictionary, any, AnswerQuestionReqBody, EditReqQuery>,
   res: Response,
   next: NextFunction
 ) => {
@@ -91,7 +97,7 @@ export const answerQuestionsController = async (
 }
 
 export const editAnswerQuestionsController = async (
-  req: Request<ParamsDictionary, any, any, CustomerQuestionReqQuery>,
+  req: Request<ParamsDictionary, any, AnswerQuestionReqBody, EditReqQuery>,
   res: Response,
   next: NextFunction
 ) => {
@@ -106,7 +112,7 @@ export const editAnswerQuestionsController = async (
 }
 
 export const adminQuestionsController = async (
-  req: Request<ParamsDictionary, any, any, CustomerQuestionReqQuery>,
+  req: Request<ParamsDictionary, any, any, GetQuestionReqQuery>,
   res: Response,
   next: NextFunction
 ) => {
@@ -115,5 +121,20 @@ export const adminQuestionsController = async (
   res.status(200).json({
     message: QUESTIONS_MESSAGES.GET_ADMIN_QUESTIONS_SUCCESSFULLY,
     result
+  })
+}
+
+export const editStateQuestionController = async (
+  req: Request<ParamsDictionary, any, EditStateQuestionReqBody, EditReqQuery>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { id } = req.params
+  const { is_public } = req.body
+
+  await questionServices.editStateQuestion(id, is_public)
+
+  res.status(200).json({
+    message: QUESTIONS_MESSAGES.QUESTION_UPDATED_SUCCESSFULLY
   })
 }

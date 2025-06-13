@@ -2,7 +2,7 @@ import { Topic } from '@prisma/client'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { QUESTIONS_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
-import { CustomerQuestionReqQuery } from '~/models/requests/question.requests'
+import { GetQuestionReqQuery } from '~/models/requests/question.requests'
 import ConsultantProfileRepository from '~/repositories/consultant_profile.repository'
 import QuestionRepository from '~/repositories/question.repository'
 
@@ -42,7 +42,7 @@ class QuestionServices {
     })
   }
 
-  async getCustomerQuestions(user_id: string, payload: CustomerQuestionReqQuery) {
+  async getCustomerQuestions(user_id: string, payload: GetQuestionReqQuery) {
     const { _page, _limit, _sort, _order, _topic, _answer, _question_like, _answer_like, _all } = payload
     const page = parseInt(_page as string, 10) || 1
     const limit = parseInt(_limit as string, 10) || 10
@@ -74,7 +74,7 @@ class QuestionServices {
     }
   }
 
-  async getConsultantQuestions(consultant_id: string, payload: CustomerQuestionReqQuery) {
+  async getConsultantQuestions(consultant_id: string, payload: GetQuestionReqQuery) {
     const { _page, _limit, _sort, _order, _topic, _answer, _question_like, _answer_like, _all } = payload
     const page = parseInt(_page as string, 10) || 1
     const limit = parseInt(_limit as string, 10) || 10
@@ -128,7 +128,7 @@ class QuestionServices {
     await this.questionRepository.answerQuestion(id, answer)
   }
 
-  async getAdminQuestions(payload: CustomerQuestionReqQuery) {
+  async getAdminQuestions(payload: GetQuestionReqQuery) {
     const { _page, _limit, _sort, _order, _topic, _answer, _question_like, _answer_like, _all } = payload
     const page = parseInt(_page as string, 10) || 1
     const limit = parseInt(_limit as string, 10) || 10
@@ -156,6 +156,17 @@ class QuestionServices {
       questions,
       total
     }
+  }
+
+  async editStateQuestion(id: string, is_public: boolean) {
+    const question = await this.questionRepository.checkQuestionExists(id)
+    if (question.is_public === is_public) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.NOT_FOUND,
+        message: QUESTIONS_MESSAGES.QUESTION_ALREADY_IN_THIS_STATE
+      })
+    }
+    return this.questionRepository.updateStateQuestion(id, is_public)
   }
 }
 const questionServices = new QuestionServices()

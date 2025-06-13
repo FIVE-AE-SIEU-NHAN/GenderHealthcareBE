@@ -6,7 +6,7 @@ export interface AskQuestionReqBody {
   question: string
 }
 
-export interface CustomerQuestionReqQuery extends ParsedQs {
+export interface GetQuestionReqQuery extends ParsedQs {
   _page: string
   _limit: string
   _sort?: string
@@ -15,4 +15,14 @@ export interface CustomerQuestionReqQuery extends ParsedQs {
   _question_like?: string
   _answer_like?: string
   _all?: string
+}
+export interface EditReqQuery extends ParsedQs {
+  id: string
+}
+export interface AnswerQuestionReqBody {
+  answer: string
+}
+
+export interface EditStateQuestionReqBody {
+  is_public: boolean
 }
