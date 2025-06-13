@@ -168,6 +168,17 @@ class QuestionServices {
     }
     return this.questionRepository.updateStateQuestion(id, is_public)
   }
+
+  async deleteQuestion(id: string) {
+    const question = await this.questionRepository.checkQuestionExists(id)
+    if (!question || !question.is_public) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.NOT_FOUND,
+        message: QUESTIONS_MESSAGES.QUESTION_NOT_FOUNDOR_OR_NOT_PUBLIC
+      })
+    }
+    return this.questionRepository.deleteQuestion(id)
+  }
 }
 const questionServices = new QuestionServices()
 export default questionServices

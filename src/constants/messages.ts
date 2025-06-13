@@ -101,5 +101,7 @@ export const QUESTIONS_MESSAGES = {
   IS_PUBLIC_IS_REQUIRED: 'Is public is required',
   IS_PUBLIC_IS_BOOLEAN: 'Is public must be a boolean',
   QUESTION_ALREADY_IN_THIS_STATE: 'Question already in this state',
-  QUESTION_UPDATED_SUCCESSFULLY: 'Question updated successfully'
+  QUESTION_UPDATED_SUCCESSFULLY: 'Question updated successfully',
+  QUESTION_DELETED_SUCCESSFULLY: 'Question deleted successfully',
+  QUESTION_NOT_FOUNDOR_OR_NOT_PUBLIC: 'Question not found or not public'
 }

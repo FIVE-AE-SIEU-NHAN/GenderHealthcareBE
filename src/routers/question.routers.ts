@@ -7,12 +7,14 @@ import {
   askQuestionController,
   consultantQuestionsController,
   customerQuestionsController,
+  deleteQuestionController,
   editAnswerQuestionsController,
   editStateQuestionController
 } from '~/controllers/question.controllers'
 import {
   answerQuestionValidator,
   askQuestionValidator,
+  deleteQuestionValidator,
   editStateQuestionValidator,
   getQuestionValidator
 } from '~/middlewares/question.middlewares'
@@ -86,6 +88,17 @@ questionRouter.patch(
   '/:id/edit',
   /*accessTokenValidator, */ editStateQuestionValidator,
   wrapAsync(editStateQuestionController)
+)
+
+/**
+ * Description: Delete a question for admin
+ * Path: question/:id/delete
+ * Method: DELETE
+ */
+questionRouter.delete(
+  '/:id/delete',
+  /*accessTokenValidator, */ deleteQuestionValidator,
+  wrapAsync(deleteQuestionController)
 )
 
 export default questionRouter

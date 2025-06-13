@@ -195,3 +195,17 @@ export const editStateQuestionValidator = validate(
     }
   })
 )
+
+export const deleteQuestionValidator = validate(
+  checkSchema({
+    id: {
+      in: ['params'],
+      notEmpty: {
+        errorMessage: QUESTIONS_MESSAGES.QUESTION_ID_IS_REQUIRED
+      },
+      isUUID: {
+        errorMessage: QUESTIONS_MESSAGES.ID_MUST_BE_UUID
+      }
+    }
+  })
+)

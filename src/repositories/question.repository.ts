@@ -350,4 +350,10 @@ export default class QuestionRepository {
       data: { is_public }
     })
   }
+
+  async deleteQuestion(id: string) {
+    return this.model.delete({
+      where: { id }
+    })
+  }
 }

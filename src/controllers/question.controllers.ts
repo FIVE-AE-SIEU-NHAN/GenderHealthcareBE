@@ -138,3 +138,17 @@ export const editStateQuestionController = async (
     message: QUESTIONS_MESSAGES.QUESTION_UPDATED_SUCCESSFULLY
   })
 }
+
+export const deleteQuestionController = async (
+  req: Request<ParamsDictionary, any, any, EditReqQuery>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { id } = req.params
+
+  await questionServices.deleteQuestion(id)
+
+  res.status(200).json({
+    message: QUESTIONS_MESSAGES.QUESTION_DELETED_SUCCESSFULLY
+  })
+}
