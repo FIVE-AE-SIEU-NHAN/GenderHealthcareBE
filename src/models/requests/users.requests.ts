@@ -1,5 +1,5 @@
 import { JwtPayload } from 'jsonwebtoken'
-import { TokenType, USER_ROLE } from '~/constants/enums'
+import { TokenType, USER_ROLE, UserVerifyStatus } from '~/constants/enums'
 import { ParsedQs } from 'qs'
 export interface RegisterReqBody {
   name: string
@@ -109,4 +109,18 @@ export interface UpdateProfileReqBody {
   date_of_birth?: string
   gender?: string
   phone_number?: string
+}
+
+export interface GetUserReqQuery extends ParsedQs {
+  _page: string
+  _limit: string
+  _sort?: string
+  _order?: string
+  _verify?: string
+  _role?: string
+  _name_like?: string
+  _email_like?: string
+  _phone_number_like?: string
+  _date_of_birth?: string
+  _all?: string
 }

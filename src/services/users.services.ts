@@ -1,4 +1,4 @@
-import { LoginReqBody, RegisterReqBody, UpdateProfileReqBody } from '~/models/requests/users.requests'
+import { GetUserReqQuery, LoginReqBody, RegisterReqBody, UpdateProfileReqBody } from '~/models/requests/users.requests'
 import { hashPassword } from '~/utils/crypto'
 import { signToken } from '~/utils/jwt'
 import { TokenType, USER_ROLE, UserVerifyStatus } from '~/constants/enums'
@@ -285,6 +285,56 @@ class UsersServices {
     const userInfor = await this.userRepository.updateUserProfile(user_id, payload)
 
     return userInfor
+  }
+
+  async getUsersForAdmin(payload: GetUserReqQuery) {
+    const {
+      _page,
+      _limit,
+      _sort,
+      _order,
+      _verify,
+      _role,
+      _name_like,
+      _email_like,
+      _phone_number_like,
+      _date_of_birth,
+      _all
+    } = payload
+    const page = parseInt(_page as string, 10) || 1
+    const limit = parseInt(_limit as string, 10) || 10
+    const _skip = (page - 1) * limit
+    const verify = _verify ? parseInt(_verify) : undefined
+    const role = _role ? parseInt(_role) : undefined
+
+    const users = await this.userRepository.getUsersForAdmin({
+      limit,
+      _sort,
+      _order,
+      verify,
+      role,
+      _name_like,
+      _email_like,
+      _phone_number_like,
+      _date_of_birth,
+      _skip,
+      _all
+    })
+
+    const total = await this.userRepository.countUsersForAdmin({
+      verify,
+      role,
+      _name_like,
+      _email_like,
+      _phone_number_like,
+      _date_of_birth,
+      _all
+    })
+
+    return {
+      users,
+      total
+    }
   }
 }
 

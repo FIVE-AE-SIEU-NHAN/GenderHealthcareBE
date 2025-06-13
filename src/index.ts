@@ -5,6 +5,8 @@ import redisService from './utils/redis'
 import cors from 'cors'
 import prismaService from './services/prisma.services'
 import questionRouter from './routers/question.routers'
+import adminQuestionRouter from './routers/admin/admin.question.router'
+import adminUserRoute from './routers/admin/admin.users.router'
 const app = express()
 const port = 3000
 
@@ -23,8 +25,8 @@ redisService.connect()
 // cấu hình body parser
 app.use(express.json())
 
-app.use('/user', usersRouter)
-app.use('/question', questionRouter)
+app.use('/user', usersRouter, adminUserRoute)
+app.use('/question', questionRouter, adminQuestionRouter)
 
 // error handler
 app.use(defaultErorHandler)

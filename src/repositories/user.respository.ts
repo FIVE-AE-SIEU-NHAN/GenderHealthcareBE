@@ -114,6 +114,106 @@ class UserRepository {
 
     return user?.role
   }
+
+  async getUsersForAdmin({
+    limit,
+    _sort,
+    _order,
+    verify,
+    role,
+    _name_like,
+    _email_like,
+    _phone_number_like,
+    _date_of_birth,
+    _skip,
+    _all
+  }: {
+    _skip: number
+    limit: number
+    _sort?: string
+    _order?: string
+    verify?: number
+    role?: number
+    _name_like?: string
+    _email_like?: string
+    _phone_number_like?: string
+    _date_of_birth?: string
+    _all?: string
+  }) {
+    if (_all) {
+      return this.model.findMany({
+        where: {
+          verify,
+          role,
+          date_of_birth: _date_of_birth ? new Date(_date_of_birth) : undefined,
+          OR: [{ name: { contains: _all } }, { email: { contains: _all } }, { phone_number: { contains: _all } }]
+        },
+        orderBy: {
+          [_sort || 'created_at']: _order || 'asc'
+        },
+        skip: _skip,
+        take: limit
+      })
+    }
+
+    console.log('role', role)
+
+    return this.model.findMany({
+      where: {
+        verify,
+        role,
+        date_of_birth: _date_of_birth ? new Date(_date_of_birth) : undefined,
+        name: { contains: _name_like },
+        email: { contains: _email_like },
+        phone_number: { contains: _phone_number_like }
+      },
+      orderBy: {
+        [_sort || 'created_at']: _order || 'asc'
+      },
+      skip: _skip,
+      take: limit
+    })
+  }
+
+  async countUsersForAdmin({
+    verify,
+    role,
+    _name_like,
+    _email_like,
+    _phone_number_like,
+    _date_of_birth,
+    _all
+  }: {
+    verify?: number
+    role?: number
+    _name_like?: string
+    _email_like?: string
+    _phone_number_like?: string
+    _date_of_birth?: string
+    _all?: string
+  }) {
+    if (_all) {
+      return this.model.count({
+        where: {
+          verify,
+          role,
+          date_of_birth: _date_of_birth ? new Date(_date_of_birth) : undefined,
+          OR: [{ name: { contains: _all } }, { email: { contains: _all } }, { phone_number: { contains: _all } }]
+        }
+      })
+    }
+
+    return this.model.count({
+      where: {
+        verify,
+        role,
+        date_of_birth: _date_of_birth ? new Date(_date_of_birth) : undefined,
+        name: { contains: _name_like },
+        email: { contains: _email_like },
+        phone_number: { contains: _phone_number_like }
+      }
+    })
+  }
 }
 
 export default UserRepository

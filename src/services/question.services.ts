@@ -43,7 +43,7 @@ class QuestionServices {
   }
 
   async getCustomerQuestions(user_id: string, payload: GetQuestionReqQuery) {
-    const { _page, _limit, _sort, _order, _topic, _answer, _question_like, _answer_like, _all } = payload
+    const { _page, _limit, _sort, _order, _topic, _question_like, _answer_like, _all } = payload
     const page = parseInt(_page as string, 10) || 1
     const limit = parseInt(_limit as string, 10) || 10
     const _skip = (page - 1) * limit

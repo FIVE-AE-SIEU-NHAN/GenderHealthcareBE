@@ -1,23 +1,14 @@
 import express from 'express'
 import { USER_ROLE } from '~/constants/enums'
 import {
-  adminQuestionsController,
   answerQuestionsController,
   askQuestionController,
   consultantQuestionsController,
   customerQuestionsController,
-  deleteQuestionController,
-  editAnswerQuestionsController,
-  editStateQuestionController
+  editAnswerQuestionsController
 } from '~/controllers/question.controllers'
 import { requireRole } from '~/middlewares/decentralization .middlewares'
-import {
-  answerQuestionValidator,
-  askQuestionValidator,
-  deleteQuestionValidator,
-  editStateQuestionValidator,
-  getQuestionValidator
-} from '~/middlewares/question.middlewares'
+import { answerQuestionValidator, askQuestionValidator, getQuestionValidator } from '~/middlewares/question.middlewares'
 import { accessTokenValidator } from '~/middlewares/user.middlewares'
 import { wrapAsync } from '~/utils/handler'
 
@@ -83,45 +74,6 @@ questionRouter.patch(
   // requireRole(USER_ROLE.Consultant),
   answerQuestionValidator,
   wrapAsync(editAnswerQuestionsController)
-)
-/**
- * Description: Get question for admin
- * Path: question/admin
- * Method: GET
- */
-questionRouter.get(
-  '/admin',
-  // accessTokenValidator,
-  // requireRole(USER_ROLE.Admin),
-  getQuestionValidator,
-  wrapAsync(adminQuestionsController)
-)
-
-/**
- * Description: Edit a question for admin
- * Path: question/:id/edit
- * Method: PATCH
- * Request body: { is_public: boolean }
- */
-questionRouter.patch(
-  '/:id/edit',
-  // accessTokenValidator,
-  // requireRole(USER_ROLE.Admin),
-  editStateQuestionValidator,
-  wrapAsync(editStateQuestionController)
-)
-
-/**
- * Description: Delete a question for admin
- * Path: question/:id/delete
- * Method: DELETE
- */
-questionRouter.delete(
-  '/:id/delete',
-  // accessTokenValidator,
-  // requireRole(USER_ROLE.Admin),
-  deleteQuestionValidator,
-  wrapAsync(deleteQuestionController)
 )
 
 export default questionRouter

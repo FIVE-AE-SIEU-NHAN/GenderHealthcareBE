@@ -9,6 +9,7 @@ import redisUtils from '~/utils/redis'
 import { verifyGoogleToken } from '~/utils/google'
 import { verifyToken } from '~/utils/jwt'
 import { validate } from '~/utils/validation'
+import { USER_ROLE, UserVerifyStatus } from '~/constants/enums'
 
 const nameSchema: ParamSchema = {
   notEmpty: {
@@ -459,5 +460,125 @@ export const updateProfileValidator = validate(
       }
     },
     ['body']
+  )
+)
+
+export const getUsersValidator = validate(
+  checkSchema(
+    {
+      _page: {
+        notEmpty: {
+          errorMessage: USERS_MESSAGES.PAGE_IS_REQUIRED
+        },
+        isInt: {
+          options: { min: 1 },
+          errorMessage: USERS_MESSAGES.PAGE_MUST_BE_A_POSITIVE_INTEGER
+        }
+      },
+      _limit: {
+        notEmpty: {
+          errorMessage: USERS_MESSAGES.LIMIT_IS_REQUIRED
+        },
+        isInt: {
+          options: { min: 1, max: 100 },
+          errorMessage: USERS_MESSAGES.LIMIT_MUST_BE_A_POSITIVE_INTEGER_AND_LESS_THAN_100
+        }
+      },
+      _sort: {
+        optional: true,
+        custom: {
+          options: (value) => {
+            const validOrders = [
+              'id',
+              'name',
+              'password',
+              'role',
+              'gender',
+              'phone_number',
+              'google_id',
+              'verify',
+              'verify'
+            ]
+            if (!validOrders.includes(value)) {
+              throw new ErrorWithStatus({
+                status: HTTP_STATUS.BAD_REQUEST,
+                message: USERS_MESSAGES.SORT_FIELD_IS_INVALID
+              })
+            }
+            return true
+          }
+        }
+      },
+      _order: {
+        optional: true,
+        custom: {
+          options: (value) => {
+            const validOrders = ['asc', 'desc']
+            if (!validOrders.includes(value)) {
+              throw new ErrorWithStatus({
+                status: HTTP_STATUS.BAD_REQUEST,
+                message: USERS_MESSAGES.ORDER_MUST_BE_ASC_OR_DESC
+              })
+            }
+            return true
+          }
+        }
+      },
+      _verify: {
+        optional: true,
+        custom: {
+          options: async (values) => {
+            const verifyList = [UserVerifyStatus.Verified, UserVerifyStatus.Banned]
+            console.log(verifyList)
+            if (!verifyList.includes(parseInt(values))) {
+              throw new ErrorWithStatus({
+                status: HTTP_STATUS.BAD_REQUEST,
+                message: USERS_MESSAGES.STATUS_IS_INVALID
+              })
+            }
+          }
+        }
+      },
+      _role: {
+        optional: true,
+        custom: {
+          options: (value) => {
+            const validRoles = [USER_ROLE.Admin, USER_ROLE.Consultant, USER_ROLE.Staff, USER_ROLE.User]
+            if (!validRoles.includes(parseInt(value))) {
+              throw new ErrorWithStatus({
+                status: HTTP_STATUS.BAD_REQUEST,
+                message: USERS_MESSAGES.ROLE_IS_INVALID
+              })
+            }
+            return true
+          }
+        }
+      },
+      _gender: {
+        optional: true,
+        custom: {
+          options: (value) => {
+            const validGenders = ['male', 'female', 'other']
+            if (!validGenders.includes(value.toLowerCase())) {
+              throw new ErrorWithStatus({
+                status: HTTP_STATUS.BAD_REQUEST,
+                message: USERS_MESSAGES.GENDER_IS_INVALID
+              })
+            }
+            return true
+          }
+        }
+      },
+      _date_of_birth: {
+        optional: true,
+        isDate: {
+          errorMessage: USERS_MESSAGES.DATE_OF_BIRTH_MUST_BE_A_DATE
+        }
+      },
+      _all: {
+        optional: true
+      }
+    },
+    ['query']
   )
 )
