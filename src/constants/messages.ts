@@ -78,6 +78,11 @@ export const USERS_MESSAGES = {
   GET_USERS_FOR_ADMIN_SUCCESSFULLY: 'Get users for admin successfully',
   DATE_OF_BIRTH_MUST_BE_A_DATE: 'Date of birth must be a date',
   ROLE_IS_INVALID: 'Role is invalid',
+  USER_ID_IS_REQUIRED: 'User id is required',
+  USER_ID_MUST_BE_A_UUID: 'User id must be a UUID',
+  STATUS_IS_REQUIRED: 'Status is required',
+  USER_STATUS_UPDATED_SUCCESSFULLY: 'User status updated successfully',
+  USER_ALREADY_IN_THIS_STATUS: 'User already in this status',
   // mail
   SEND_MAIL_FAIL: 'Send mail fail',
   SEND_MAIL_SUCCESS: 'Send mail success',

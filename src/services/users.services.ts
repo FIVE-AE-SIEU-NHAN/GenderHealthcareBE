@@ -336,6 +336,17 @@ class UsersServices {
       total
     }
   }
+
+  async editStatusUser(id: string, status: number) {
+    const user = await this.userRepository.getUserStatus(id)
+    if (user?.verify === status) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.NOT_FOUND,
+        message: USERS_MESSAGES.USER_ALREADY_IN_THIS_STATUS
+      })
+    }
+    return this.userRepository.updateStatusUser(id, status)
+  }
 }
 
 const usersServices = new UsersServices()

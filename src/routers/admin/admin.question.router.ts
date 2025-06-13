@@ -26,7 +26,7 @@ adminQuestionRouter.get(
 )
 
 /**
- * Description: Edit a question for admin
+ * Description: Edit state question for admin
  * Path: question/:id/edit
  * Method: PATCH
  * Request body: { is_public: boolean }

@@ -529,7 +529,6 @@ export const getUsersValidator = validate(
         custom: {
           options: async (values) => {
             const verifyList = [UserVerifyStatus.Verified, UserVerifyStatus.Banned]
-            console.log(verifyList)
             if (!verifyList.includes(parseInt(values))) {
               throw new ErrorWithStatus({
                 status: HTTP_STATUS.BAD_REQUEST,
@@ -581,4 +580,34 @@ export const getUsersValidator = validate(
     },
     ['query']
   )
+)
+
+export const editStatusUserValidator = validate(
+  checkSchema({
+    id: {
+      in: ['params'],
+      notEmpty: {
+        errorMessage: USERS_MESSAGES.USER_ID_IS_REQUIRED
+      },
+      isUUID: {
+        errorMessage: USERS_MESSAGES.USER_ID_MUST_BE_A_UUID
+      }
+    },
+    status: {
+      notEmpty: {
+        errorMessage: USERS_MESSAGES.STATUS_IS_REQUIRED
+      },
+      custom: {
+        options: async (values) => {
+          const verifyList = [UserVerifyStatus.Verified, UserVerifyStatus.Banned]
+          if (!verifyList.includes(parseInt(values))) {
+            throw new ErrorWithStatus({
+              status: HTTP_STATUS.BAD_REQUEST,
+              message: USERS_MESSAGES.STATUS_IS_INVALID
+            })
+          }
+        }
+      }
+    }
+  })
 )

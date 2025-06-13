@@ -344,7 +344,6 @@ export default class QuestionRepository {
   }
 
   async updateStateQuestion(id: string, is_public: boolean) {
-    console.log(`Updating question ${id} to is_public: ${is_public}`)
     return this.model.update({
       where: { id },
       data: { is_public }

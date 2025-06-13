@@ -124,3 +124,11 @@ export interface GetUserReqQuery extends ParsedQs {
   _date_of_birth?: string
   _all?: string
 }
+
+export interface EditStatusUserReqBody {
+  status: number
+}
+
+export interface EditReqQuery extends ParsedQs {
+  id: string
+}

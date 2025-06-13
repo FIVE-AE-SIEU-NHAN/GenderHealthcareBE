@@ -214,6 +214,20 @@ class UserRepository {
       }
     })
   }
+
+  async getUserStatus(id: string) {
+    return this.model.findUnique({
+      where: { id },
+      select: { verify: true }
+    })
+  }
+
+  async updateStatusUser(id: string, status: number) {
+    return this.model.update({
+      where: { id },
+      data: { verify: status, updated_at: new Date() }
+    })
+  }
 }
 
 export default UserRepository
