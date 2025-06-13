@@ -132,3 +132,13 @@ export interface EditStatusUserReqBody {
 export interface EditReqQuery extends ParsedQs {
   id: string
 }
+export interface CreateUserReqBody {
+  name: string
+  email: string
+  password: string
+  confirm_password: string
+  date_of_birth: string
+  gender: string
+  phone_number: string
+  role: number
+}

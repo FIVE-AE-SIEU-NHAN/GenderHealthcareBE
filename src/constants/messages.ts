@@ -83,6 +83,9 @@ export const USERS_MESSAGES = {
   STATUS_IS_REQUIRED: 'Status is required',
   USER_STATUS_UPDATED_SUCCESSFULLY: 'User status updated successfully',
   USER_ALREADY_IN_THIS_STATUS: 'User already in this status',
+  USER_HAVE_ACCOUNT_WITH_GOOGLE: 'User have account with Google',
+  ROLE_IS_REQUIRED: 'Role is required',
+  CREATE_USER_SUCCESSFULLTY: 'Create user successfully',
   // mail
   SEND_MAIL_FAIL: 'Send mail fail',
   SEND_MAIL_SUCCESS: 'Send mail success',

@@ -1,5 +1,5 @@
 import { Users as User } from '@prisma/client'
-import { RegisterReqBody, UpdateProfileReqBody } from '~/models/requests/users.requests'
+import { CreateUserReqBody, RegisterReqBody, UpdateProfileReqBody } from '~/models/requests/users.requests'
 import { prisma } from '~/services/client'
 import { hashPassword } from '~/utils/crypto'
 class UserRepository {
@@ -227,6 +227,22 @@ class UserRepository {
       where: { id },
       data: { verify: status, updated_at: new Date() }
     })
+  }
+
+  async createUserByAdmin(data: {
+    id: string
+    name: string
+    email: string
+    date_of_birth: Date
+    phone_number: string
+    gender: string
+    password: string
+    created_at: Date
+    updated_at: Date
+    verify: number
+    role: number
+  }) {
+    return this.model.create({ data })
   }
 }
 

@@ -1,4 +1,10 @@
-import { GetUserReqQuery, LoginReqBody, RegisterReqBody, UpdateProfileReqBody } from '~/models/requests/users.requests'
+import {
+  CreateUserReqBody,
+  GetUserReqQuery,
+  LoginReqBody,
+  RegisterReqBody,
+  UpdateProfileReqBody
+} from '~/models/requests/users.requests'
 import { hashPassword } from '~/utils/crypto'
 import { signToken } from '~/utils/jwt'
 import { TokenType, USER_ROLE, UserVerifyStatus } from '~/constants/enums'
@@ -346,6 +352,23 @@ class UsersServices {
       })
     }
     return this.userRepository.updateStatusUser(id, status)
+  }
+
+  async createUser(payload: CreateUserReqBody) {
+    const user_id = ObjectId()
+    await this.userRepository.createUserByAdmin({
+      id: user_id,
+      name: payload.name,
+      email: payload.email,
+      date_of_birth: payload.date_of_birth ? new Date(payload.date_of_birth) : new Date(),
+      gender: payload.gender,
+      password: payload.password ? await hashPassword(payload.password) : '',
+      phone_number: payload.phone_number,
+      created_at: new Date(),
+      updated_at: new Date(),
+      verify: UserVerifyStatus.Verified,
+      role: payload.role
+    })
   }
 }
 

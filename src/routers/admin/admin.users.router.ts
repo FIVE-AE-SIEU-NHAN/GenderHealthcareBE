@@ -1,13 +1,23 @@
 import express from 'express'
-import { editStatusUserController, getUsersController } from '~/controllers/admin/admin.users.controller'
-import { editStatusUserValidator, getUsersValidator } from '~/middlewares/user.middlewares'
+import { create } from 'lodash'
+import {
+  createUserController,
+  editStatusUserController,
+  getUsersController
+} from '~/controllers/admin/admin.users.controller'
+import {
+  createValidator,
+  editStatusUserValidator,
+  getUsersValidator,
+  registerValidator
+} from '~/middlewares/user.middlewares'
 import { wrapAsync } from '~/utils/handler'
 
 const adminUserRoute = express.Router()
 
 /**
  * Description: Get user.
- * Path: /admin/user/
+ * Path: /user/get-users
  * Method: GET
  * Parameters: { page: number, limit: number }
  */
@@ -21,7 +31,7 @@ adminUserRoute.get(
 
 /**
  * Description: Edit status user.
- * Path: /admin/:id/edit-status
+ * Path: /user/:id/edit-status
  * Method: PATCH
  * Parameters: { id: string }
  * Body: { status: string }
@@ -35,15 +45,16 @@ adminUserRoute.patch(
 )
 /**
  * Description: Create user.
- * Path: /admin/user/
+ * Path: /user/create
  * Method: POST
  * Body: { email: string, name: string, phone_number: string, date_of_birth: string, role: string }
  */
-// adminUserRoute.post(
-//   '/user',
-//   // accessTokenValidator,
-//   // requireRole(USER_ROLE.Admin),
-//   wrapAsync(createUserController)
-// )
+adminUserRoute.post(
+  '/create',
+  // accessTokenValidator,
+  // requireRole(USER_ROLE.Admin),
+  createValidator,
+  wrapAsync(createUserController)
+)
 
 export default adminUserRoute

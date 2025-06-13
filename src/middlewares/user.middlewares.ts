@@ -611,3 +611,73 @@ export const editStatusUserValidator = validate(
     }
   })
 )
+
+export const createValidator = validate(
+  checkSchema(
+    {
+      name: nameSchema,
+      email: {
+        notEmpty: {
+          errorMessage: USERS_MESSAGES.EMAIL_IS_REQUIRED
+        },
+        isEmail: {
+          errorMessage: USERS_MESSAGES.EMAIL_IS_INVALID
+        },
+        trim: true
+      },
+      gender: {
+        notEmpty: {
+          errorMessage: USERS_MESSAGES.GENDER_IS_REQUIRED
+        },
+        isString: {
+          errorMessage: USERS_MESSAGES.GENDER_MUST_BE_A_STRING
+        },
+        trim: true,
+        custom: {
+          options: (value) => {
+            const validGenders = ['male', 'female', 'other']
+            if (!validGenders.includes(value.toLowerCase())) {
+              throw new Error(USERS_MESSAGES.GENDER_IS_INVALID)
+            }
+            return true
+          }
+        }
+      },
+      phone_number: {
+        notEmpty: {
+          errorMessage: USERS_MESSAGES.PHONE_NUMBER_IS_REQUIRED
+        },
+        isString: {
+          errorMessage: USERS_MESSAGES.PHONE_NUMBER_MUST_BE_STRING
+        },
+        trim: true,
+        custom: {
+          options: (value) => {
+            const phoneRegex = /(84|0[3|5|7|8|9])+([0-9]{8})\b/g
+            if (!phoneRegex.test(value)) {
+              throw new Error(USERS_MESSAGES.PHONE_NUMBER_IS_INVALID)
+            }
+            return true
+          }
+        }
+      },
+      password: passwordSchema,
+      date_of_birth: dateOfBirthSchema,
+      role: {
+        notEmpty: {
+          errorMessage: USERS_MESSAGES.ROLE_IS_REQUIRED
+        },
+        custom: {
+          options: (value) => {
+            const validRoles = [USER_ROLE.Admin, USER_ROLE.Consultant, USER_ROLE.Staff, USER_ROLE.User]
+            if (!validRoles.includes(value)) {
+              throw new Error(USERS_MESSAGES.ROLE_IS_INVALID)
+            }
+            return true
+          }
+        }
+      }
+    },
+    ['body']
+  )
+)
