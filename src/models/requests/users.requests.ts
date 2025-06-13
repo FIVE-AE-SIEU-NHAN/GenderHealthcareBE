@@ -1,8 +1,6 @@
 import { JwtPayload } from 'jsonwebtoken'
-import { TokenType } from '~/constants/enums'
+import { TokenType, USER_ROLE } from '~/constants/enums'
 import { ParsedQs } from 'qs'
-
-// file này lưu các định nghĩa của các Request
 export interface RegisterReqBody {
   name: string
   email: string
@@ -26,6 +24,7 @@ export interface LoginGoogleReqBody {
 
 export interface TokenPayLoad extends JwtPayload {
   user_id: string
+  role: USER_ROLE
   token_type: TokenType
 }
 export interface TokenGoogleVerifyPayload {

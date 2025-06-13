@@ -1,7 +1,4 @@
-//trong users.routers.ts
-//khai báo
 import express from 'express'
-import test from 'node:test'
 import {
   getOTPController,
   loginController,
@@ -24,18 +21,14 @@ import {
   getOTPValidator,
   loginGoogleValidator,
   loginValidator,
+  logoutValidator,
   refreshTokenValidator,
   registerValidator,
   resetPasswordValidator,
   updateProfileValidator
 } from '~/middlewares/user.middlewares'
 import { UpdateProfileReqBody } from '~/models/requests/users.requests'
-import User from '~/models/User.schema'
-import RefreshTokenRepository from '~/repositories/refresh_token.repository'
-import UserRepository from '~/repositories/user.respository'
-import { verifyGoogleToken } from '~/utils/google'
 import { wrapAsync } from '~/utils/handler'
-import { verifyToken } from '~/utils/jwt'
 
 const userRouter = express.Router()
 
@@ -78,7 +71,7 @@ userRouter.post('/login-google', loginGoogleValidator, wrapAsync(loginGoogleCont
  * Header: {Authorization: Bearer <access_token>}
  * Body: {refresh_token: string}
  */
-userRouter.post('/logout', accessTokenValidator, refreshTokenValidator, wrapAsync(logoutController))
+userRouter.post('/logout', logoutValidator, wrapAsync(logoutController))
 
 /**
  * Description: Forgot password
@@ -145,8 +138,5 @@ userRouter.patch(
   updateProfileValidator,
   wrapAsync(updateProfileController)
 )
-
-// phân quyền api cho phép truy cập
-// tao router + middleware moi cho logout kh quan tam access token vaf refresh token het han
 
 export default userRouter

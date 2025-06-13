@@ -1,6 +1,5 @@
-import { sign } from 'crypto'
 import express from 'express'
-import { TokenType } from '~/constants/enums'
+import { USER_ROLE } from '~/constants/enums'
 import {
   adminQuestionsController,
   answerQuestionsController,
@@ -11,6 +10,7 @@ import {
   editAnswerQuestionsController,
   editStateQuestionController
 } from '~/controllers/question.controllers'
+import { requireRole } from '~/middlewares/decentralization .middlewares'
 import {
   answerQuestionValidator,
   askQuestionValidator,
@@ -18,6 +18,7 @@ import {
   editStateQuestionValidator,
   getQuestionValidator
 } from '~/middlewares/question.middlewares'
+import { accessTokenValidator } from '~/middlewares/user.middlewares'
 import { wrapAsync } from '~/utils/handler'
 
 const questionRouter = express.Router()
@@ -28,14 +29,20 @@ const questionRouter = express.Router()
  * Method: POST
  * Request body: { title: string, description: string}
  */
-questionRouter.post('/ask', /*accessTokenValidator,*/ askQuestionValidator, wrapAsync(askQuestionController))
+questionRouter.post('/ask', accessTokenValidator, askQuestionValidator, wrapAsync(askQuestionController))
 
 /**
  * Description: Get questions of customer
  * Path: question/customer
  * Method: GET
  */
-questionRouter.get('/customer', /*accessTokenValidator, */ getQuestionValidator, wrapAsync(customerQuestionsController))
+questionRouter.get(
+  '/customer',
+  // accessTokenValidator,
+  // requireRole(USER_ROLE.User),
+  getQuestionValidator,
+  wrapAsync(customerQuestionsController)
+)
 
 /**
  * Description: Get questions for consultant
@@ -44,7 +51,9 @@ questionRouter.get('/customer', /*accessTokenValidator, */ getQuestionValidator,
  */
 questionRouter.get(
   '/consultant',
-  /*accessTokenValidator, */ getQuestionValidator,
+  // accessTokenValidator,
+  // requireRole(USER_ROLE.Consultant),
+  getQuestionValidator,
   wrapAsync(consultantQuestionsController)
 )
 
@@ -56,7 +65,9 @@ questionRouter.get(
  */
 questionRouter.patch(
   '/:id/answer',
-  /*accessTokenValidator, */ answerQuestionValidator,
+  // accessTokenValidator,
+  // requireRole(USER_ROLE.Consultant),
+  answerQuestionValidator,
   wrapAsync(answerQuestionsController)
 )
 
@@ -68,7 +79,9 @@ questionRouter.patch(
  */
 questionRouter.patch(
   '/:id/consultant-edit',
-  /*accessTokenValidator, */ answerQuestionValidator,
+  // accessTokenValidator,
+  // requireRole(USER_ROLE.Consultant),
+  answerQuestionValidator,
   wrapAsync(editAnswerQuestionsController)
 )
 /**
@@ -76,7 +89,13 @@ questionRouter.patch(
  * Path: question/admin
  * Method: GET
  */
-questionRouter.get('/admin', /*accessTokenValidator, */ getQuestionValidator, wrapAsync(adminQuestionsController))
+questionRouter.get(
+  '/admin',
+  // accessTokenValidator,
+  // requireRole(USER_ROLE.Admin),
+  getQuestionValidator,
+  wrapAsync(adminQuestionsController)
+)
 
 /**
  * Description: Edit a question for admin
@@ -86,7 +105,9 @@ questionRouter.get('/admin', /*accessTokenValidator, */ getQuestionValidator, wr
  */
 questionRouter.patch(
   '/:id/edit',
-  /*accessTokenValidator, */ editStateQuestionValidator,
+  // accessTokenValidator,
+  // requireRole(USER_ROLE.Admin),
+  editStateQuestionValidator,
   wrapAsync(editStateQuestionController)
 )
 
@@ -97,7 +118,9 @@ questionRouter.patch(
  */
 questionRouter.delete(
   '/:id/delete',
-  /*accessTokenValidator, */ deleteQuestionValidator,
+  // accessTokenValidator,
+  // requireRole(USER_ROLE.Admin),
+  deleteQuestionValidator,
   wrapAsync(deleteQuestionController)
 )
 

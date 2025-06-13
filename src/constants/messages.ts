@@ -61,6 +61,8 @@ export const USERS_MESSAGES = {
   CHANGE_PASSWORD_SUCCESS: 'Change password successfully',
   REFRESH_TOKEN_SUCCESS: 'Refresh token successfully',
   GOOGLE_ID_IS_INCORRECT: 'Google id is incorrect',
+  USER_IS_BANNED: 'User is banned',
+  PERMISSION_DENIED: 'Permission denied',
   // mail
   SEND_MAIL_FAIL: 'Send mail fail',
   SEND_MAIL_SUCCESS: 'Send mail success',

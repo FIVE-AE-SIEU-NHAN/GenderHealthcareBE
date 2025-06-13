@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import { body, checkSchema, ParamSchema } from 'express-validator'
 import { JsonWebTokenError } from 'jsonwebtoken'
-import { capitalize } from 'lodash'
+import { capitalize, upperCase } from 'lodash'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { USERS_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
@@ -253,6 +253,39 @@ export const registerValidator = validate(
   )
 )
 
+export const logoutValidator = validate(
+  checkSchema(
+    {
+      refresh_token: {
+        notEmpty: {
+          errorMessage: USERS_MESSAGES.REFRESH_TOKEN_IS_REQUIRED
+        },
+        custom: {
+          options: async (values, { req }) => {
+            try {
+              const decode_refresh_token = await verifyToken({
+                token: values,
+                privateKey: process.env.JWT_SECRET_REFRESH_TOKEN as string
+              })
+              ;(req as Request).decode_refresh_token = decode_refresh_token
+            } catch (error) {
+              if (upperCase((error as JsonWebTokenError).message) === 'JWT EXPIRED') {
+                return true
+              }
+              throw new ErrorWithStatus({
+                status: HTTP_STATUS.UNAUTHORIZED,
+                message: capitalize((error as JsonWebTokenError).message)
+              })
+            }
+            return true
+          }
+        }
+      }
+    },
+    ['body']
+  )
+)
+
 export const getOTPValidator = validate(
   checkSchema(
     {
@@ -318,6 +351,7 @@ export const refreshTokenValidator = validate(
               })
               ;(req as Request).decode_refresh_token = decode_refresh_token
             } catch (error) {
+              console.log((error as JsonWebTokenError).message)
               throw new ErrorWithStatus({
                 status: HTTP_STATUS.UNAUTHORIZED,
                 message: capitalize((error as JsonWebTokenError).message)

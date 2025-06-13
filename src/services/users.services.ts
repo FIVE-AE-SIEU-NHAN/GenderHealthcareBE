@@ -24,17 +24,17 @@ class UsersServices {
   }
 
   // chữ ký access token và refresh token
-  private signAccessToken(user_id: string) {
+  private signAccessToken(user_id: string, role: USER_ROLE) {
     return signToken({
-      payload: { user_id, token_type: TokenType.AccessToken },
+      payload: { user_id, role, token_type: TokenType.AccessToken },
       privateKey: process.env.JWT_SECRET_ACCESS_TOKEN as string,
       options: { expiresIn: Number(process.env.ACCESS_TOKEN_EXPIRE_IN) }
     })
   }
 
-  private signRefreshToken(user_id: string) {
+  private signRefreshToken(user_id: string, role: USER_ROLE) {
     return signToken({
-      payload: { user_id, token_type: TokenType.RefreshToken },
+      payload: { user_id, role, token_type: TokenType.RefreshToken },
       privateKey: process.env.JWT_SECRET_REFRESH_TOKEN as string,
       options: { expiresIn: Number(process.env.REFRESH_TOKEN_EXPIRE_IN) }
     })
@@ -50,7 +50,7 @@ class UsersServices {
 
   async register(payload: RegisterReqBody) {
     const user_id = ObjectId()
-    await this.userRepository.createUser({
+    const user = await this.userRepository.createUser({
       id: user_id,
       name: payload.name,
       email: payload.email,
@@ -67,8 +67,8 @@ class UsersServices {
     })
 
     const [access_token, refresh_token] = await Promise.all([
-      this.signAccessToken(user_id.toString()),
-      this.signRefreshToken(user_id.toString())
+      this.signAccessToken(user_id.toString(), USER_ROLE.User),
+      this.signRefreshToken(user_id.toString(), USER_ROLE.User)
     ])
 
     await refreshTokenServices.createRefreshToken(user_id, refresh_token)
@@ -114,8 +114,8 @@ class UsersServices {
     // Tạo token để đăng nhập
     const user_id = user!.id
     const [access_token, refresh_token] = await Promise.all([
-      this.signAccessToken(user_id),
-      this.signRefreshToken(user_id)
+      this.signAccessToken(user_id, user!.role as USER_ROLE),
+      this.signRefreshToken(user_id, user!.role as USER_ROLE)
     ])
 
     await refreshTokenServices.createRefreshToken(user_id, refresh_token)
@@ -137,6 +137,13 @@ class UsersServices {
       }
     }
 
+    if (user.verify === UserVerifyStatus.Banned) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.UNAUTHORIZED,
+        message: USERS_MESSAGES.USER_IS_BANNED
+      })
+    }
+
     // CASE 2: Tìm thấy tài khoản với email này và chưa có Google ID
     if (!user.google_id) {
       // Cập nhật Google ID vào tài khoản hiện có
@@ -144,8 +151,8 @@ class UsersServices {
 
       // Tạo token để đăng nhập
       const [access_token, refresh_token] = await Promise.all([
-        this.signAccessToken(user.id),
-        this.signRefreshToken(user.id)
+        this.signAccessToken(user.id, user.role as USER_ROLE),
+        this.signRefreshToken(user.id, user.role as USER_ROLE)
       ])
 
       await refreshTokenServices.createRefreshToken(user.id, refresh_token)
@@ -162,8 +169,8 @@ class UsersServices {
     if (user.google_id === google_id) {
       // Google ID khớp với ID được lưu trong DB
       const [access_token, refresh_token] = await Promise.all([
-        this.signAccessToken(user.id),
-        this.signRefreshToken(user.id)
+        this.signAccessToken(user.id, user.role as USER_ROLE),
+        this.signRefreshToken(user.id, user.role as USER_ROLE)
       ])
 
       await refreshTokenServices.createRefreshToken(user.id, refresh_token)
@@ -192,11 +199,19 @@ class UsersServices {
         message: USERS_MESSAGES.EMAIL_OR_PASSWORD_IS_INCORRECT
       })
     }
+
+    if (user.verify === UserVerifyStatus.Banned) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.UNAUTHORIZED,
+        message: USERS_MESSAGES.USER_IS_BANNED
+      })
+    }
+
     // nếu có user thì tạo access_token và refresh_token
     const user_id = user.id!
     const [access_token, refresh_token] = await Promise.all([
-      this.signAccessToken(user_id),
-      this.signRefreshToken(user_id)
+      this.signAccessToken(user_id, user.role as USER_ROLE),
+      this.signRefreshToken(user_id, user.role as USER_ROLE)
     ])
 
     await refreshTokenServices.createRefreshToken(user_id, refresh_token)
