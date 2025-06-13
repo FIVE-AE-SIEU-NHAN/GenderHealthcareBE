@@ -127,6 +127,36 @@ class QuestionServices {
     }
     await this.questionRepository.answerQuestion(id, answer)
   }
+
+  async getAdminQuestions(payload: CustomerQuestionReqQuery) {
+    const { _page, _limit, _sort, _order, _topic, _answer, _question_like, _answer_like, _all } = payload
+    const page = parseInt(_page as string, 10) || 1
+    const limit = parseInt(_limit as string, 10) || 10
+    const _skip = (page - 1) * limit
+
+    const questions = await this.questionRepository.getAdminQuestions({
+      limit,
+      _sort,
+      _order,
+      _topic,
+      _question_like,
+      _answer_like,
+      _skip,
+      _all
+    })
+
+    const total = await this.questionRepository.countAdminQuestions({
+      _topic,
+      _question_like,
+      _answer_like,
+      _all
+    })
+
+    return {
+      questions,
+      total
+    }
+  }
 }
 const questionServices = new QuestionServices()
 export default questionServices

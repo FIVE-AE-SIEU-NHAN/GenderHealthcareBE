@@ -104,3 +104,16 @@ export const editAnswerQuestionsController = async (
     message: QUESTIONS_MESSAGES.ANSWER_QUESTION_SUCCESSFULLY
   })
 }
+
+export const adminQuestionsController = async (
+  req: Request<ParamsDictionary, any, any, CustomerQuestionReqQuery>,
+  res: Response,
+  next: NextFunction
+) => {
+  const result = await questionServices.getAdminQuestions(req.query)
+
+  res.status(200).json({
+    message: QUESTIONS_MESSAGES.GET_ADMIN_QUESTIONS_SUCCESSFULLY,
+    result
+  })
+}

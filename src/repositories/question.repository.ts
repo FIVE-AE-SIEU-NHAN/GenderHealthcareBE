@@ -262,4 +262,98 @@ export default class QuestionRepository {
       }
     })
   }
+
+  async getAdminQuestions({
+    _skip,
+    limit,
+    _sort,
+    _order,
+    _topic,
+    _question_like,
+    _answer_like,
+    _all
+  }: {
+    _skip: number
+    limit: number
+    _sort?: string
+    _order?: string
+    _topic?: Topic
+    _question_like?: string
+    _answer_like?: string
+    _all?: string
+  }) {
+    if (_all) {
+      return this.model.findMany({
+        where: {
+          topic: _topic,
+          OR: [{ question: { contains: _all } }, { answer: { contains: _all } }],
+          is_public: true
+        },
+        orderBy: {
+          [_sort || 'created_at']: _order || 'asc'
+        },
+        skip: _skip,
+        take: limit,
+        select: {
+          id: true,
+          topic: true,
+          question: true,
+          answer: true,
+          created_at: true
+        }
+      })
+    }
+
+    return this.model.findMany({
+      where: {
+        topic: _topic,
+        question: { contains: _question_like },
+        answer: { contains: _answer_like },
+        is_public: true
+      },
+      orderBy: {
+        [_sort || 'created_at']: _order || 'asc'
+      },
+      skip: _skip,
+      take: limit,
+      select: {
+        id: true,
+        topic: true,
+        question: true,
+        answer: true,
+        created_at: true
+      }
+    })
+  }
+
+  async countAdminQuestions({
+    _topic,
+    _question_like,
+    _answer_like,
+    _all
+  }: {
+    _topic?: Topic
+    _question_like?: string
+    _answer_like?: string
+    _all?: string
+  }) {
+    if (_all) {
+      return this.model.count({
+        where: {
+          topic: _topic,
+          OR: [{ question: { contains: _all } }, { answer: { contains: _all } }],
+          is_public: true
+        }
+      })
+    }
+
+    return this.model.count({
+      where: {
+        topic: _topic,
+        question: { contains: _question_like },
+        answer: { contains: _answer_like },
+        is_public: true
+      }
+    })
+  }
 }

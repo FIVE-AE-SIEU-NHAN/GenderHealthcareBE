@@ -95,5 +95,6 @@ export const QUESTIONS_MESSAGES = {
   ANSWER_QUESTION_FAILED: 'Answer question failed',
   ANSWER_MUST_BE_HAVE_OR_NOTYET: 'Answer must be have or notyet',
   QUESTION_NOT_FOUND: 'Question not found',
-  QUESTION_ALREADY_ANSWERED: 'Question already answered'
+  QUESTION_ALREADY_ANSWERED: 'Question already answered',
+  GET_ADMIN_QUESTIONS_SUCCESSFULLY: 'Get admin questions successfully'
 }

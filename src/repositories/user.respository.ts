@@ -105,6 +105,15 @@ class UserRepository {
       }
     })
   }
+
+  async getUserRoleById(user_id: string) {
+    const user = await this.model.findUnique({
+      where: { id: user_id },
+      select: { role: true }
+    })
+
+    return user?.role
+  }
 }
 
 export default UserRepository

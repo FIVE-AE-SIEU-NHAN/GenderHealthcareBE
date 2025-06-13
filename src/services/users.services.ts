@@ -28,8 +28,7 @@ class UsersServices {
     return signToken({
       payload: { user_id, token_type: TokenType.AccessToken },
       privateKey: process.env.JWT_SECRET_ACCESS_TOKEN as string,
-      // options: { expiresIn: Number(process.env.ACCESS_TOKEN_EXPIRE_IN) }
-      options: { expiresIn: '1m' }
+      options: { expiresIn: Number(process.env.ACCESS_TOKEN_EXPIRE_IN) }
     })
   }
 

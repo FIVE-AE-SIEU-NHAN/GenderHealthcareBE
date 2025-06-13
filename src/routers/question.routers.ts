@@ -1,4 +1,6 @@
+import { sign } from 'crypto'
 import express from 'express'
+import { TokenType } from '~/constants/enums'
 import {
   answerQuestionsController,
   askQuestionController,
@@ -20,14 +22,14 @@ const questionRouter = express.Router()
 questionRouter.post('/ask', /*accessTokenValidator,*/ askQuestionValidator, wrapAsync(askQuestionController))
 
 /**
- * Description: Get customer questions
+ * Description: Get questions of customer
  * Path: question/customer
  * Method: GET
  */
 questionRouter.get('/customer', /*accessTokenValidator, */ getQuestionValidator, wrapAsync(customerQuestionsController))
 
 /**
- * Description: Get customer questions
+ * Description: Get questions for consultant
  * Path: question/consultant
  * Method: GET
  */
@@ -38,7 +40,7 @@ questionRouter.get(
 )
 
 /**
- * Description: Answer a question
+ * Description: Answer a question for consultant
  * Path: question/:id/answer
  * Method: PATCH
  * Request body: { answer: string }
@@ -50,15 +52,21 @@ questionRouter.patch(
 )
 
 /**
- * Description: Edit a answer
- * Path: question/:id/edit
+ * Description: Edit a answer for consultant
+ * Path: question/:id/consultant-edit
  * Method: PATCH
  * Request body: { answer: string }
  */
 questionRouter.patch(
-  '/:id/edit',
+  '/:id/consultant-edit',
   /*accessTokenValidator, */ answerQuestionValidator,
   wrapAsync(editAnswerQuestionsController)
 )
+/**
+ * Description: Get question for admin
+ * Path: question/admin
+ * Method: GET
+ */
+questionRouter.get('/admin', /*accessTokenValidator, */ getQuestionValidator, wrapAsync(customerQuestionsController))
 
 export default questionRouter
