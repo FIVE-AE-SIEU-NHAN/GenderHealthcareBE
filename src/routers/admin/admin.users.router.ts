@@ -1,16 +1,10 @@
 import express from 'express'
-import { create } from 'lodash'
 import {
   createUserController,
   editStatusUserController,
   getUsersController
 } from '~/controllers/admin/admin.users.controller'
-import {
-  createValidator,
-  editStatusUserValidator,
-  getUsersValidator,
-  registerValidator
-} from '~/middlewares/user.middlewares'
+import { createValidator, editStatusUserValidator, getUsersValidator } from '~/middlewares/user.middlewares'
 import { wrapAsync } from '~/utils/handler'
 
 const adminUserRoute = express.Router()

@@ -10,6 +10,7 @@ import { verifyGoogleToken } from '~/utils/google'
 import { verifyToken } from '~/utils/jwt'
 import { validate } from '~/utils/validation'
 import { USER_ROLE, UserVerifyStatus } from '~/constants/enums'
+import { Topic } from '@prisma/client'
 
 const nameSchema: ParamSchema = {
   notEmpty: {
@@ -672,6 +673,105 @@ export const createValidator = validate(
             const validRoles = [USER_ROLE.Admin, USER_ROLE.Consultant, USER_ROLE.Staff, USER_ROLE.User]
             if (!validRoles.includes(value)) {
               throw new Error(USERS_MESSAGES.ROLE_IS_INVALID)
+            }
+            return true
+          }
+        }
+      },
+      specialization_1: {
+        custom: {
+          options: (value, { req }) => {
+            const role = req.body.role
+            if (role === USER_ROLE.Consultant) {
+              if (!value) {
+                throw new ErrorWithStatus({
+                  status: HTTP_STATUS.BAD_REQUEST,
+                  message: USERS_MESSAGES.SPECIALIZATION_1_IS_REQUIRED
+                })
+              }
+
+              const topicList = Object.values(Topic)
+              if (!topicList.includes(value)) {
+                throw new ErrorWithStatus({
+                  status: HTTP_STATUS.BAD_REQUEST,
+                  message: USERS_MESSAGES.SPECIALIZATION_1_IS_INVALID
+                })
+              }
+            }
+            return true
+          }
+        }
+      },
+      specialization_2: {
+        custom: {
+          options: (value, { req }) => {
+            if (typeof value === 'undefined') {
+              delete req.body.specialization_2
+              return true
+            }
+
+            const { role, specialization_1 } = req.body
+            if (role === USER_ROLE.Consultant) {
+              const topicList = Object.values(Topic)
+              if (!topicList.includes(value)) {
+                throw new ErrorWithStatus({
+                  status: HTTP_STATUS.BAD_REQUEST,
+                  message: USERS_MESSAGES.SPECIALIZATION_2_IS_INVALID
+                })
+              }
+
+              if (value === specialization_1) {
+                throw new ErrorWithStatus({
+                  status: HTTP_STATUS.BAD_REQUEST,
+                  message: USERS_MESSAGES.SPECIALIZATION_2_IS_THE_SAME_AS_SPECIALIZATION_1
+                })
+              }
+            }
+            return true
+          }
+        }
+      },
+      certifications: {
+        custom: {
+          options: (value, { req }) => {
+            const role = req.body.role
+            if (role === USER_ROLE.Consultant) {
+              if (!value) {
+                throw new ErrorWithStatus({
+                  status: HTTP_STATUS.BAD_REQUEST,
+                  message: USERS_MESSAGES.CERTIFICATIONS_IS_REQUIRED
+                })
+              }
+
+              if (typeof value !== 'string') {
+                throw new ErrorWithStatus({
+                  status: HTTP_STATUS.BAD_REQUEST,
+                  message: USERS_MESSAGES.CERTIFICATIONS_MUST_BE_A_STRING
+                })
+              }
+            }
+            return true
+          }
+        }
+      },
+      experienceYears: {
+        custom: {
+          options: (value, { req }) => {
+            const role = req.body.role
+            if (role === USER_ROLE.Consultant) {
+              if (!value) {
+                throw new ErrorWithStatus({
+                  status: HTTP_STATUS.BAD_REQUEST,
+                  message: USERS_MESSAGES.EXPERIENCE_YEARS_IS_REQUIRED
+                })
+              }
+
+              if (typeof value !== 'number' || value < 0) {
+                throw new ErrorWithStatus({
+                  status: HTTP_STATUS.BAD_REQUEST,
+                  message: USERS_MESSAGES.EXPERIENCE_YEARS_MUST_BE_A_POSITIVE_NUMBER
+                })
+              }
             }
             return true
           }

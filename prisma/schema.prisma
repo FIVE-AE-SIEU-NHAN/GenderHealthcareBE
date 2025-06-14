@@ -53,9 +53,8 @@ enum Topic {
 model ConsultantProfiles {
   id               String   @id @map("_id") @db.VarChar(36)
   user_id          String   @unique @db.VarChar(36)
-  topic_1          Topic    
-  topic_2          Topic?   
-  specialization   String   @default("") @db.VarChar(255)
+  specialization_1          Topic    
+  specialization_2          Topic?
   certifications   String?  @default("") @db.VarChar(255)
   experienceYears  Int      @default(0) @db.Int
   status           Int      @default(1) @db.TinyInt

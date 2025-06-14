@@ -46,7 +46,7 @@ export const createUserController = async (
 ) => {
   const checkResult = await usersServices.checkEmailExist(req.body.email)
 
-  // Nếu chưa có tài khoản → đăng ký mới
+  // Chưa có tài khoản
   if (!checkResult || !checkResult.haveAccount) {
     const result = await usersServices.createUser(req.body)
     res.status(HTTP_STATUS.CREATED).json({
@@ -56,6 +56,7 @@ export const createUserController = async (
     return
   }
 
+  // Đã có tài khoản đăng nhập bằng google
   const { havePassword } = checkResult
   if (!havePassword) {
     throw new ErrorWithStatus({
@@ -64,7 +65,7 @@ export const createUserController = async (
     })
   }
 
-  // Nếu đã có tài khoản và đã có password → báo lỗi
+  // Đã có tài khoản và đã có password
   throw new ErrorWithStatus({
     status: HTTP_STATUS.UNPROCESSABLE_ENTITY,
     message: USERS_MESSAGES.EMAIL_ALREADY_EXISTS

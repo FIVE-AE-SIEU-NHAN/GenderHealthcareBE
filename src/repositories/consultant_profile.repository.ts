@@ -7,7 +7,7 @@ export default class ConsultantProfileRepository {
   async getNumberOfConsultantsByTopic(topic: Topic) {
     return prisma.consultantProfiles.count({
       where: {
-        OR: [{ topic_1: topic }, { topic_2: topic }]
+        OR: [{ specialization_1: topic }, { specialization_2: topic }]
       }
     })
   }
@@ -15,7 +15,7 @@ export default class ConsultantProfileRepository {
   async getConsultantIdByIndexAndTopic(index: number, topic: Topic) {
     const consultant = await prisma.consultantProfiles.findMany({
       where: {
-        OR: [{ topic_1: topic }, { topic_2: topic }]
+        OR: [{ specialization_1: topic }, { specialization_2: topic }]
       },
       orderBy: {
         id: 'asc'
@@ -27,5 +27,33 @@ export default class ConsultantProfileRepository {
       }
     })
     return consultant[0].id
+  }
+
+  async createConsultantProfile({
+    id,
+    user_id,
+    specialization_1,
+    specialization_2,
+    certifications,
+    experienceYears
+  }: {
+    id: string
+    user_id: string
+    specialization_1: Topic
+    specialization_2?: Topic
+    certifications: string
+    experienceYears: number
+  }) {
+    return this.model.create({
+      data: {
+        id,
+        user_id,
+        specialization_1,
+        specialization_2,
+        certifications,
+        experienceYears,
+        status: 1
+      }
+    })
   }
 }

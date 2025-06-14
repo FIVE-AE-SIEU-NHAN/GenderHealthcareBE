@@ -1,6 +1,7 @@
 import { JwtPayload } from 'jsonwebtoken'
 import { TokenType, USER_ROLE, UserVerifyStatus } from '~/constants/enums'
 import { ParsedQs } from 'qs'
+import { Topic } from '@prisma/client'
 export interface RegisterReqBody {
   name: string
   email: string
@@ -141,4 +142,8 @@ export interface CreateUserReqBody {
   gender: string
   phone_number: string
   role: number
+  specialization_1?: Topic
+  specialization_2?: Topic
+  certifications?: string
+  experienceYears?: number
 }

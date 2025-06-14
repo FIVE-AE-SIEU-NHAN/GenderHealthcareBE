@@ -9,24 +9,25 @@ import { hashPassword } from '~/utils/crypto'
 import { signToken } from '~/utils/jwt'
 import { TokenType, USER_ROLE, UserVerifyStatus } from '~/constants/enums'
 import dotenv from 'dotenv'
-import User from '~/models/User.schema'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { USERS_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
-import RefreshToken from '~/models/RefreshToken.schema'
 import emailServices from './email.services'
-import { result } from 'lodash'
 import UserRepository from '~/repositories/user.respository'
 import { v4 as ObjectId } from 'uuid'
 import refreshTokenServices from './refreshToken.services'
 import redisUtils from '~/utils/redis'
+import ConsultantProfileRepository from '~/repositories/consultant_profile.repository'
+import { Topic } from '@prisma/client'
 dotenv.config()
 
 class UsersServices {
   private userRepository: UserRepository
+  private consultantRepository: ConsultantProfileRepository
 
   constructor() {
     this.userRepository = new UserRepository()
+    this.consultantRepository = new ConsultantProfileRepository()
   }
 
   // chữ ký access token và refresh token
@@ -369,6 +370,19 @@ class UsersServices {
       verify: UserVerifyStatus.Verified,
       role: payload.role
     })
+
+    if (payload.role === USER_ROLE.Consultant) {
+      const id = ObjectId()
+      const { specialization_1, specialization_2, certifications, experienceYears } = payload
+      await this.consultantRepository.createConsultantProfile({
+        id,
+        user_id,
+        specialization_1: specialization_1 as Topic,
+        specialization_2: specialization_2 as Topic,
+        certifications: certifications as string,
+        experienceYears: experienceYears as number
+      })
+    }
   }
 }
 

@@ -29,6 +29,7 @@ export const askQuestionValidator = validate(
         notEmpty: {
           errorMessage: QUESTIONS_MESSAGES.QUESTION_IS_REQUIRED
         },
+        trim: true,
         isString: {
           errorMessage: QUESTIONS_MESSAGES.QUESTION_MUST_BE_A_STRING
         },
