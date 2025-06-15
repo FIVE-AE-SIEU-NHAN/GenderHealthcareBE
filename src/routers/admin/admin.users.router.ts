@@ -4,7 +4,7 @@ import {
   editStatusUserController,
   getUsersController
 } from '~/controllers/admin/admin.users.controller'
-import { createValidator, editStatusUserValidator, getUsersValidator } from '~/middlewares/user.middlewares'
+import { createUserValidator, editStatusUserValidator, getUsersValidator } from '~/middlewares/user.middlewares'
 import { wrapAsync } from '~/utils/handler'
 
 const adminUserRoute = express.Router()
@@ -47,7 +47,7 @@ adminUserRoute.post(
   '/create',
   // accessTokenValidator,
   // requireRole(USER_ROLE.Admin),
-  createValidator,
+  createUserValidator,
   wrapAsync(createUserController)
 )
 

@@ -1,4 +1,4 @@
-import { Users as User } from '@prisma/client'
+import { Topic, Users as User } from '@prisma/client'
 import { CreateUserReqBody, RegisterReqBody, UpdateProfileReqBody } from '~/models/requests/users.requests'
 import { prisma } from '~/services/client'
 import { hashPassword } from '~/utils/crypto'
@@ -155,9 +155,6 @@ class UserRepository {
         take: limit
       })
     }
-
-    console.log('role', role)
-
     return this.model.findMany({
       where: {
         verify,

@@ -7,6 +7,7 @@ import {
   CreateUserReqBody,
   EditReqQuery,
   EditStatusUserReqBody,
+  GetConsultantReqQuery,
   GetUserReqQuery
 } from '~/models/requests/users.requests'
 import usersServices from '~/services/users.services'
@@ -69,5 +70,18 @@ export const createUserController = async (
   throw new ErrorWithStatus({
     status: HTTP_STATUS.UNPROCESSABLE_ENTITY,
     message: USERS_MESSAGES.EMAIL_ALREADY_EXISTS
+  })
+}
+
+export const getConsultantController = async (
+  req: Request<ParamsDictionary, any, any, GetConsultantReqQuery>,
+  res: Response,
+  next: NextFunction
+) => {
+  const result = await usersServices.getConsultantsForAdmin(req.query)
+
+  res.status(200).json({
+    message: USERS_MESSAGES.GET_USERS_FOR_ADMIN_SUCCESSFULLY,
+    result
   })
 }

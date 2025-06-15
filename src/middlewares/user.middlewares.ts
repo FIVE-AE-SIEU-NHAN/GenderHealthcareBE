@@ -498,7 +498,7 @@ export const getUsersValidator = validate(
               'phone_number',
               'google_id',
               'verify',
-              'verify'
+              'created_at'
             ]
             if (!validOrders.includes(value)) {
               throw new ErrorWithStatus({
@@ -613,7 +613,7 @@ export const editStatusUserValidator = validate(
   })
 )
 
-export const createValidator = validate(
+export const createUserValidator = validate(
   checkSchema(
     {
       name: nameSchema,
@@ -779,5 +779,122 @@ export const createValidator = validate(
       }
     },
     ['body']
+  )
+)
+
+export const getConsultantValidator = validate(
+  checkSchema(
+    {
+      _page: {
+        notEmpty: {
+          errorMessage: USERS_MESSAGES.PAGE_IS_REQUIRED
+        },
+        isInt: {
+          options: { min: 1 },
+          errorMessage: USERS_MESSAGES.PAGE_MUST_BE_A_POSITIVE_INTEGER
+        }
+      },
+      _limit: {
+        notEmpty: {
+          errorMessage: USERS_MESSAGES.LIMIT_IS_REQUIRED
+        },
+        isInt: {
+          options: { min: 1, max: 100 },
+          errorMessage: USERS_MESSAGES.LIMIT_MUST_BE_A_POSITIVE_INTEGER_AND_LESS_THAN_100
+        }
+      },
+      _sort: {
+        optional: true,
+        custom: {
+          options: (value) => {
+            const validOrders = [
+              'id',
+              'name',
+              'gender',
+              'specialization_1',
+              'specialization_2',
+              'certifications',
+              'experienceYears',
+              'created_at'
+            ]
+            if (!validOrders.includes(value)) {
+              throw new ErrorWithStatus({
+                status: HTTP_STATUS.BAD_REQUEST,
+                message: USERS_MESSAGES.SORT_FIELD_IS_INVALID
+              })
+            }
+            return true
+          }
+        }
+      },
+      _order: {
+        optional: true,
+        custom: {
+          options: (value) => {
+            const validOrders = ['asc', 'desc']
+            if (!validOrders.includes(value)) {
+              throw new ErrorWithStatus({
+                status: HTTP_STATUS.BAD_REQUEST,
+                message: USERS_MESSAGES.ORDER_MUST_BE_ASC_OR_DESC
+              })
+            }
+            return true
+          }
+        }
+      },
+      _specialization_1: {
+        optional: true,
+        custom: {
+          options: async (values) => {
+            const topicList = Object.values(Topic)
+            if (!topicList.includes(values)) {
+              throw new ErrorWithStatus({
+                status: HTTP_STATUS.BAD_REQUEST,
+                message: USERS_MESSAGES.SPECIALIZATION_1_IS_INVALID
+              })
+            }
+          }
+        }
+      },
+      _specialization_2: {
+        optional: true,
+        custom: {
+          options: async (values) => {
+            const topicList = Object.values(Topic)
+            if (!topicList.includes(values)) {
+              throw new ErrorWithStatus({
+                status: HTTP_STATUS.BAD_REQUEST,
+                message: USERS_MESSAGES.SPECIALIZATION_2_IS_INVALID
+              })
+            }
+          }
+        }
+      },
+      _gender: {
+        optional: true,
+        custom: {
+          options: (value) => {
+            const validGenders = ['male', 'female', 'other']
+            if (!validGenders.includes(value.toLowerCase())) {
+              throw new ErrorWithStatus({
+                status: HTTP_STATUS.BAD_REQUEST,
+                message: USERS_MESSAGES.GENDER_IS_INVALID
+              })
+            }
+            return true
+          }
+        }
+      },
+      _date_of_birth: {
+        optional: true,
+        isDate: {
+          errorMessage: USERS_MESSAGES.DATE_OF_BIRTH_MUST_BE_A_DATE
+        }
+      },
+      _all: {
+        optional: true
+      }
+    },
+    ['query']
   )
 )

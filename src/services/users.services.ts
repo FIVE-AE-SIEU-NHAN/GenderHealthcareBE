@@ -1,5 +1,6 @@
 import {
   CreateUserReqBody,
+  GetConsultantReqQuery,
   GetUserReqQuery,
   LoginReqBody,
   RegisterReqBody,
@@ -382,6 +383,70 @@ class UsersServices {
         certifications: certifications as string,
         experienceYears: experienceYears as number
       })
+    }
+  }
+
+  async getConsultantsForAdmin(payload: GetConsultantReqQuery) {
+    const {
+      _page,
+      _limit,
+      _sort,
+      _order,
+      _specialization_1,
+      _specialization_2,
+      _gender,
+      _date_of_birth,
+      _name_like,
+      _certifications_like,
+      _experienceYears_like,
+      _all
+    } = payload
+    const page = parseInt(_page as string, 10) || 1
+    const limit = parseInt(_limit as string, 10) || 10
+    const _skip = (page - 1) * limit
+    const experienceYears_like = _experienceYears_like ? parseInt(_experienceYears_like as string) : undefined
+
+    const result = await this.consultantRepository.getConsultantsForAdmin({
+      limit,
+      _sort,
+      _order,
+      _specialization_1,
+      _specialization_2,
+      _gender,
+      _date_of_birth,
+      _name_like,
+      _certifications_like,
+      experienceYears_like,
+      _skip,
+      _all
+    })
+
+    const consultants = result.map((consultant) => ({
+      id: consultant.id,
+      specialization_1: consultant.specialization_1,
+      specialization_2: consultant.specialization_2,
+      certifications: consultant.certifications,
+      experienceYears: consultant.experienceYears,
+      name: consultant.user?.name,
+      date_of_birth: consultant.user?.date_of_birth,
+      gender: consultant.user?.gender,
+      created_at: consultant.user?.created_at
+    }))
+
+    const total = await this.consultantRepository.countConsultantsForAdmin({
+      _specialization_1,
+      _specialization_2,
+      _gender,
+      _date_of_birth,
+      _name_like,
+      _certifications_like,
+      experienceYears_like,
+      _all
+    })
+
+    return {
+      consultants,
+      total
     }
   }
 }

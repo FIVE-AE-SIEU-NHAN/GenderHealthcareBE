@@ -147,3 +147,18 @@ export interface CreateUserReqBody {
   certifications?: string
   experienceYears?: number
 }
+
+export interface GetConsultantReqQuery extends ParsedQs {
+  _page: string
+  _limit: string
+  _sort?: string
+  _order?: string
+  _specialization_1?: Topic
+  _specialization_2?: Topic
+  _gender?: string
+  _date_of_birth?: string
+  _name_like?: string
+  _certifications_like?: string
+  _experienceYears_like?: string
+  _all?: string
+}

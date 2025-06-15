@@ -53,37 +53,21 @@ export default class QuestionRepository {
     _answer_like?: string
     _all?: string
   }) {
-    if (_all) {
-      return this.model.findMany({
-        where: {
-          user_id,
-          topic: _topic,
-          OR: [{ question: { contains: _all } }, { answer: { contains: _all } }],
-          is_public: true
-        },
-        orderBy: {
-          [_sort || 'created_at']: _order || 'asc'
-        },
-        skip: _skip,
-        take: limit,
-        select: {
-          id: true,
-          topic: true,
-          question: true,
-          answer: true,
-          created_at: true
-        }
-      })
-    }
-
     return this.model.findMany({
-      where: {
-        user_id,
-        topic: _topic,
-        question: { contains: _question_like },
-        answer: { contains: _answer_like },
-        is_public: true
-      },
+      where: _all
+        ? {
+            user_id,
+            topic: _topic,
+            OR: [{ question: { contains: _all } }, { answer: { contains: _all } }],
+            is_public: true
+          }
+        : {
+            user_id,
+            topic: _topic,
+            question: { contains: _question_like },
+            answer: { contains: _answer_like },
+            is_public: true
+          },
       orderBy: {
         [_sort || 'created_at']: _order || 'asc'
       },
@@ -112,25 +96,21 @@ export default class QuestionRepository {
     _answer_like?: string
     _all?: string
   }) {
-    if (_all) {
-      return this.model.count({
-        where: {
-          user_id,
-          topic: _topic,
-          OR: [{ question: { contains: _all } }, { answer: { contains: _all } }],
-          is_public: true
-        }
-      })
-    }
-
     return this.model.count({
-      where: {
-        user_id,
-        topic: _topic,
-        question: { contains: _question_like },
-        answer: { contains: _answer_like },
-        is_public: true
-      }
+      where: _all
+        ? {
+            user_id,
+            topic: _topic,
+            OR: [{ question: { contains: _all } }, { answer: { contains: _all } }],
+            is_public: true
+          }
+        : {
+            user_id,
+            topic: _topic,
+            question: { contains: _question_like },
+            answer: { contains: _answer_like },
+            is_public: true
+          }
     })
   }
 
@@ -155,38 +135,21 @@ export default class QuestionRepository {
     _answer_like?: string
     _all?: string
   }) {
-    if (_all) {
-      return this.model.findMany({
-        where: {
-          consultant_id,
-          topic: _topic,
-          OR: [{ question: { contains: _all } }, { answer: { contains: _all } }],
-          is_public: true
-        },
-        orderBy: {
-          [_sort || 'created_at']: _order || 'asc'
-        },
-        skip: _skip,
-        take: limit,
-        select: {
-          id: true,
-          user_id: true,
-          topic: true,
-          question: true,
-          answer: true,
-          created_at: true
-        }
-      })
-    }
-
     return this.model.findMany({
-      where: {
-        consultant_id,
-        topic: _topic,
-        question: { contains: _question_like },
-        answer: { contains: _answer_like },
-        is_public: true
-      },
+      where: _all
+        ? {
+            consultant_id,
+            topic: _topic,
+            OR: [{ question: { contains: _all } }, { answer: { contains: _all } }],
+            is_public: true
+          }
+        : {
+            consultant_id,
+            topic: _topic,
+            question: { contains: _question_like },
+            answer: { contains: _answer_like },
+            is_public: true
+          },
       orderBy: {
         [_sort || 'created_at']: _order || 'asc'
       },
@@ -216,24 +179,21 @@ export default class QuestionRepository {
     _answer_like?: string
     _all?: string
   }) {
-    if (_all) {
-      return this.model.count({
-        where: {
-          consultant_id,
-          topic: _topic,
-          OR: [{ question: { contains: _all } }, { answer: { contains: _all } }],
-          is_public: true
-        }
-      })
-    }
     return this.model.count({
-      where: {
-        consultant_id,
-        topic: _topic,
-        question: { contains: _question_like },
-        answer: { not: null, contains: _answer_like },
-        is_public: true
-      }
+      where: _all
+        ? {
+            consultant_id,
+            topic: _topic,
+            OR: [{ question: { contains: _all } }, { answer: { contains: _all } }],
+            is_public: true
+          }
+        : {
+            consultant_id,
+            topic: _topic,
+            question: { contains: _question_like },
+            answer: { not: null, contains: _answer_like },
+            is_public: true
+          }
     })
   }
 
@@ -282,28 +242,19 @@ export default class QuestionRepository {
     _answer_like?: string
     _all?: string
   }) {
-    if (_all) {
-      return this.model.findMany({
-        where: {
-          topic: _topic,
-          OR: [{ question: { contains: _all } }, { answer: { contains: _all } }],
-          is_public: true
-        },
-        orderBy: {
-          [_sort || 'created_at']: _order || 'asc'
-        },
-        skip: _skip,
-        take: limit
-      })
-    }
-
     return this.model.findMany({
-      where: {
-        topic: _topic,
-        question: { contains: _question_like },
-        answer: { contains: _answer_like },
-        is_public: true
-      },
+      where: _all
+        ? {
+            topic: _topic,
+            OR: [{ question: { contains: _all } }, { answer: { contains: _all } }],
+            is_public: true
+          }
+        : {
+            topic: _topic,
+            question: { contains: _question_like },
+            answer: { contains: _answer_like },
+            is_public: true
+          },
       orderBy: {
         [_sort || 'created_at']: _order || 'asc'
       },
@@ -323,23 +274,19 @@ export default class QuestionRepository {
     _answer_like?: string
     _all?: string
   }) {
-    if (_all) {
-      return this.model.count({
-        where: {
-          topic: _topic,
-          OR: [{ question: { contains: _all } }, { answer: { contains: _all } }],
-          is_public: true
-        }
-      })
-    }
-
     return this.model.count({
-      where: {
-        topic: _topic,
-        question: { contains: _question_like },
-        answer: { contains: _answer_like },
-        is_public: true
-      }
+      where: _all
+        ? {
+            topic: _topic,
+            OR: [{ question: { contains: _all } }, { answer: { contains: _all } }],
+            is_public: true
+          }
+        : {
+            topic: _topic,
+            question: { contains: _question_like },
+            answer: { contains: _answer_like },
+            is_public: true
+          }
     })
   }
 
