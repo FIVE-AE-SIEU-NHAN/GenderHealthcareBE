@@ -95,6 +95,7 @@ export const USERS_MESSAGES = {
   EXPERIENCE_YEARS_IS_REQUIRED: 'Experience years is required',
   EXPERIENCE_YEARS_MUST_BE_A_POSITIVE_NUMBER: 'Experience years must be a positive integer',
   SPECIALIZATION_2_IS_REQUIRED: 'Specialization 2 is required',
+  CREATED_AT_BE_ISO8601: 'Created at must be ISO8601',
   // mail
   SEND_MAIL_FAIL: 'Send mail fail',
   SEND_MAIL_SUCCESS: 'Send mail success',

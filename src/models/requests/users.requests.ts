@@ -117,12 +117,14 @@ export interface GetUserReqQuery extends ParsedQs {
   _limit: string
   _sort?: string
   _order?: string
-  _verify?: string
-  _role?: string
+  _verify?: string[]
+  _role?: string[]
+  _gender?: string[]
+  _date_of_birth?: string[]
+  _created_at?: string[]
   _name_like?: string
   _email_like?: string
   _phone_number_like?: string
-  _date_of_birth?: string
   _all?: string
 }
 

@@ -117,53 +117,105 @@ class UserRepository {
 
   async getUsersForAdmin({
     limit,
+    _skip,
     _sort,
     _order,
     verify,
     role,
+    gender,
+    date_of_birth,
+    created_at,
     _name_like,
     _email_like,
     _phone_number_like,
-    _date_of_birth,
-    _skip,
     _all
   }: {
-    _skip: number
     limit: number
+    _skip: number
     _sort?: string
     _order?: string
-    verify?: number
-    role?: number
+    verify?: number[]
+    role?: number[]
+    gender?: string[]
+    date_of_birth?: Date[]
+    created_at?: Date[]
     _name_like?: string
     _email_like?: string
     _phone_number_like?: string
     _date_of_birth?: string
     _all?: string
   }) {
-    if (_all) {
-      return this.model.findMany({
-        where: {
-          verify,
-          role,
-          date_of_birth: _date_of_birth ? new Date(_date_of_birth) : undefined,
-          OR: [{ name: { contains: _all } }, { email: { contains: _all } }, { phone_number: { contains: _all } }]
-        },
-        orderBy: {
-          [_sort || 'created_at']: _order || 'asc'
-        },
-        skip: _skip,
-        take: limit
-      })
-    }
+    console.log('role', role)
     return this.model.findMany({
-      where: {
-        verify,
-        role,
-        date_of_birth: _date_of_birth ? new Date(_date_of_birth) : undefined,
-        name: { contains: _name_like },
-        email: { contains: _email_like },
-        phone_number: { contains: _phone_number_like }
-      },
+      where: _all
+        ? {
+            ...(role && { role: { in: role } }),
+            ...(verify && { verify: { in: verify } }),
+            ...(gender && { gender: { in: gender } }),
+            ...(date_of_birth?.length === 2 && {
+              date_of_birth: {
+                gte: date_of_birth[0],
+                lte: date_of_birth[1]
+              }
+            }),
+            ...(date_of_birth?.length === 1 && {
+              date_of_birth: date_of_birth[0]
+            }),
+            ...(created_at?.length === 2 && {
+              created_at: {
+                gte: `${created_at[0].toISOString().split('T')[0]}T00:00:00.000Z`,
+                lte: `${created_at[1].toISOString().split('T')[0]}T11:59:59.999Z`
+              }
+            }),
+            ...(created_at?.length === 1 && {
+              created_at: {
+                gte: `${created_at[0].toISOString().split('T')[0]}T00:00:00.000Z`,
+                lte: `${created_at[0].toISOString().split('T')[0]}T11:59:59.999Z`
+              }
+            }),
+            OR: [{ name: { contains: _all } }, { email: { contains: _all } }, { phone_number: { contains: _all } }]
+          }
+        : {
+            ...(role && { role: { in: role } }),
+            ...(verify && { verify: { in: verify } }),
+            ...(gender && { gender: { in: gender } }),
+            ...(date_of_birth?.length === 2 && {
+              date_of_birth: {
+                gte: date_of_birth[0],
+                lte: date_of_birth[1]
+              }
+            }),
+            ...(date_of_birth?.length === 1 && {
+              date_of_birth: date_of_birth[0]
+            }),
+            ...(created_at?.length === 2 && {
+              created_at: {
+                gte: `${created_at[0].toISOString().split('T')[0]}T00:00:00.000Z`,
+                lte: `${created_at[1].toISOString().split('T')[0]}T11:59:59.999Z`
+              }
+            }),
+            ...(created_at?.length === 1 && {
+              created_at: {
+                gte: `${created_at[0].toISOString().split('T')[0]}T00:00:00.000Z`,
+                lte: `${created_at[0].toISOString().split('T')[0]}T11:59:59.999Z`
+              }
+            }),
+            ...(_name_like && {
+              name: {
+                contains: _name_like
+              }
+            }),
+            ...(_email_like && {
+              email: {
+                contains: _email_like
+              }
+            }),
+            ...(_phone_number_like && {
+              phone_number: {
+                contains: _phone_number_like
+              }
+            })
+          },
       orderBy: {
         [_sort || 'created_at']: _order || 'asc'
       },
@@ -175,40 +227,95 @@ class UserRepository {
   async countUsersForAdmin({
     verify,
     role,
+    gender,
+    date_of_birth,
+    created_at,
     _name_like,
     _email_like,
     _phone_number_like,
-    _date_of_birth,
     _all
   }: {
-    verify?: number
-    role?: number
+    verify?: number[]
+    role?: number[]
+    gender?: string[]
+    date_of_birth?: Date[]
+    created_at?: Date[]
     _name_like?: string
     _email_like?: string
     _phone_number_like?: string
     _date_of_birth?: string
     _all?: string
   }) {
-    if (_all) {
-      return this.model.count({
-        where: {
-          verify,
-          role,
-          date_of_birth: _date_of_birth ? new Date(_date_of_birth) : undefined,
-          OR: [{ name: { contains: _all } }, { email: { contains: _all } }, { phone_number: { contains: _all } }]
-        }
-      })
-    }
-
     return this.model.count({
-      where: {
-        verify,
-        role,
-        date_of_birth: _date_of_birth ? new Date(_date_of_birth) : undefined,
-        name: { contains: _name_like },
-        email: { contains: _email_like },
-        phone_number: { contains: _phone_number_like }
-      }
+      where: _all
+        ? {
+            ...(role && { role: { in: role } }),
+            ...(verify && { verify: { in: verify } }),
+            ...(gender && { gender: { in: gender } }),
+            ...(date_of_birth?.length === 2 && {
+              date_of_birth: {
+                gte: date_of_birth[0],
+                lte: date_of_birth[1]
+              }
+            }),
+            ...(date_of_birth?.length === 1 && {
+              date_of_birth: date_of_birth[0]
+            }),
+            ...(created_at?.length === 2 && {
+              created_at: {
+                gte: `${created_at[0].toISOString().split('T')[0]}T00:00:00.000Z`,
+                lte: `${created_at[1].toISOString().split('T')[0]}T11:59:59.999Z`
+              }
+            }),
+            ...(created_at?.length === 1 && {
+              created_at: {
+                gte: `${created_at[0].toISOString().split('T')[0]}T00:00:00.000Z`,
+                lte: `${created_at[0].toISOString().split('T')[0]}T11:59:59.999Z`
+              }
+            }),
+            OR: [{ name: { contains: _all } }, { email: { contains: _all } }, { phone_number: { contains: _all } }]
+          }
+        : {
+            ...(role && { role: { in: role } }),
+            ...(verify && { verify: { in: verify } }),
+            ...(gender && { gender: { in: gender } }),
+            ...(date_of_birth?.length === 2 && {
+              date_of_birth: {
+                gte: date_of_birth[0],
+                lte: date_of_birth[1]
+              }
+            }),
+            ...(date_of_birth?.length === 1 && {
+              date_of_birth: date_of_birth[0]
+            }),
+            ...(created_at?.length === 2 && {
+              created_at: {
+                gte: `${created_at[0].toISOString().split('T')[0]}T00:00:00.000Z`,
+                lte: `${created_at[1].toISOString().split('T')[0]}T11:59:59.999Z`
+              }
+            }),
+            ...(created_at?.length === 1 && {
+              created_at: {
+                gte: `${created_at[0].toISOString().split('T')[0]}T00:00:00.000Z`,
+                lte: `${created_at[0].toISOString().split('T')[0]}T11:59:59.999Z`
+              }
+            }),
+            ...(_name_like && {
+              name: {
+                contains: _name_like
+              }
+            }),
+            ...(_email_like && {
+              email: {
+                contains: _email_like
+              }
+            }),
+            ...(_phone_number_like && {
+              phone_number: {
+                contains: _phone_number_like
+              }
+            })
+          }
     })
   }
 

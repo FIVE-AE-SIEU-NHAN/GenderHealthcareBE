@@ -303,39 +303,66 @@ class UsersServices {
       _order,
       _verify,
       _role,
+      _gender,
+      _date_of_birth,
+      _created_at,
       _name_like,
       _email_like,
       _phone_number_like,
-      _date_of_birth,
       _all
     } = payload
+
     const page = parseInt(_page as string, 10) || 1
     const limit = parseInt(_limit as string, 10) || 10
     const _skip = (page - 1) * limit
-    const verify = _verify ? parseInt(_verify) : undefined
-    const role = _role ? parseInt(_role) : undefined
+
+    const verify = Array.isArray(_verify) ? _verify.map((v) => parseInt(v)) : _verify ? [parseInt(_verify)] : undefined
+
+    const role = Array.isArray(_role) ? _role.map((role) => parseInt(role)) : _role ? [parseInt(_role)] : undefined
+
+    const gender = Array.isArray(_gender)
+      ? _gender.map((gender) => gender.toLowerCase())
+      : _gender
+        ? [_gender]
+        : undefined
+
+    const date_of_birth = Array.isArray(_date_of_birth)
+      ? _date_of_birth.map((dob) => new Date(dob)).sort((a, b) => a.getTime() - b.getTime())
+      : _date_of_birth
+        ? [new Date(_date_of_birth)]
+        : []
+
+    const created_at = Array.isArray(_created_at)
+      ? _created_at.map((created_at) => new Date(created_at)).sort((a, b) => a.getTime() - b.getTime())
+      : _created_at
+        ? [new Date(_created_at)]
+        : []
 
     const users = await this.userRepository.getUsersForAdmin({
       limit,
+      _skip,
       _sort,
       _order,
       verify,
       role,
+      gender,
+      date_of_birth,
+      created_at,
       _name_like,
       _email_like,
       _phone_number_like,
-      _date_of_birth,
-      _skip,
       _all
     })
 
     const total = await this.userRepository.countUsersForAdmin({
       verify,
       role,
+      gender,
+      date_of_birth,
+      created_at,
       _name_like,
       _email_like,
       _phone_number_like,
-      _date_of_birth,
       _all
     })
 

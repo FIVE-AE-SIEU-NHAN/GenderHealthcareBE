@@ -1,11 +1,17 @@
 import express from 'express'
+import { checkSchema } from 'express-validator'
+import { USER_ROLE, UserVerifyStatus } from '~/constants/enums'
+import HTTP_STATUS from '~/constants/httpStatus'
+import { USERS_MESSAGES } from '~/constants/messages'
 import {
   createUserController,
   editStatusUserController,
   getUsersController
 } from '~/controllers/admin/admin.users.controller'
 import { createUserValidator, editStatusUserValidator, getUsersValidator } from '~/middlewares/user.middlewares'
+import { ErrorWithStatus } from '~/models/Errors'
 import { wrapAsync } from '~/utils/handler'
+import { validate } from '~/utils/validation'
 
 const adminUserRoute = express.Router()
 

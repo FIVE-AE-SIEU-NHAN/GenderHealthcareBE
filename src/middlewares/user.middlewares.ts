@@ -528,9 +528,10 @@ export const getUsersValidator = validate(
       _verify: {
         optional: true,
         custom: {
-          options: async (values) => {
-            const verifyList = [UserVerifyStatus.Verified, UserVerifyStatus.Banned]
-            if (!verifyList.includes(parseInt(values))) {
+          options: async (value) => {
+            value = Array.isArray(value) ? value.map((status) => parseInt(status)) : [parseInt(value)]
+            const statusList = [UserVerifyStatus.Verified, UserVerifyStatus.Banned]
+            if (!value.every((status: number) => statusList.includes(status))) {
               throw new ErrorWithStatus({
                 status: HTTP_STATUS.BAD_REQUEST,
                 message: USERS_MESSAGES.STATUS_IS_INVALID
@@ -543,8 +544,9 @@ export const getUsersValidator = validate(
         optional: true,
         custom: {
           options: (value) => {
+            value = Array.isArray(value) ? value.map((role) => parseInt(role)) : [parseInt(value)]
             const validRoles = [USER_ROLE.Admin, USER_ROLE.Consultant, USER_ROLE.Staff, USER_ROLE.User]
-            if (!validRoles.includes(parseInt(value))) {
+            if (!value.every((role: number) => validRoles.includes(role))) {
               throw new ErrorWithStatus({
                 status: HTTP_STATUS.BAD_REQUEST,
                 message: USERS_MESSAGES.ROLE_IS_INVALID
@@ -558,8 +560,9 @@ export const getUsersValidator = validate(
         optional: true,
         custom: {
           options: (value) => {
+            value = Array.isArray(value) ? value.map((gender) => gender.toLowerCase()) : [value.toLowerCase()]
             const validGenders = ['male', 'female', 'other']
-            if (!validGenders.includes(value.toLowerCase())) {
+            if (!value.every((gender: string) => validGenders.includes(gender))) {
               throw new ErrorWithStatus({
                 status: HTTP_STATUS.BAD_REQUEST,
                 message: USERS_MESSAGES.GENDER_IS_INVALID
@@ -571,8 +574,22 @@ export const getUsersValidator = validate(
       },
       _date_of_birth: {
         optional: true,
-        isDate: {
-          errorMessage: USERS_MESSAGES.DATE_OF_BIRTH_MUST_BE_A_DATE
+        isISO8601: {
+          options: {
+            strict: true,
+            strictSeparator: true
+          },
+          errorMessage: USERS_MESSAGES.DATE_OF_BIRTH_BE_ISO8601
+        }
+      },
+      _created_at: {
+        optional: true,
+        isISO8601: {
+          options: {
+            strict: true,
+            strictSeparator: true
+          },
+          errorMessage: USERS_MESSAGES.CREATED_AT_BE_ISO8601
         }
       },
       _all: {
