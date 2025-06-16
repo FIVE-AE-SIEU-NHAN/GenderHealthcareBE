@@ -27,6 +27,8 @@ export default class QuestionRepository {
         consultant_id,
         topic,
         question,
+        answer: '',
+        status: 0,
         created_at: new Date()
       }
     })
@@ -144,7 +146,8 @@ export default class QuestionRepository {
     limit,
     _sort,
     _order,
-    _topic,
+    topic,
+    status,
     _question_like,
     _answer_like,
     _all
@@ -154,7 +157,8 @@ export default class QuestionRepository {
     limit: number
     _sort?: string
     _order?: string
-    _topic?: Topic
+    topic?: Topic[]
+    status?: number[]
     _question_like?: string
     _answer_like?: string
     _all?: string
@@ -163,15 +167,25 @@ export default class QuestionRepository {
       where: _all
         ? {
             consultant_id,
-            topic: _topic,
+            ...(topic && { topic: { in: topic } }),
+            ...(status && { status: { in: status } }),
             OR: [{ question: { contains: _all } }, { answer: { contains: _all } }],
             is_public: true
           }
         : {
             consultant_id,
-            topic: _topic,
-            question: { contains: _question_like },
-            answer: { contains: _answer_like },
+            ...(topic && { topic: { in: topic } }),
+            ...(status && { status: { in: status } }),
+            ...(_question_like && {
+              question: {
+                contains: _question_like
+              }
+            }),
+            ...(_answer_like && {
+              answer: {
+                contains: _answer_like
+              }
+            }),
             is_public: true
           },
       orderBy: {
@@ -192,13 +206,15 @@ export default class QuestionRepository {
 
   async countConsultantQuestions({
     consultant_id,
-    _topic,
+    topic,
+    status,
     _question_like,
     _answer_like,
     _all
   }: {
     consultant_id: string
-    _topic?: Topic
+    topic?: Topic[]
+    status?: number[]
     _question_like?: string
     _answer_like?: string
     _all?: string
@@ -207,15 +223,25 @@ export default class QuestionRepository {
       where: _all
         ? {
             consultant_id,
-            topic: _topic,
+            ...(topic && { topic: { in: topic } }),
+            ...(status && { status: { in: status } }),
             OR: [{ question: { contains: _all } }, { answer: { contains: _all } }],
             is_public: true
           }
         : {
             consultant_id,
-            topic: _topic,
-            question: { contains: _question_like },
-            answer: { not: null, contains: _answer_like },
+            ...(topic && { topic: { in: topic } }),
+            ...(status && { status: { in: status } }),
+            ...(_question_like && {
+              question: {
+                contains: _question_like
+              }
+            }),
+            ...(_answer_like && {
+              answer: {
+                contains: _answer_like
+              }
+            }),
             is_public: true
           }
     })
@@ -242,6 +268,7 @@ export default class QuestionRepository {
       where: { id },
       data: {
         answer,
+        status: 1,
         answered_at: new Date()
       }
     })
@@ -252,7 +279,8 @@ export default class QuestionRepository {
     limit,
     _sort,
     _order,
-    _topic,
+    topic,
+    status,
     _question_like,
     _answer_like,
     _all
@@ -261,7 +289,8 @@ export default class QuestionRepository {
     limit: number
     _sort?: string
     _order?: string
-    _topic?: Topic
+    topic?: Topic[]
+    status?: number[]
     _question_like?: string
     _answer_like?: string
     _all?: string
@@ -269,15 +298,24 @@ export default class QuestionRepository {
     return this.model.findMany({
       where: _all
         ? {
-            topic: _topic,
+            ...(topic && { topic: { in: topic } }),
+            ...(status && { status: { in: status } }),
             OR: [{ question: { contains: _all } }, { answer: { contains: _all } }],
             is_public: true
           }
         : {
-            topic: _topic,
-            question: { contains: _question_like },
-            answer: { contains: _answer_like },
-            is_public: true
+            ...(topic && { topic: { in: topic } }),
+            ...(status && { status: { in: status } }),
+            ...(_question_like && {
+              question: {
+                contains: _question_like
+              }
+            }),
+            ...(_answer_like && {
+              answer: {
+                contains: _answer_like
+              }
+            })
           },
       orderBy: {
         [_sort || 'created_at']: _order || 'asc'
@@ -288,12 +326,14 @@ export default class QuestionRepository {
   }
 
   async countAdminQuestions({
-    _topic,
+    topic,
+    status,
     _question_like,
     _answer_like,
     _all
   }: {
-    _topic?: Topic
+    topic?: Topic[]
+    status?: number[]
     _question_like?: string
     _answer_like?: string
     _all?: string
@@ -301,15 +341,24 @@ export default class QuestionRepository {
     return this.model.count({
       where: _all
         ? {
-            topic: _topic,
+            ...(topic && { topic: { in: topic } }),
+            ...(status && { status: { in: status } }),
             OR: [{ question: { contains: _all } }, { answer: { contains: _all } }],
             is_public: true
           }
         : {
-            topic: _topic,
-            question: { contains: _question_like },
-            answer: { contains: _answer_like },
-            is_public: true
+            ...(topic && { topic: { in: topic } }),
+            ...(status && { status: { in: status } }),
+            ...(_question_like && {
+              question: {
+                contains: _question_like
+              }
+            }),
+            ...(_answer_like && {
+              answer: {
+                contains: _answer_like
+              }
+            })
           }
     })
   }

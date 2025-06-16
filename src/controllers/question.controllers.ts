@@ -20,7 +20,7 @@ export const askQuestionController = async (
 ) => {
   const { topic, question } = req.body
   //   const { user_id } = req.decode_authorization as TokenPayLoad
-  const user_id = '1c1d0365-1d64-43d3-894f-d3f69949ebbc'
+  const user_id = 'e1fcef6f-49c8-11f0-bfde-0242ac110002'
 
   // lấy danh sách consultant theo topic
   const numberOfCounsultant = await questionServices.getNumberOfConsultantsByTopic(topic)
@@ -71,7 +71,7 @@ export const consultantQuestionsController = async (
   next: NextFunction
 ) => {
   //   const { consultant_id } = req.decode_authorization as TokenPayLoad
-  const consultant_id = '660e8400-e29b-41d4-a716-446655440010'
+  const consultant_id = 'aad5aff6-48bc-11f0-bfde-0242ac110002'
 
   const result = await questionServices.getConsultantQuestions(consultant_id, req.query)
 
