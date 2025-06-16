@@ -43,17 +43,20 @@ class QuestionServices {
   }
 
   async getCustomerQuestions(user_id: string, payload: GetQuestionReqQuery) {
-    const { _page, _limit, _sort, _order, _topic, _question_like, _answer_like, _all } = payload
+    const { _page, _limit, _sort, _order, _topic, _status, _question_like, _answer_like, _all } = payload
     const page = parseInt(_page as string, 10) || 1
     const limit = parseInt(_limit as string, 10) || 10
     const _skip = (page - 1) * limit
 
+    const topic = Array.isArray(_topic) ? _topic : _topic ? [_topic] : undefined
+    const status = Array.isArray(_status) ? _status.map((v) => parseInt(v)) : _status ? [parseInt(_status)] : undefined
     const questions = await this.questionRepository.getCustomerQuestions({
       user_id,
       limit,
       _sort,
       _order,
-      _topic,
+      topic,
+      status,
       _question_like,
       _answer_like,
       _skip,
@@ -62,7 +65,8 @@ class QuestionServices {
 
     const total = await this.questionRepository.countCustomerQuestions({
       user_id,
-      _topic,
+      topic,
+      status,
       _question_like,
       _answer_like,
       _all
@@ -80,29 +84,29 @@ class QuestionServices {
     const limit = parseInt(_limit as string, 10) || 10
     const _skip = (page - 1) * limit
 
-    const questions = await this.questionRepository.getConsultantQuestions({
-      consultant_id,
-      limit,
-      _sort,
-      _order,
-      _topic,
-      _question_like,
-      _answer_like,
-      _skip,
-      _all
-    })
+    // const questions = await this.questionRepository.getConsultantQuestions({
+    //   consultant_id,
+    //   limit,
+    //   _sort,
+    //   _order,
+    //   _topic,
+    //   _question_like,
+    //   _answer_like,
+    //   _skip,
+    //   _all
+    // })
 
-    const total = await this.questionRepository.countConsultantQuestions({
-      consultant_id,
-      _topic,
-      _question_like,
-      _answer_like,
-      _all
-    })
+    // const total = await this.questionRepository.countConsultantQuestions({
+    //   consultant_id,
+    //   _topic,
+    //   _question_like,
+    //   _answer_like,
+    //   _all
+    // })
 
     return {
-      questions,
-      total
+      // questions,
+      // total
     }
   }
 
@@ -134,27 +138,27 @@ class QuestionServices {
     const limit = parseInt(_limit as string, 10) || 10
     const _skip = (page - 1) * limit
 
-    const questions = await this.questionRepository.getAdminQuestions({
-      limit,
-      _sort,
-      _order,
-      _topic,
-      _question_like,
-      _answer_like,
-      _skip,
-      _all
-    })
+    // const questions = await this.questionRepository.getAdminQuestions({
+    //   limit,
+    //   _sort,
+    //   _order,
+    //   _topic,
+    //   _question_like,
+    //   _answer_like,
+    //   _skip,
+    //   _all
+    // })
 
-    const total = await this.questionRepository.countAdminQuestions({
-      _topic,
-      _question_like,
-      _answer_like,
-      _all
-    })
+    // const total = await this.questionRepository.countAdminQuestions({
+    //   _topic,
+    //   _question_like,
+    //   _answer_like,
+    //   _all
+    // })
 
     return {
-      questions,
-      total
+      // questions,
+      // total
     }
   }
 

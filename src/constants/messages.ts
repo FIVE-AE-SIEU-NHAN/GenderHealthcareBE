@@ -138,5 +138,6 @@ export const QUESTIONS_MESSAGES = {
   QUESTION_ALREADY_IN_THIS_STATE: 'Question already in this state',
   QUESTION_UPDATED_SUCCESSFULLY: 'Question updated successfully',
   QUESTION_DELETED_SUCCESSFULLY: 'Question deleted successfully',
-  QUESTION_NOT_FOUNDOR_OR_NOT_PUBLIC: 'Question not found or not public'
+  QUESTION_NOT_FOUNDOR_OR_NOT_PUBLIC: 'Question not found or not public',
+  STATUS_IS_INVALID: 'Status is invalid'
 }

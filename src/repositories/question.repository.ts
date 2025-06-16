@@ -38,7 +38,8 @@ export default class QuestionRepository {
     limit,
     _sort,
     _order,
-    _topic,
+    topic,
+    status,
     _question_like,
     _answer_like,
     _all
@@ -48,7 +49,8 @@ export default class QuestionRepository {
     limit: number
     _sort?: string
     _order?: string
-    _topic?: Topic
+    topic?: Topic[]
+    status?: number[]
     _question_like?: string
     _answer_like?: string
     _all?: string
@@ -57,15 +59,25 @@ export default class QuestionRepository {
       where: _all
         ? {
             user_id,
-            topic: _topic,
+            ...(topic && { topic: { in: topic } }),
+            ...(status && { status: { in: status } }),
             OR: [{ question: { contains: _all } }, { answer: { contains: _all } }],
             is_public: true
           }
         : {
             user_id,
-            topic: _topic,
-            question: { contains: _question_like },
-            answer: { contains: _answer_like },
+            ...(topic && { topic: { in: topic } }),
+            ...(status && { status: { in: status } }),
+            ...(_question_like && {
+              question: {
+                contains: _question_like
+              }
+            }),
+            ...(_answer_like && {
+              answer: {
+                contains: _answer_like
+              }
+            }),
             is_public: true
           },
       orderBy: {
@@ -85,13 +97,15 @@ export default class QuestionRepository {
 
   async countCustomerQuestions({
     user_id,
-    _topic,
+    topic,
+    status,
     _question_like,
     _answer_like,
     _all
   }: {
     user_id: string
-    _topic?: Topic
+    topic?: Topic[]
+    status?: number[]
     _question_like?: string
     _answer_like?: string
     _all?: string
@@ -100,15 +114,25 @@ export default class QuestionRepository {
       where: _all
         ? {
             user_id,
-            topic: _topic,
+            ...(topic && { topic: { in: topic } }),
+            ...(status && { status: { in: status } }),
             OR: [{ question: { contains: _all } }, { answer: { contains: _all } }],
             is_public: true
           }
         : {
             user_id,
-            topic: _topic,
-            question: { contains: _question_like },
-            answer: { contains: _answer_like },
+            ...(topic && { topic: { in: topic } }),
+            ...(status && { status: { in: status } }),
+            ...(_question_like && {
+              question: {
+                contains: _question_like
+              }
+            }),
+            ...(_answer_like && {
+              answer: {
+                contains: _answer_like
+              }
+            }),
             is_public: true
           }
     })

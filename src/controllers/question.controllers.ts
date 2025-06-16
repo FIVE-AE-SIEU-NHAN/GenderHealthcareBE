@@ -55,7 +55,7 @@ export const customerQuestionsController = async (
   next: NextFunction
 ) => {
   //   const { user_id } = req.decode_authorization as TokenPayLoad
-  const user_id = '1c1d0365-1d64-43d3-894f-d3f69949ebbc'
+  const user_id = 'e1fcef6f-49c8-11f0-bfde-0242ac110002'
 
   const result = await questionServices.getCustomerQuestions(user_id, req.query)
 

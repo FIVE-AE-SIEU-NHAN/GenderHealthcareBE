@@ -109,26 +109,29 @@ export const getQuestionValidator = validate(
       _topic: {
         optional: true,
         custom: {
-          options: async (values) => {
+          options: async (value) => {
+            value = Array.isArray(value) ? value : [value]
             const topicList = Object.values(Topic)
-            if (!topicList.includes(values)) {
+            if (!value.every((topic: string) => topicList.includes(topic as Topic))) {
               throw new ErrorWithStatus({
                 status: HTTP_STATUS.BAD_REQUEST,
                 message: QUESTIONS_MESSAGES.TOPIC_IS_INVALID
               })
             }
+            return true
           }
         }
       },
-      _answer: {
+      _status: {
         optional: true,
         custom: {
           options: (value) => {
-            const validAnswers = ['have', 'notyet']
-            if (!validAnswers.includes(value)) {
+            value = Array.isArray(value) ? value.map((role) => parseInt(role)) : [parseInt(value)]
+            const validStatus = [0, 1]
+            if (!value.every((status: number) => validStatus.includes(status))) {
               throw new ErrorWithStatus({
                 status: HTTP_STATUS.BAD_REQUEST,
-                message: QUESTIONS_MESSAGES.ANSWER_MUST_BE_HAVE_OR_NOTYET
+                message: QUESTIONS_MESSAGES.STATUS_IS_INVALID
               })
             }
             return true
