@@ -330,13 +330,13 @@ class UsersServices {
       ? _date_of_birth.map((dob) => new Date(dob)).sort((a, b) => a.getTime() - b.getTime())
       : _date_of_birth
         ? [new Date(_date_of_birth)]
-        : []
+        : undefined
 
     const created_at = Array.isArray(_created_at)
       ? _created_at.map((created_at) => new Date(created_at)).sort((a, b) => a.getTime() - b.getTime())
       : _created_at
         ? [new Date(_created_at)]
-        : []
+        : undefined
 
     const users = await this.userRepository.getUsersForAdmin({
       limit,
@@ -419,32 +419,56 @@ class UsersServices {
       _limit,
       _sort,
       _order,
-      _specialization_1,
-      _specialization_2,
+      _specialization,
       _gender,
       _date_of_birth,
+      _created_at,
+      _experienceYears,
       _name_like,
       _certifications_like,
-      _experienceYears_like,
       _all
     } = payload
+
     const page = parseInt(_page as string, 10) || 1
     const limit = parseInt(_limit as string, 10) || 10
     const _skip = (page - 1) * limit
-    const experienceYears_like = _experienceYears_like ? parseInt(_experienceYears_like as string) : undefined
+
+    const specialization = (
+      Array.isArray(_specialization) ? _specialization : _specialization ? [_specialization] : undefined
+    ) as Topic[] | undefined
+
+    const gender = Array.isArray(_gender)
+      ? _gender.map((gender) => gender.toLowerCase())
+      : _gender
+        ? [_gender]
+        : undefined
+
+    const date_of_birth = Array.isArray(_date_of_birth)
+      ? _date_of_birth.map((dob) => new Date(dob)).sort((a, b) => a.getTime() - b.getTime())
+      : _date_of_birth
+        ? [new Date(_date_of_birth)]
+        : undefined
+
+    const created_at = Array.isArray(_created_at)
+      ? _created_at.map((created_at) => new Date(created_at)).sort((a, b) => a.getTime() - b.getTime())
+      : _created_at
+        ? [new Date(_created_at)]
+        : undefined
+
+    const experienceYears = _experienceYears ? parseInt(_experienceYears) : undefined
 
     const result = await this.consultantRepository.getConsultantsForAdmin({
       limit,
       _sort,
       _order,
-      _specialization_1,
-      _specialization_2,
-      _gender,
-      _date_of_birth,
+      _skip,
+      specialization,
+      gender,
+      date_of_birth,
+      created_at,
+      experienceYears,
       _name_like,
       _certifications_like,
-      experienceYears_like,
-      _skip,
       _all
     })
 
@@ -461,13 +485,13 @@ class UsersServices {
     }))
 
     const total = await this.consultantRepository.countConsultantsForAdmin({
-      _specialization_1,
-      _specialization_2,
-      _gender,
-      _date_of_birth,
+      specialization,
+      gender,
+      date_of_birth,
+      created_at,
+      experienceYears,
       _name_like,
       _certifications_like,
-      experienceYears_like,
       _all
     })
 

@@ -859,29 +859,16 @@ export const getConsultantValidator = validate(
           }
         }
       },
-      _specialization_1: {
+      _specialization: {
         optional: true,
         custom: {
           options: async (values) => {
+            const combinedValues = Array.isArray(values) ? values : [values]
             const topicList = Object.values(Topic)
-            if (!topicList.includes(values)) {
+            if (!combinedValues.every((value) => topicList.includes(value))) {
               throw new ErrorWithStatus({
                 status: HTTP_STATUS.BAD_REQUEST,
-                message: USERS_MESSAGES.SPECIALIZATION_1_IS_INVALID
-              })
-            }
-          }
-        }
-      },
-      _specialization_2: {
-        optional: true,
-        custom: {
-          options: async (values) => {
-            const topicList = Object.values(Topic)
-            if (!topicList.includes(values)) {
-              throw new ErrorWithStatus({
-                status: HTTP_STATUS.BAD_REQUEST,
-                message: USERS_MESSAGES.SPECIALIZATION_2_IS_INVALID
+                message: USERS_MESSAGES.SPECIALIZATION_IS_INVALID
               })
             }
           }
@@ -891,8 +878,9 @@ export const getConsultantValidator = validate(
         optional: true,
         custom: {
           options: (value) => {
+            value = Array.isArray(value) ? value.map((gender) => gender.toLowerCase()) : [value.toLowerCase()]
             const validGenders = ['male', 'female', 'other']
-            if (!validGenders.includes(value.toLowerCase())) {
+            if (!value.every((gender: string) => validGenders.includes(gender))) {
               throw new ErrorWithStatus({
                 status: HTTP_STATUS.BAD_REQUEST,
                 message: USERS_MESSAGES.GENDER_IS_INVALID
@@ -902,10 +890,27 @@ export const getConsultantValidator = validate(
           }
         }
       },
+      _experienceYears: {
+        optional: true,
+        isInt: {
+          options: { min: 0 },
+          errorMessage: USERS_MESSAGES.EXPERIENCE_YEARS_MUST_BE_A_POSITIVE_NUMBER
+        }
+      },
       _date_of_birth: {
         optional: true,
         isDate: {
           errorMessage: USERS_MESSAGES.DATE_OF_BIRTH_MUST_BE_A_DATE
+        }
+      },
+      _created_at: {
+        optional: true,
+        isISO8601: {
+          options: {
+            strict: true,
+            strictSeparator: true
+          },
+          errorMessage: USERS_MESSAGES.CREATED_AT_BE_ISO8601
         }
       },
       _all: {

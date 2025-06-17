@@ -61,29 +61,30 @@ export default class ConsultantProfileRepository {
     limit,
     _sort,
     _order,
-    _specialization_1,
-    _specialization_2,
-    _gender,
-    _date_of_birth,
+    _skip,
+    specialization,
+    gender,
+    date_of_birth,
+    created_at,
+    experienceYears,
     _name_like,
     _certifications_like,
-    experienceYears_like,
-    _skip,
     _all
   }: {
     _skip: number
     limit: number
     _sort?: string
     _order?: string
-    _specialization_1?: Topic
-    _specialization_2?: Topic
-    _gender?: string
-    _date_of_birth?: string
+    specialization?: Topic[]
+    gender?: string[]
+    date_of_birth?: Date[]
+    created_at?: Date[]
+    experienceYears?: number
     _name_like?: string
     _certifications_like?: string
-    experienceYears_like?: number
     _all?: string
   }) {
+    console.log('all', _all)
     return this.model.findMany({
       select: {
         id: true,
@@ -102,29 +103,79 @@ export default class ConsultantProfileRepository {
       },
       where: _all
         ? {
-            OR: [
-              { certifications: { contains: _all.toLowerCase() } },
-              { user: { name: { contains: _all.toLowerCase() } } }
-            ],
-            specialization_1: _specialization_1,
-            specialization_2: _specialization_2,
-            experienceYears: experienceYears_like,
+            ...(specialization && {
+              OR: [{ specialization_1: { in: specialization } }, { specialization_2: { in: specialization } }]
+            }),
             user: {
-              date_of_birth: _date_of_birth ? new Date(_date_of_birth) : undefined,
-              gender: _gender,
+              ...(gender && { gender: { in: gender } }),
+              ...(date_of_birth?.length === 2 && {
+                date_of_birth: {
+                  gte: date_of_birth[0],
+                  lte: date_of_birth[1]
+                }
+              }),
+              ...(date_of_birth?.length === 1 && {
+                date_of_birth: date_of_birth[0]
+              }),
+              ...(created_at?.length === 2 && {
+                created_at: {
+                  gte: `${created_at[0].toISOString().split('T')[0]}T00:00:00.000Z`,
+                  lte: `${created_at[1].toISOString().split('T')[0]}T23:59:59.999Z`
+                }
+              }),
+              ...(created_at?.length === 1 && {
+                created_at: {
+                  gte: `${created_at[0].toISOString().split('T')[0]}T00:00:00.000Z`,
+                  lte: `${created_at[0].toISOString().split('T')[0]}T23:59:59.999Z`
+                }
+              }),
               verify: 0,
               role: 1
-            }
+            },
+            OR: [{ certifications: { contains: _all } }, { user: { name: { contains: _all } } }]
           }
         : {
-            specialization_1: _specialization_1,
-            specialization_2: _specialization_2,
-            experienceYears: experienceYears_like,
-            certifications: { contains: _certifications_like },
+            ...(specialization && {
+              OR: [{ specialization_1: { in: specialization } }, { specialization_2: { in: specialization } }]
+            }),
+            ...(experienceYears && {
+              experienceYears: {
+                equals: experienceYears
+              }
+            }),
+            ...(_certifications_like && {
+              certifications: {
+                contains: _certifications_like
+              }
+            }),
             user: {
-              date_of_birth: _date_of_birth ? new Date(_date_of_birth) : undefined,
-              name: { contains: _name_like },
-              gender: _gender,
+              ...(gender && { gender: { in: gender } }),
+              ...(date_of_birth?.length === 2 && {
+                date_of_birth: {
+                  gte: date_of_birth[0],
+                  lte: date_of_birth[1]
+                }
+              }),
+              ...(date_of_birth?.length === 1 && {
+                date_of_birth: date_of_birth[0]
+              }),
+              ...(created_at?.length === 2 && {
+                created_at: {
+                  gte: `${created_at[0].toISOString().split('T')[0]}T00:00:00.000Z`,
+                  lte: `${created_at[1].toISOString().split('T')[0]}T23:59:59.999Z`
+                }
+              }),
+              ...(created_at?.length === 1 && {
+                created_at: {
+                  gte: `${created_at[0].toISOString().split('T')[0]}T00:00:00.000Z`,
+                  lte: `${created_at[0].toISOString().split('T')[0]}T23:59:59.999Z`
+                }
+              }),
+              ...(_name_like && {
+                name: {
+                  contains: _name_like
+                }
+              }),
               verify: 0,
               role: 1
             }
@@ -140,47 +191,100 @@ export default class ConsultantProfileRepository {
   }
 
   async countConsultantsForAdmin({
-    _specialization_1,
-    _specialization_2,
-    _gender,
-    _date_of_birth,
+    specialization,
+    gender,
+    date_of_birth,
+    created_at,
+    experienceYears,
     _name_like,
     _certifications_like,
-    experienceYears_like,
     _all
   }: {
-    _specialization_1?: Topic
-    _specialization_2?: Topic
-    _gender?: string
-    _date_of_birth?: string
+    specialization?: Topic[]
+    gender?: string[]
+    date_of_birth?: Date[]
+    created_at?: Date[]
+    experienceYears?: number
     _name_like?: string
     _certifications_like?: string
-    experienceYears_like?: number
     _all?: string
   }) {
     return this.model.count({
       where: _all
         ? {
-            OR: [{ certifications: { contains: _all } }, { user: { name: { contains: _all } } }],
-            specialization_1: _specialization_1,
-            specialization_2: _specialization_2,
-            experienceYears: experienceYears_like,
+            ...(specialization && {
+              OR: [{ specialization_1: { in: specialization } }, { specialization_2: { in: specialization } }]
+            }),
             user: {
-              date_of_birth: _date_of_birth ? new Date(_date_of_birth) : undefined,
-              gender: _gender,
+              ...(gender && { gender: { in: gender } }),
+              ...(date_of_birth?.length === 2 && {
+                date_of_birth: {
+                  gte: date_of_birth[0],
+                  lte: date_of_birth[1]
+                }
+              }),
+              ...(date_of_birth?.length === 1 && {
+                date_of_birth: date_of_birth[0]
+              }),
+              ...(created_at?.length === 2 && {
+                created_at: {
+                  gte: `${created_at[0].toISOString().split('T')[0]}T00:00:00.000Z`,
+                  lte: `${created_at[1].toISOString().split('T')[0]}T23:59:59.999Z`
+                }
+              }),
+              ...(created_at?.length === 1 && {
+                created_at: {
+                  gte: `${created_at[0].toISOString().split('T')[0]}T00:00:00.000Z`,
+                  lte: `${created_at[0].toISOString().split('T')[0]}T23:59:59.999Z`
+                }
+              }),
               verify: 0,
               role: 1
-            }
+            },
+            OR: [{ certifications: { contains: _all } }, { user: { name: { contains: _all } } }]
           }
         : {
-            specialization_1: _specialization_1,
-            specialization_2: _specialization_2,
-            experienceYears: experienceYears_like,
-            certifications: { contains: _certifications_like },
+            ...(specialization && {
+              OR: [{ specialization_1: { in: specialization } }, { specialization_2: { in: specialization } }]
+            }),
+            ...(experienceYears && {
+              experienceYears: {
+                equals: experienceYears
+              }
+            }),
+            ...(_certifications_like && {
+              certifications: {
+                contains: _certifications_like
+              }
+            }),
             user: {
-              date_of_birth: _date_of_birth ? new Date(_date_of_birth) : undefined,
-              name: { contains: _name_like },
-              gender: _gender,
+              ...(gender && { gender: { in: gender } }),
+              ...(date_of_birth?.length === 2 && {
+                date_of_birth: {
+                  gte: date_of_birth[0],
+                  lte: date_of_birth[1]
+                }
+              }),
+              ...(date_of_birth?.length === 1 && {
+                date_of_birth: date_of_birth[0]
+              }),
+              ...(created_at?.length === 2 && {
+                created_at: {
+                  gte: `${created_at[0].toISOString().split('T')[0]}T00:00:00.000Z`,
+                  lte: `${created_at[1].toISOString().split('T')[0]}T23:59:59.999Z`
+                }
+              }),
+              ...(created_at?.length === 1 && {
+                created_at: {
+                  gte: `${created_at[0].toISOString().split('T')[0]}T00:00:00.000Z`,
+                  lte: `${created_at[0].toISOString().split('T')[0]}T23:59:59.999Z`
+                }
+              }),
+              ...(_name_like && {
+                name: {
+                  contains: _name_like
+                }
+              }),
               verify: 0,
               role: 1
             }

@@ -164,13 +164,13 @@ class UserRepository {
             ...(created_at?.length === 2 && {
               created_at: {
                 gte: `${created_at[0].toISOString().split('T')[0]}T00:00:00.000Z`,
-                lte: `${created_at[1].toISOString().split('T')[0]}T11:59:59.999Z`
+                lte: `${created_at[1].toISOString().split('T')[0]}T23:59:59.999Z`
               }
             }),
             ...(created_at?.length === 1 && {
               created_at: {
                 gte: `${created_at[0].toISOString().split('T')[0]}T00:00:00.000Z`,
-                lte: `${created_at[0].toISOString().split('T')[0]}T11:59:59.999Z`
+                lte: `${created_at[0].toISOString().split('T')[0]}T23:59:59.999Z`
               }
             }),
             OR: [{ name: { contains: _all } }, { email: { contains: _all } }, { phone_number: { contains: _all } }]
@@ -191,13 +191,13 @@ class UserRepository {
             ...(created_at?.length === 2 && {
               created_at: {
                 gte: `${created_at[0].toISOString().split('T')[0]}T00:00:00.000Z`,
-                lte: `${created_at[1].toISOString().split('T')[0]}T11:59:59.999Z`
+                lte: `${created_at[1].toISOString().split('T')[0]}T23:59:59.999Z`
               }
             }),
             ...(created_at?.length === 1 && {
               created_at: {
                 gte: `${created_at[0].toISOString().split('T')[0]}T00:00:00.000Z`,
-                lte: `${created_at[0].toISOString().split('T')[0]}T11:59:59.999Z`
+                lte: `${created_at[0].toISOString().split('T')[0]}T23:59:59.999Z`
               }
             }),
             ...(_name_like && {
@@ -264,13 +264,13 @@ class UserRepository {
             ...(created_at?.length === 2 && {
               created_at: {
                 gte: `${created_at[0].toISOString().split('T')[0]}T00:00:00.000Z`,
-                lte: `${created_at[1].toISOString().split('T')[0]}T11:59:59.999Z`
+                lte: `${created_at[1].toISOString().split('T')[0]}T23:59:59.999Z`
               }
             }),
             ...(created_at?.length === 1 && {
               created_at: {
                 gte: `${created_at[0].toISOString().split('T')[0]}T00:00:00.000Z`,
-                lte: `${created_at[0].toISOString().split('T')[0]}T11:59:59.999Z`
+                lte: `${created_at[0].toISOString().split('T')[0]}T23:59:59.999Z`
               }
             }),
             OR: [{ name: { contains: _all } }, { email: { contains: _all } }, { phone_number: { contains: _all } }]
@@ -291,13 +291,13 @@ class UserRepository {
             ...(created_at?.length === 2 && {
               created_at: {
                 gte: `${created_at[0].toISOString().split('T')[0]}T00:00:00.000Z`,
-                lte: `${created_at[1].toISOString().split('T')[0]}T11:59:59.999Z`
+                lte: `${created_at[1].toISOString().split('T')[0]}T23:59:59.999Z`
               }
             }),
             ...(created_at?.length === 1 && {
               created_at: {
                 gte: `${created_at[0].toISOString().split('T')[0]}T00:00:00.000Z`,
-                lte: `${created_at[0].toISOString().split('T')[0]}T11:59:59.999Z`
+                lte: `${created_at[0].toISOString().split('T')[0]}T23:59:59.999Z`
               }
             }),
             ...(_name_like && {

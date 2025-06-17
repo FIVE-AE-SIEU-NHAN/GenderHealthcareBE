@@ -155,12 +155,12 @@ export interface GetConsultantReqQuery extends ParsedQs {
   _limit: string
   _sort?: string
   _order?: string
-  _specialization_1?: Topic
-  _specialization_2?: Topic
-  _gender?: string
-  _date_of_birth?: string
+  _specialization?: Topic[]
+  _gender?: string[]
+  _date_of_birth?: string[]
+  _created_at?: string[]
+  _experienceYears?: string
   _name_like?: string
   _certifications_like?: string
-  _experienceYears_like?: string
   _all?: string
 }
