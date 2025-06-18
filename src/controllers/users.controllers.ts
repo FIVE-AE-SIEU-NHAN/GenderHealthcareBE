@@ -21,7 +21,7 @@ import { ParamsDictionary } from 'express-serve-static-core'
 import emailServices from '~/services/email.services'
 import redisUtils from '~/utils/redis'
 import refreshTokenServices from '~/services/refreshToken.services'
-import { omit } from 'lodash'
+import { omit, result } from 'lodash'
 
 export const getOTPController = async (
   req: Request<ParamsDictionary, any, OTPReqBody>,
@@ -125,8 +125,10 @@ export const loginGoogleController = async (
   if (googleIDIsValid) {
     res.status(HTTP_STATUS.OK).json({
       message: USERS_MESSAGES.LOGIN_SUCCESS,
-      access_token: access_token,
-      refresh_token: refresh_token
+      result: {
+        access_token,
+        refresh_token
+      }
     })
     return
   }

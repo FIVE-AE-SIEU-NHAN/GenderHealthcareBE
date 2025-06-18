@@ -374,6 +374,12 @@ class UsersServices {
 
   async editStatusUser(id: string, status: number) {
     const user = await this.userRepository.getUserStatus(id)
+    if (!user) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.NOT_FOUND,
+        message: USERS_MESSAGES.USER_NOT_FOUND
+      })
+    }
     if (user?.verify === status) {
       throw new ErrorWithStatus({
         status: HTTP_STATUS.NOT_FOUND,
@@ -481,7 +487,8 @@ class UsersServices {
       name: consultant.user?.name,
       date_of_birth: consultant.user?.date_of_birth,
       gender: consultant.user?.gender,
-      created_at: consultant.user?.created_at
+      created_at: consultant.user?.created_at,
+      status: consultant.status
     }))
 
     const total = await this.consultantRepository.countConsultantsForAdmin({
@@ -499,6 +506,24 @@ class UsersServices {
       consultants,
       total
     }
+  }
+
+  async editStatusConsultant(id: string, status: number) {
+    const consultant = await this.consultantRepository.getConsultantStatus(id)
+    if (!consultant) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.NOT_FOUND,
+        message: USERS_MESSAGES.CONSULTANT_NOT_FOUND
+      })
+    }
+    if (consultant?.status === status) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.NOT_FOUND,
+        message: USERS_MESSAGES.CONSULTANT_ALREADY_IN_THIS_STATUS
+      })
+    }
+
+    return this.consultantRepository.updateStatusConsultant(id, status)
   }
 }
 

@@ -14,3 +14,8 @@ export enum TokenType {
   ForgotPasswordToken, // 2
   EmailVerificationToken // 3
 }
+
+export enum ConsultantStatus {
+  Active, // 0
+  Inactive // 1
+}

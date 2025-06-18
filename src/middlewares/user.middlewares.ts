@@ -9,7 +9,7 @@ import redisUtils from '~/utils/redis'
 import { verifyGoogleToken } from '~/utils/google'
 import { verifyToken } from '~/utils/jwt'
 import { validate } from '~/utils/validation'
-import { USER_ROLE, UserVerifyStatus } from '~/constants/enums'
+import { ConsultantStatus, USER_ROLE, UserVerifyStatus } from '~/constants/enums'
 import { Topic } from '@prisma/client'
 
 const nameSchema: ParamSchema = {
@@ -919,4 +919,34 @@ export const getConsultantValidator = validate(
     },
     ['query']
   )
+)
+
+export const editStatusConsultantValidator = validate(
+  checkSchema({
+    id: {
+      in: ['params'],
+      notEmpty: {
+        errorMessage: USERS_MESSAGES.USER_ID_IS_REQUIRED
+      },
+      isUUID: {
+        errorMessage: USERS_MESSAGES.USER_ID_MUST_BE_A_UUID
+      }
+    },
+    status: {
+      notEmpty: {
+        errorMessage: USERS_MESSAGES.STATUS_IS_REQUIRED
+      },
+      custom: {
+        options: async (values) => {
+          const verifyList = [ConsultantStatus.Active, ConsultantStatus.Inactive]
+          if (!verifyList.includes(parseInt(values))) {
+            throw new ErrorWithStatus({
+              status: HTTP_STATUS.BAD_REQUEST,
+              message: USERS_MESSAGES.STATUS_IS_INVALID
+            })
+          }
+        }
+      }
+    }
+  })
 )

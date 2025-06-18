@@ -5,11 +5,4 @@ import { wrapAsync } from '~/utils/handler'
 
 const adminConsultantRouter = express.Router()
 
-adminConsultantRouter.get(
-  '/get-consultant',
-  // accessTokenValidator,
-  // requireRole(USER_ROLE.Admin),
-  getConsultantValidator,
-  wrapAsync(getConsultantController)
-)
 export default adminConsultantRouter

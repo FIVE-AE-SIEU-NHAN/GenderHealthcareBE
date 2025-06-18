@@ -7,7 +7,8 @@ export default class ConsultantProfileRepository {
   async getNumberOfConsultantsByTopic(topic: Topic) {
     return prisma.consultantProfiles.count({
       where: {
-        OR: [{ specialization_1: topic }, { specialization_2: topic }]
+        OR: [{ specialization_1: topic }, { specialization_2: topic }],
+        status: 1
       }
     })
   }
@@ -99,7 +100,8 @@ export default class ConsultantProfileRepository {
             gender: true,
             created_at: true
           }
-        }
+        },
+        status: true
       },
       where: _all
         ? {
@@ -289,6 +291,20 @@ export default class ConsultantProfileRepository {
               role: 1
             }
           }
+    })
+  }
+
+  async getConsultantStatus(id: string) {
+    return this.model.findUnique({
+      where: { id },
+      select: { status: true }
+    })
+  }
+
+  async updateStatusConsultant(id: string, status: number) {
+    return this.model.update({
+      where: { id },
+      data: { status }
     })
   }
 }

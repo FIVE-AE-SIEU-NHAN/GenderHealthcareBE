@@ -1,13 +1,15 @@
 import express from 'express'
-import usersRouter from './routers/user.routers'
 import { defaultErorHandler } from './middlewares/error.middlewares'
 import redisService from './utils/redis'
 import cors from 'cors'
 import prismaService from './services/prisma.services'
-import questionRouter from './routers/question.routers'
-import adminQuestionRouter from './routers/admin/admin.question.router'
-import adminUserRoute from './routers/admin/admin.users.router'
-import adminConsultantRouter from './routers/admin/admin.consultant.router'
+import usersRouter from './routers/user/user.routers'
+import adminUserRoute from './routers/user/admin.users.router'
+import questionRouter from './routers/question/question.routers'
+import adminQuestionRouter from './routers/question/admin.question.router'
+import consultantRouter from './routers/consultant/consultant.router'
+import adminConsultantRouter from './routers/consultant/admin.consultant.router'
+import managerConsultantRouter from './routers/consultant/manager.consultant.routers'
 const app = express()
 const port = 3000
 
@@ -28,7 +30,7 @@ app.use(express.json())
 
 app.use('/user', usersRouter, adminUserRoute)
 app.use('/question', questionRouter, adminQuestionRouter)
-app.use('/consultant', adminConsultantRouter)
+app.use('/consultant', consultantRouter, adminConsultantRouter, managerConsultantRouter)
 
 // error handler
 app.use(defaultErorHandler)

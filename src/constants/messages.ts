@@ -97,6 +97,10 @@ export const USERS_MESSAGES = {
   SPECIALIZATION_2_IS_REQUIRED: 'Specialization 2 is required',
   CREATED_AT_BE_ISO8601: 'Created at must be ISO8601',
   SPECIALIZATION_IS_INVALID: 'Specialization is invalid',
+  GET_CONSULTANTS_FOR_ADMIN_SUCCESSFULLY: 'Get consultants for admin successfully',
+  CONSULTANT_NOT_FOUND: 'Consultant not found',
+  CONSULTANT_STATUS_UPDATED_SUCCESSFULLY: 'Consultant status updated successfully',
+  CONSULTANT_ALREADY_IN_THIS_STATUS: 'Consultant already in this status',
   // mail
   SEND_MAIL_FAIL: 'Send mail fail',
   SEND_MAIL_SUCCESS: 'Send mail success',
