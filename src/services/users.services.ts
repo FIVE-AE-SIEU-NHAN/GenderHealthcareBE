@@ -4,6 +4,7 @@ import {
   GetUserReqQuery,
   LoginReqBody,
   RegisterReqBody,
+  UpdateConsultantProfileReqBody,
   UpdateProfileReqBody
 } from '~/models/requests/users.requests'
 import { hashPassword } from '~/utils/crypto'
@@ -62,7 +63,7 @@ class UsersServices {
       id: user_id,
       name: payload.name,
       email: payload.email,
-      date_of_birth: payload.date_of_birth ? new Date(payload.date_of_birth) : new Date(),
+      date_of_birth: payload.date_of_birth ? new Date(payload.date_of_birth) : null,
       gender: payload.gender,
       password: payload.password ? await hashPassword(payload.password) : '',
       phone_number: payload.phone_number,
@@ -524,6 +525,24 @@ class UsersServices {
     }
 
     return this.consultantRepository.updateStatusConsultant(id, status)
+  }
+
+  async updateConsultantProfile(user_id: string, payload: UpdateConsultantProfileReqBody) {
+    const user = await this.userRepository.findUserById(user_id)
+    if (!user) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.NOT_FOUND,
+        message: USERS_MESSAGES.USER_NOT_FOUND
+      })
+    }
+
+    const consultantInfor = await this.consultantRepository.updateConsultantProfile(user_id, payload)
+
+    return consultantInfor
+  }
+
+  async getConsultantProfile(user_id: string) {
+    return await this.consultantRepository.getConsultantById(user_id)
   }
 }
 

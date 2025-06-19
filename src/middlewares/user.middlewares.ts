@@ -138,7 +138,21 @@ export const loginValidator = validate(
         },
         trim: true
       },
-      password: passwordSchema
+      password: {
+        notEmpty: {
+          errorMessage: USERS_MESSAGES.PASSWORD_IS_REQUIRED
+        },
+        isString: {
+          errorMessage: USERS_MESSAGES.PASSWORD_MUST_BE_A_STRING
+        },
+        isLength: {
+          options: {
+            min: 8,
+            max: 50
+          },
+          errorMessage: USERS_MESSAGES.PASSWORD_LENGTH_MUST_BE_FROM_8_TO_50
+        }
+      }
     },
     ['body']
   )
@@ -949,4 +963,56 @@ export const editStatusConsultantValidator = validate(
       }
     }
   })
+)
+
+export const updateConsultantProfileValidator = validate(
+  checkSchema(
+    {
+      specialization_1: {
+        optional: true,
+        custom: {
+          options: (value) => {
+            const topicList = Object.values(Topic)
+            if (!topicList.includes(value)) {
+              throw new ErrorWithStatus({
+                status: HTTP_STATUS.BAD_REQUEST,
+                message: USERS_MESSAGES.SPECIALIZATION_1_IS_INVALID
+              })
+            }
+            return true
+          }
+        }
+      },
+      specialization_2: {
+        optional: true,
+        custom: {
+          options: (value) => {
+            const topicList = Object.values(Topic)
+            if (!topicList.includes(value)) {
+              throw new ErrorWithStatus({
+                status: HTTP_STATUS.BAD_REQUEST,
+                message: USERS_MESSAGES.SPECIALIZATION_2_IS_INVALID
+              })
+            }
+            return true
+          }
+        }
+      },
+      certifications: {
+        optional: true,
+        isString: {
+          errorMessage: USERS_MESSAGES.CERTIFICATIONS_MUST_BE_A_STRING
+        },
+        trim: true
+      },
+      experienceYears: {
+        optional: true,
+        isInt: {
+          options: { min: 0 },
+          errorMessage: USERS_MESSAGES.EXPERIENCE_YEARS_MUST_BE_A_POSITIVE_NUMBER
+        }
+      }
+    },
+    ['body']
+  )
 )

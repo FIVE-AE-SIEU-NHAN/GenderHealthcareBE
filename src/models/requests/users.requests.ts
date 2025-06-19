@@ -164,3 +164,10 @@ export interface GetConsultantReqQuery extends ParsedQs {
   _certifications_like?: string
   _all?: string
 }
+
+export interface UpdateConsultantProfileReqBody {
+  specialization_1?: Topic
+  specialization_2?: Topic
+  certifications?: string
+  experienceYears?: number
+}

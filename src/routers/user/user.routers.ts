@@ -114,10 +114,10 @@ userRouter.post('/refresh-token', refreshTokenValidator, wrapAsync(refreshTokenC
 /**
  * Description: get user profile
  * Path: /user/profile
- * Method: POST
+ * Method: GET
  * Header: {Authorization: Bearer <access_token>}
  */
-userRouter.post('/profile' /*, accessTokenValidator*/, wrapAsync(getProfileController))
+userRouter.get('/profile' /*, accessTokenValidator*/, wrapAsync(getProfileController))
 
 /**
  * Description: Update user profile

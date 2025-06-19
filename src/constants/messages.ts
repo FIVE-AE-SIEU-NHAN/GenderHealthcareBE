@@ -11,14 +11,14 @@ export const USERS_MESSAGES = {
   //password
   PASSWORD_IS_REQUIRED: 'Password is required',
   PASSWORD_MUST_BE_A_STRING: 'Password must be a string',
-  PASSWORD_LENGTH_MUST_BE_FROM_8_TO_50: 'Password length must be from 8 to 50',
+  PASSWORD_LENGTH_MUST_BE_FROM_8_TO_50: 'Password length must be from 8 to 50 characters.',
   PASSWORD_MUST_BE_STRONG:
-    'Password must be at least 8 characters long and contain at least 1 lowercase letter, 1 uppercase letter, 1 number, and 1 symbol',
+    'Your password must be strong: minimum 8 characters, with at least one lowercase letter, one uppercase letter, one digit, and one special character.',
   OLD_PASSWORD_IS_INCORRECT: 'Old password is incorrect',
   //confirmPassword
   CONFIRM_PASSWORD_IS_REQUIRED: 'Confirm password is required',
   CONFIRM_PASSWORD_MUST_BE_A_STRING: 'Confirm password must be a string',
-  CONFIRM_PASSWORD_LENGTH_MUST_BE_FROM_8_TO_50: 'Confirm length must be from 8 to 50',
+  CONFIRM_PASSWORD_LENGTH_MUST_BE_FROM_8_TO_50: 'Confirm password length must be from 8 to 50 characters.',
   CONFIRM_PASSWORD_MUST_BE_STRONG:
     'Confirm password must be at least 8 characters long and contain at least 1 lowercase letter, 1 uppercase letter, 1 number, and 1 symbol',
   CONFIRM_PASSWORD_MUST_BE_THE_SAME_AS_PASSWORD: 'Confirm password must be the same as password',
@@ -101,6 +101,8 @@ export const USERS_MESSAGES = {
   CONSULTANT_NOT_FOUND: 'Consultant not found',
   CONSULTANT_STATUS_UPDATED_SUCCESSFULLY: 'Consultant status updated successfully',
   CONSULTANT_ALREADY_IN_THIS_STATUS: 'Consultant already in this status',
+  UPDATE_CONSULTANT_PROFILE_SUCCESS: 'Update consultant profile successfully',
+  GET_CONSULTANT_PROFILE_SUCCESS: 'Get consultant profile successfully',
   // mail
   SEND_MAIL_FAIL: 'Send mail fail',
   SEND_MAIL_SUCCESS: 'Send mail success',

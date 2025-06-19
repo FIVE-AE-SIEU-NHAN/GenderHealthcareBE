@@ -1,4 +1,5 @@
 import { ConsultantProfiles, Topic } from '@prisma/client'
+import { UpdateConsultantProfileReqBody } from '~/models/requests/users.requests'
 import { prisma } from '~/services/client'
 
 export default class ConsultantProfileRepository {
@@ -305,6 +306,44 @@ export default class ConsultantProfileRepository {
     return this.model.update({
       where: { id },
       data: { status }
+    })
+  }
+
+  async getConsultantById(user_id: string) {
+    return this.model.findUnique({
+      where: { user_id },
+      select: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            date_of_birth: true,
+            gender: true,
+            phone_number: true,
+            google_id: true
+          }
+        },
+        specialization_1: true,
+        specialization_2: true,
+        certifications: true,
+        experienceYears: true,
+        status: true
+      }
+    })
+  }
+
+  async updateConsultantProfile(user_id: string, payload: UpdateConsultantProfileReqBody): Promise<ConsultantProfiles> {
+    return this.model.update({
+      where: { user_id },
+      data: {
+        ...payload,
+        user: {
+          update: {
+            updated_at: new Date()
+          }
+        }
+      }
     })
   }
 }

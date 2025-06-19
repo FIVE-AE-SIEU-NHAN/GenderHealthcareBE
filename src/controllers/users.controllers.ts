@@ -14,6 +14,7 @@ import {
   RegisterReqBody,
   ResetPasswordReqBody,
   TokenPayLoad,
+  UpdateConsultantProfileReqBody,
   UpdateProfileReqBody
 } from '~/models/requests/users.requests'
 import usersServices from '~/services/users.services'
@@ -259,5 +260,42 @@ export const updateProfileController = async (
   res.status(HTTP_STATUS.OK).json({
     message: USERS_MESSAGES.UPDATE_PROFILE_SUCCESS,
     userInfor
+  })
+}
+
+export const updateConsultantProfileController = async (
+  req: Request<ParamsDictionary, any, UpdateConsultantProfileReqBody>,
+  res: Response,
+  next: NextFunction
+) => {
+  // const { user_id } = req.decode_authorization as TokenPayLoad
+  const user_id = '74e150aa-3f78-4618-b873-60f7da0b1248'
+  const payload = req.body
+  const consultantInfor = await usersServices.updateConsultantProfile(user_id, payload)
+  res.status(HTTP_STATUS.OK).json({
+    message: USERS_MESSAGES.UPDATE_CONSULTANT_PROFILE_SUCCESS,
+    consultantInfor
+  })
+}
+
+export const getConsultantProfileController = async (req: Request, res: Response, next: NextFunction) => {
+  // const { user_id } = req.decode_authorization as TokenPayLoad
+  const user_id = '74e150aa-3f78-4618-b873-60f7da0b1248'
+  const result = await usersServices.getConsultantProfile(user_id)
+
+  if (!result) {
+    throw new ErrorWithStatus({
+      status: HTTP_STATUS.NOT_FOUND,
+      message: USERS_MESSAGES.USER_NOT_FOUND
+    })
+  }
+
+  const { user, ...consultantData } = result
+  res.status(HTTP_STATUS.OK).json({
+    message: USERS_MESSAGES.GET_CONSULTANT_PROFILE_SUCCESS,
+    consultant: {
+      ...user,
+      ...consultantData
+    }
   })
 }
