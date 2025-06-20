@@ -42,7 +42,7 @@ questionRouter.get(
  */
 questionRouter.get(
   '/consultant',
-  // accessTokenValidator,
+  accessTokenValidator,
   // requireRole(USER_ROLE.Consultant),
   getQuestionValidator,
   wrapAsync(consultantQuestionsController)

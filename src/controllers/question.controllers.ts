@@ -10,7 +10,9 @@ import {
   EditStateQuestionReqBody,
   GetQuestionReqQuery
 } from '~/models/requests/question.requests'
+import { TokenPayLoad } from '~/models/requests/users.requests'
 import questionServices from '~/services/question.services'
+import usersServices from '~/services/users.services'
 import redisUtils from '~/utils/redis'
 
 export const askQuestionController = async (
@@ -70,9 +72,10 @@ export const consultantQuestionsController = async (
   res: Response,
   next: NextFunction
 ) => {
-  //   const { consultant_id } = req.decode_authorization as TokenPayLoad
-  const consultant_id = 'aad5aff6-48bc-11f0-bfde-0242ac110002'
+  const { user_id } = req.decode_authorization as TokenPayLoad
 
+  const consultant_id = await usersServices.getConsultantIdByUserId(user_id)
+  console.log('>>> ', consultant_id)
   const result = await questionServices.getConsultantQuestions(consultant_id, req.query)
 
   res.status(200).json({

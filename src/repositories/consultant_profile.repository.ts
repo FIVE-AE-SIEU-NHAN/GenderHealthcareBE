@@ -349,4 +349,10 @@ export default class ConsultantProfileRepository {
       }
     })
   }
+
+  async getConsultantByUserId(user_id: string) {
+    return this.model.findUnique({
+      where: { user_id }
+    })
+  }
 }

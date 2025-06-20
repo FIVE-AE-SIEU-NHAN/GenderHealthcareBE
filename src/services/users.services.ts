@@ -549,6 +549,17 @@ class UsersServices {
   async getConsultantByTopicAndIndex(topic: Topic, index: number) {
     return await this.consultantRepository.getConsultantIdByIndexAndTopic(index, topic)
   }
+
+  async getConsultantIdByUserId(user_id: string) {
+    const consultant = await this.consultantRepository.getConsultantByUserId(user_id)
+    if (!consultant) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.NOT_FOUND,
+        message: USERS_MESSAGES.CONSULTANT_NOT_FOUND
+      })
+    }
+    return consultant.id
+  }
 }
 
 const usersServices = new UsersServices()
