@@ -626,6 +626,7 @@ export const editStatusUserValidator = validate(
       }
     },
     status: {
+      in: ['body'],
       notEmpty: {
         errorMessage: USERS_MESSAGES.STATUS_IS_REQUIRED
       },

@@ -147,3 +147,39 @@ export const getAppointmentValidator = validate(
     ['query']
   )
 )
+
+export const editStatusAppointmentValidator = validate(
+  checkSchema({
+    id: {
+      in: ['params'],
+      notEmpty: {
+        errorMessage: APPOINTMENT_MESSAGES.USER_ID_IS_REQUIRED
+      },
+      isUUID: {
+        errorMessage: APPOINTMENT_MESSAGES.USER_ID_MUST_BE_A_UUID
+      }
+    },
+    status: {
+      in: ['body'],
+      notEmpty: {
+        errorMessage: APPOINTMENT_MESSAGES.STATUS_IS_REQUIRED
+      },
+      custom: {
+        options: async (values) => {
+          const statusList = [
+            BookingStatus.PENDING,
+            BookingStatus.ONGOING,
+            BookingStatus.COMPLETED,
+            BookingStatus.CANCELLED
+          ]
+          if (!statusList.includes(values)) {
+            throw new ErrorWithStatus({
+              status: HTTP_STATUS.BAD_REQUEST,
+              message: APPOINTMENT_MESSAGES.STATUS_IS_INVALID
+            })
+          }
+        }
+      }
+    }
+  })
+)

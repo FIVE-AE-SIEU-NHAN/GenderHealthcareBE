@@ -173,5 +173,11 @@ export const APPOINTMENT_MESSAGES = {
   START_DATE_IS_REQUIRED: 'Start date is required',
   START_DATE_BE_ISO8601: 'Start date must be ISO8601',
   END_DATE_IS_REQUIRED: 'End date is required',
-  END_DATE_BE_ISO8601: 'End date must be ISO8601'
+  END_DATE_BE_ISO8601: 'End date must be ISO8601',
+  USER_ID_IS_REQUIRED: 'User id is required',
+  USER_ID_MUST_BE_A_UUID: 'User id must be a UUID',
+  STATUS_IS_REQUIRED: 'Status is required',
+  APPOINTMENT_STATUS_UPDATED_SUCCESSFULLY: 'Appointment status updated successfully',
+  APPOINTMENT_NOT_FOUND: 'Appointment not found',
+  APPOINTMENT_ALREADY_IN_THIS_STATUS: 'Appointment already in this status'
 }

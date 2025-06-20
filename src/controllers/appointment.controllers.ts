@@ -3,7 +3,12 @@ import { ParamsDictionary } from 'express-serve-static-core'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { APPOINTMENT_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
-import { BookAppointmentReqBody, GetAppointmentReqQuery } from '~/models/requests/appointment.requests'
+import {
+  BookAppointmentReqBody,
+  EditReqQuery,
+  EditStatusUserReqBody,
+  GetAppointmentReqQuery
+} from '~/models/requests/appointment.requests'
 import appointmentServices from '~/services/appointment.services'
 import questionServices from '~/services/question.services'
 import usersServices from '~/services/users.services'
@@ -99,6 +104,19 @@ export const customerAppointmentsController = async (
   })
 }
 
-// consultant đổi trạng thái lịch hẹn
+export const editStatusAppointmentController = async (
+  req: Request<ParamsDictionary, any, EditStatusUserReqBody, EditReqQuery>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { id } = req.params
+  const { status } = req.body
+
+  await appointmentServices.editStatusAppointment(id, status)
+
+  res.status(200).json({
+    message: APPOINTMENT_MESSAGES.APPOINTMENT_STATUS_UPDATED_SUCCESSFULLY
+  })
+}
+
 // manager xem lịch hẹn của consultant
-// manager đổi trạng thái lịch hẹn

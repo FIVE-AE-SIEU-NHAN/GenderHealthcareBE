@@ -1,4 +1,7 @@
-import { TimeSlot, Topic } from '@prisma/client'
+import { BookingStatus, TimeSlot, Topic } from '@prisma/client'
+import HTTP_STATUS from '~/constants/httpStatus'
+import { APPOINTMENT_MESSAGES } from '~/constants/messages'
+import { ErrorWithStatus } from '~/models/Errors'
 import { GetAppointmentReqQuery } from '~/models/requests/appointment.requests'
 import AppointmentRepository from '~/repositories/appointment.repository'
 
@@ -49,6 +52,23 @@ class AppointmentServices {
 
   async getCustomerAppointments(user_id: string) {
     return await this.appointmentRepository.getCustomerAppointments(user_id)
+  }
+
+  async editStatusAppointment(id: string, status: BookingStatus) {
+    const appointment = await this.appointmentRepository.getAppointmentStatus(id)
+    if (!appointment) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.NOT_FOUND,
+        message: APPOINTMENT_MESSAGES.APPOINTMENT_NOT_FOUND
+      })
+    }
+    if (appointment.status === status) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.NOT_FOUND,
+        message: APPOINTMENT_MESSAGES.APPOINTMENT_ALREADY_IN_THIS_STATUS
+      })
+    }
+    return this.appointmentRepository.updateStatusAppointment(id, status)
   }
 }
 

@@ -75,4 +75,22 @@ export default class AppointmentRepository {
       }
     })
   }
+
+  async getAppointmentStatus(id: string) {
+    return this.model.findUnique({
+      where: {
+        id
+      },
+      select: {
+        status: true
+      }
+    })
+  }
+
+  async updateStatusAppointment(id: string, status: BookingStatus) {
+    return this.model.update({
+      where: { id },
+      data: { status }
+    })
+  }
 }

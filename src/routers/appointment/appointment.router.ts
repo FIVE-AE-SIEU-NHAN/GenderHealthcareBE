@@ -2,9 +2,14 @@ import express from 'express'
 import {
   bookAppointmentController,
   consultantAppointmentsController,
-  customerAppointmentsController
+  customerAppointmentsController,
+  editStatusAppointmentController
 } from '~/controllers/appointment.controllers'
-import { bookAppointmentValidator, getAppointmentValidator } from '~/middlewares/appointment.middlewares'
+import {
+  bookAppointmentValidator,
+  editStatusAppointmentValidator,
+  getAppointmentValidator
+} from '~/middlewares/appointment.middlewares'
 import { wrapAsync } from '~/utils/handler'
 
 const appointmentRouter = express.Router()
@@ -42,4 +47,18 @@ appointmentRouter.get(
   wrapAsync(customerAppointmentsController)
 )
 
+/**
+ * Description: Edit appointment status
+ * Path: appointment/:id/edit-status
+ * Method: PATCH
+ * Parameters: { id: string }
+ * Body: { status: BookingStatus }
+ */
+appointmentRouter.patch(
+  '/:id/edit-status',
+  // accessTokenValidator,
+  // requireRole(USER_ROLE.Consultant, USER_ROLE.Manager),
+  editStatusAppointmentValidator,
+  wrapAsync(editStatusAppointmentController)
+)
 export default appointmentRouter
