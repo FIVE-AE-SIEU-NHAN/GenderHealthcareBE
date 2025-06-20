@@ -119,4 +119,16 @@ export const editStatusAppointmentController = async (
   })
 }
 
+export const managerAppointmentsController = async (
+  req: Request<ParamsDictionary, any, any, GetAppointmentReqQuery>,
+  res: Response,
+  next: NextFunction
+) => {
+  const result = await appointmentServices.getManagerAppointments(req.query)
+
+  res.status(200).json({
+    message: APPOINTMENT_MESSAGES.GET_MANAGER_APPOINTMENTS_SUCCESSFULLY,
+    result
+  })
+}
 // manager xem lịch hẹn của consultant

@@ -179,5 +179,6 @@ export const APPOINTMENT_MESSAGES = {
   STATUS_IS_REQUIRED: 'Status is required',
   APPOINTMENT_STATUS_UPDATED_SUCCESSFULLY: 'Appointment status updated successfully',
   APPOINTMENT_NOT_FOUND: 'Appointment not found',
-  APPOINTMENT_ALREADY_IN_THIS_STATUS: 'Appointment already in this status'
+  APPOINTMENT_ALREADY_IN_THIS_STATUS: 'Appointment already in this status',
+  GET_MANAGER_APPOINTMENTS_SUCCESSFULLY: 'Get manager appointments successfully'
 }

@@ -70,6 +70,27 @@ class AppointmentServices {
     }
     return this.appointmentRepository.updateStatusAppointment(id, status)
   }
+
+  async getManagerAppointments(payload: GetAppointmentReqQuery) {
+    const { _start_date, _end_date, _topic, _status } = payload
+
+    const start_day = new Date(_start_date!)
+    const end_day = new Date(_end_date!)
+    const topic = Array.isArray(_topic) ? _topic : _topic ? [_topic] : undefined
+    const status = Array.isArray(_status) ? _status : _status ? [_status] : undefined
+
+    const appointments = await this.appointmentRepository.getManagerAppointments({
+      start_day,
+      end_day,
+      topic,
+      status
+    })
+
+    return {
+      appointments,
+      total: appointments.length
+    }
+  }
 }
 
 const appointmentServices = new AppointmentServices()

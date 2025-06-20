@@ -93,4 +93,30 @@ export default class AppointmentRepository {
       data: { status }
     })
   }
+
+  async getManagerAppointments({
+    start_day,
+    end_day,
+    topic,
+    status
+  }: {
+    start_day?: Date
+    end_day?: Date
+    topic?: Topic[]
+    status?: BookingStatus[]
+  }) {
+    return this.model.findMany({
+      where: {
+        ...(topic && { topic: { in: topic } }),
+        ...(status && { status: { in: status } }),
+        ...(start_day &&
+          end_day && {
+            created_at: {
+              gte: `${start_day.toISOString().split('T')[0]}T00:00:00.000Z`,
+              lte: `${end_day.toISOString().split('T')[0]}T23:59:59.999Z`
+            }
+          })
+      }
+    })
+  }
 }

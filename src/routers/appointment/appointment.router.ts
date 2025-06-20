@@ -3,7 +3,8 @@ import {
   bookAppointmentController,
   consultantAppointmentsController,
   customerAppointmentsController,
-  editStatusAppointmentController
+  editStatusAppointmentController,
+  managerAppointmentsController
 } from '~/controllers/appointment.controllers'
 import {
   bookAppointmentValidator,
@@ -23,6 +24,18 @@ const appointmentRouter = express.Router()
 appointmentRouter.post('/book', bookAppointmentValidator, wrapAsync(bookAppointmentController))
 
 /**
+ * Description: Get appointments for customer
+ * Path: appointment/customer
+ * Method: GET
+ */
+appointmentRouter.get(
+  '/customer',
+  // accessTokenValidator,
+  // requireRole(USER_ROLE.User),
+  wrapAsync(customerAppointmentsController)
+)
+
+/**
  * Description: Get appointments for consultant
  * Path: appointment/customer
  * Method: GET
@@ -33,18 +46,6 @@ appointmentRouter.get(
   // requireRole(USER_ROLE.User),
   getAppointmentValidator,
   wrapAsync(consultantAppointmentsController)
-)
-
-/**
- * Description: Get appointments for customer
- * Path: appointment/customer
- * Method: GET
- */
-appointmentRouter.get(
-  '/customer',
-  // accessTokenValidator,
-  // requireRole(USER_ROLE.User),
-  wrapAsync(customerAppointmentsController)
 )
 
 /**
@@ -61,4 +62,18 @@ appointmentRouter.patch(
   editStatusAppointmentValidator,
   wrapAsync(editStatusAppointmentController)
 )
+
+/**
+ * Description: Get appointments for consultant
+ * Path: appointment/customer
+ * Method: GET
+ */
+appointmentRouter.get(
+  '/manager',
+  // accessTokenValidator,
+  // requireRole(USER_ROLE.Manager),
+  getAppointmentValidator,
+  wrapAsync(managerAppointmentsController)
+)
+
 export default appointmentRouter
