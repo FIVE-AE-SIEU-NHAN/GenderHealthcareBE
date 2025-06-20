@@ -75,10 +75,10 @@ export const getQuestionValidator = validate(
               'user_id',
               'consultant_id',
               'topic',
-              'question',
-              'answer',
               'created_at',
-              'answered_at'
+              'answered_at',
+              'is_public',
+              'status'
             ]
             if (!validOrders.includes(value)) {
               throw new ErrorWithStatus({

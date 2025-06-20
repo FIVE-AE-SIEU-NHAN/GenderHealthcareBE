@@ -159,5 +159,19 @@ export const APPOINTMENT_MESSAGES = {
   CREATED_AT_BE_ISO8601: 'Created at must be ISO8601',
   TOPIC_DO_NOT_HAVE_CONSULTANT: 'Topic do not have consultant',
   BOOKING_CREATED_SUCCESSFULLY: 'Booking created successfully',
-  NO_AVAILABLE_CONSULTANT: 'No available consultant at this time slot'
+  NO_AVAILABLE_CONSULTANT: 'No available consultant at this time slot',
+  PAGE_IS_REQUIRED: 'Page is required',
+  PAGE_MUST_BE_A_POSITIVE_INTEGER: 'Page must be a positive integer',
+  LIMIT_IS_REQUIRED: 'Limit is required',
+  LIMIT_MUST_BE_A_POSITIVE_INTEGER_AND_LESS_THAN_100: 'Limit must be a positive integer and less than 100',
+  SORT_IS_REQUIRED: 'Sort is required',
+  SORT_FIELD_IS_INVALID: 'Sort field is invalid',
+  ORDER_MUST_BE_ASC_OR_DESC: 'Order must be asc or desc',
+  STATUS_IS_INVALID: 'Status is invalid',
+  GET_CUSTOMER_APPOINTMENTS_SUCCESSFULLY: 'Get customer appointments successfully',
+  GET_CONSULTANT_APPOINTMENTS_SUCCESSFULLY: 'Get consultant appointments successfully',
+  START_DATE_IS_REQUIRED: 'Start date is required',
+  START_DATE_BE_ISO8601: 'Start date must be ISO8601',
+  END_DATE_IS_REQUIRED: 'End date is required',
+  END_DATE_BE_ISO8601: 'End date must be ISO8601'
 }

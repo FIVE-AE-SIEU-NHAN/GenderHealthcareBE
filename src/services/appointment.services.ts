@@ -1,4 +1,5 @@
 import { TimeSlot, Topic } from '@prisma/client'
+import { GetAppointmentReqQuery } from '~/models/requests/appointment.requests'
 import AppointmentRepository from '~/repositories/appointment.repository'
 
 class AppointmentServices {
@@ -22,6 +23,32 @@ class AppointmentServices {
   }) {
     console.log(data)
     return this.appointmentRepository.createAppointment(data)
+  }
+
+  async getConsultantAppointments(consultant_id: string, payload: GetAppointmentReqQuery) {
+    const { _start_date, _end_date, _topic, _status } = payload
+
+    const start_day = new Date(_start_date!)
+    const end_day = new Date(_end_date!)
+    const topic = Array.isArray(_topic) ? _topic : _topic ? [_topic] : undefined
+    const status = Array.isArray(_status) ? _status : _status ? [_status] : undefined
+
+    const appointments = await this.appointmentRepository.getConsultantAppointments({
+      consultant_id,
+      start_day,
+      end_day,
+      topic,
+      status
+    })
+
+    return {
+      appointments,
+      total: appointments.length
+    }
+  }
+
+  async getCustomerAppointments(user_id: string) {
+    return await this.appointmentRepository.getCustomerAppointments(user_id)
   }
 }
 
