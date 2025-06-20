@@ -6,7 +6,7 @@ import path from 'path'
 import usersRouter from './routers/user.routers'
 import otpRouter from './routers/otp.routers'
 import blogRoutes from './routers/blog.routes'
-
+import cycleRoutes from './routers/cycle.routes';
 // Middlewares
 import { defaultErorHandler } from './middlewares/error.middlewares'
 
@@ -18,7 +18,11 @@ const app = express()
 const port = 3000
 
 // ===== CORS config =====
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173', // Thay bằng domain FE thật nếu deploy
+  credentials: true,
+  exposedHeaders: ['X-Total-Count'], // 👈 Cho phép FE đọc header này
+}));
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
@@ -35,7 +39,7 @@ app.get('/', (req, res) => {
 app.use('/user', usersRouter)
 app.use('/otp', otpRouter)
 app.use('/api/blogs', blogRoutes);
-
+app.use('/api/cycles', cycleRoutes);
 // ===== Error handler =====
 app.use(defaultErorHandler)
 

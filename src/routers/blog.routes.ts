@@ -1,5 +1,9 @@
 import express from 'express';
-import { getAllBlogs, getBlogById, createBlog, updateBlog, deleteBlog } from '../controllers/blog.controller';
+import { getAllBlogs, getBlogById, createBlog, updateBlog, deleteBlog,getBlogDetail,
+    likeBlog,
+    commentBlog,
+    getComments,getCommentLikers
+    } from '../controllers/blog.controller';
 import { wrapAsync } from '~/utils/handler'
 
 const router = express.Router();
@@ -10,4 +14,9 @@ router.post('/', wrapAsync(createBlog));
 router.put('/:id', wrapAsync(updateBlog));
 router.delete('/:id', wrapAsync(deleteBlog));
 
+router.post('/:id/view', wrapAsync(getBlogDetail));
+router.post('/:id/like', wrapAsync(likeBlog));
+router.post('/:id/comments', wrapAsync(commentBlog));
+router.get('/:id/comments', wrapAsync(getComments));
+router.get('/comments/:id/likers', wrapAsync(getCommentLikers)); 
 export default router;

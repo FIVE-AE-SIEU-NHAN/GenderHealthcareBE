@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  
 }
 
 datasource db {
@@ -8,74 +7,155 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Users {
+  id                    String              @id @map("_id") @db.VarChar(36)
+  name                  String              @db.VarChar(100)
+  email                 String              @unique @db.VarChar(255)
+  date_of_birth         DateTime?           @db.Date
+  gender                String              @db.VarChar(20)
+  password              String              @db.VarChar(255)
+  phone_number          String              @db.VarChar(255)
+  created_at            DateTime?           @default(now()) @db.DateTime(0)
+  updated_at            DateTime?           @default(now()) @db.DateTime(0)
+  forgot_password_token String              @db.VarChar(100)
+  google_id             String              @db.VarChar(100)
+  verify                Int                 @default(0)
+  role                  Int                 @default(0)
+  BlogInteractions      BlogInteractions[]
+  Blogs                 Blogs[]
+  ConsultantProfiles    ConsultantProfiles?
+  cycles                Cycle[]
+  Questions             Questions[]
+  Refresh_tokens        Refresh_tokens[]
+
+  @@map("Users")
+}
+
+model Blogs {
+  id           Int                @id @default(autoincrement())
+  userId       String?            @db.VarChar(36)
+  title        String?            @db.VarChar(255)
+  summary      String?            @db.Text
+  content      String?            @db.Text
+  section1     String?            @db.Text
+  section2     String?            @db.Text
+  mainImage    String?            @db.VarChar(255)
+  subImage     String?            @db.VarChar(255)
+  image        String?            @db.VarChar(255)
+  createdAt    DateTime?          @default(now()) @db.DateTime(0)
+  interactions BlogInteractions[]
+  user         Users?             @relation(fields: [userId], references: [id], map: "blogs_ibfk_1")
+
+  @@index([userId], map: "userId")
+  @@map("Blogs")
+}
+
+model BlogInteractions {
+  id        Int                   @id @default(autoincrement())
+  blogId    Int
+  userId    String?               @db.VarChar(36)
+  type      BlogInteractions_type
+  content   String?               @db.Text
+  parentId  Int?
+  createdAt DateTime?             @default(now()) @db.DateTime(0)
+  blog      Blogs                 @relation(fields: [blogId], references: [id], map: "BlogInteractions_ibfk_1")
+  user      Users?                @relation(fields: [userId], references: [id], map: "BlogInteractions_ibfk_2")
+  parent    BlogInteractions?     @relation("CommentReplies", fields: [parentId], references: [id], map: "BlogInteractions_ibfk_3")
+  replies   BlogInteractions[]    @relation("CommentReplies")
+
+  @@index([blogId], map: "blogId")
+  @@index([parentId], map: "parentId")
+  @@index([userId], map: "userId")
+  @@map("BlogInteractions")
+}
+
+model Cycle {
+  id              Int      @id @default(autoincrement())
+  userId          String
+  startDate       DateTime
+  cycleLength     Int      // Số ngày của chu kỳ (thường 28)
+  periodLength    Int      // Số ngày hành kinh (thường 4-7)
+  ovulationDate   DateTime
+  fertileStart    DateTime
+  fertileEnd      DateTime
+  pillReminder    DateTime
+  createdAt       DateTime @default(now())
+
+  user            Users    @relation(fields: [userId], references: [id])
+}
+
+
+
+model ConsultantProfiles {
+  id               String                               @id @map("_id") @db.VarChar(36)
+  user_id          String                               @unique(map: "user_id") @db.VarChar(36)
+  specialization_1 ConsultantProfiles_specialization_1
+  specialization_2 ConsultantProfiles_specialization_2?
+  certifications   String?                              @db.Text
+  experienceYears  Int
+  status           Int?                                 @default(1) @db.TinyInt
+  Users            Users                                @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "ConsultantProfiles_ibfk_1")
+  Questions        Questions[]
+}
+
+model Questions {
+  id                 String             @id @map("_id") @db.VarChar(36)
+  user_id            String?            @db.VarChar(36)
+  consultant_id      String             @db.VarChar(36)
+  topic              Questions_topic
+  question           String             @db.Text
+  answer             String?            @db.Text
+  is_public          Boolean?           @default(true)
+  status             Int?               @default(0) @db.TinyInt
+  created_at         DateTime?          @default(now()) @db.DateTime(0)
+  answered_at        DateTime?          @db.DateTime(0)
+  ConsultantProfiles ConsultantProfiles @relation(fields: [consultant_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_question_consultant")
+  Users              Users?             @relation(fields: [user_id], references: [id], onUpdate: NoAction, map: "fk_question_user")
+
+  @@index([consultant_id], map: "fk_question_consultant")
+  @@index([user_id], map: "fk_question_user")
+}
+
 model Refresh_tokens {
   id            String    @id @map("_id") @db.VarChar(36)
   user_id       String    @db.VarChar(36)
   refresh_token String    @db.VarChar(255)
-  created_at    DateTime? @default(now()) @db.Timestamp(0)
+  created_at    DateTime? @default(now()) @db.DateTime(0)
   Users         Users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Refresh_tokens_ibfk_1")
 
   @@index([user_id], map: "user_id")
 }
 
-model Users {
-  id                                     String           @id @map("_id") @db.VarChar(36)
-  name                                   String?          @default("") @db.VarChar(100)
-  email                                  String           @unique(map: "email") @db.VarChar(255)
-  date_of_birth                          DateTime?        @db.Date
-  gender                                 String?          @default("") @db.VarChar(20)
-  password                               String?          @default("") @db.VarChar(255)
-  created_at                             DateTime?        @default(now()) @db.Timestamp(0)
-  updated_at                             DateTime?        @default(now()) @db.Timestamp(0)
-  forgot_password_token                  String?          @default("") @db.VarChar(100)
-  google_id                              String?          @default("") @db.VarChar(100)
-  verify                                 Int?             @default(0) @db.TinyInt
-  role                                   Int?             @default(0) @db.TinyInt
-  Refresh_tokens                         Refresh_tokens[]
-  blogs                                  blogs[]
-  bookings_bookings_customer_idToUsers   bookings[]       @relation("bookings_customer_idToUsers")
-  bookings_bookings_consultant_idToUsers bookings[]       @relation("bookings_consultant_idToUsers")
+enum ConsultantProfiles_specialization_1 {
+  WOMENS_REPRODUCTIVE_HEALTH
+  CONTRACEPTION_AND_FAMILY_PLANNING
+  PREGNANCY_AND_MATERNITY_SUPPORT
+  STIS
+  SEXUAL_HEALTH_AND_GENDER_PSYCHOLOGY
+  TESTING_AND_DIAGNOSTIC_SERVICES
 }
 
-model blogs {
-  id        Int       @id @default(autoincrement())
-  userId    String?   @db.VarChar(36)
-  title     String?   @db.VarChar(255)
-  summary   String?   @db.Text
-  content   String?   @db.Text
-  section1  String?   @db.Text
-  section2  String?   @db.Text
-  mainImage String?   @db.VarChar(255)
-  subImage  String?   @db.VarChar(255)
-  image     String?   @db.VarChar(255)
-  createdAt DateTime? @default(now()) @db.DateTime(0)
-  Users     Users?    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "blogs_ibfk_1")
-
-  @@index([userId], map: "userId")
+enum ConsultantProfiles_specialization_2 {
+  WOMENS_REPRODUCTIVE_HEALTH
+  CONTRACEPTION_AND_FAMILY_PLANNING
+  PREGNANCY_AND_MATERNITY_SUPPORT
+  STIS
+  SEXUAL_HEALTH_AND_GENDER_PSYCHOLOGY
+  TESTING_AND_DIAGNOSTIC_SERVICES
 }
 
-model bookings {
-  id                                  Int              @id @default(autoincrement())
-  customer_id                         String           @db.VarChar(36)
-  consultant_id                       String           @db.VarChar(36)
-  date                                DateTime         @db.Date
-  time                                DateTime         @db.Time(0)
-  note                                String?          @db.Text
-  confirmed_at                        DateTime?        @db.DateTime(0)
-  canceled_at                         DateTime?        @db.DateTime(0)
-  canceled_by                         String?          @db.VarChar(36)
-  status                              bookings_status? @default(pending)
-  created_at                          DateTime?        @default(now()) @db.Timestamp(0)
-  updated_at                          DateTime?        @default(now()) @db.Timestamp(0)
-  Users_bookings_customer_idToUsers   Users            @relation("bookings_customer_idToUsers", fields: [customer_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "bookings_ibfk_1")
-  Users_bookings_consultant_idToUsers Users            @relation("bookings_consultant_idToUsers", fields: [consultant_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "bookings_ibfk_2")
-
-  @@index([consultant_id], map: "consultant_id")
-  @@index([customer_id], map: "customer_id")
+enum BlogInteractions_type {
+  LIKE
+  COMMENT
+  REPLY
+  VIEW
 }
 
-enum bookings_status {
-  pending
-  approved
-  rejected
+enum Questions_topic {
+  WOMENS_REPRODUCTIVE_HEALTH
+  CONTRACEPTION_AND_FAMILY_PLANNING
+  PREGNANCY_AND_MATERNITY_SUPPORT
+  STIS
+  SEXUAL_HEALTH_AND_GENDER_PSYCHOLOGY
+  TESTING_AND_DIAGNOSTIC_SERVICES
 }

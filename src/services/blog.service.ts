@@ -16,47 +16,65 @@ export interface Blog {
   createdAt: Date | null;
 }
 
-// Định nghĩa kiểu trả về có authorName đã tỉa sẵn
 export interface BlogWithAuthor extends Blog {
   authorName: string;
+  authorEmail?: string | null;
 }
 
-// Lấy tất cả blog, trả về BlogWithAuthor
-export const getAllBlogs = async (): Promise<BlogWithAuthor[]> => {
-  const blogs = await prisma.blogs.findMany({
-    orderBy: { createdAt: 'desc' },
+export const getAllBlogs = async (
+  page: number,
+  limit: number,
+  search: string = '',
+  sortBy: 'createdAt' | 'title' = 'createdAt',
+  sortOrder: 'asc' | 'desc' = 'desc'
+): Promise<{ blogs: BlogWithAuthor[]; total: number }> => {
+  const skip = (page - 1) * limit;
+
+  const allBlogs = await prisma.blogs.findMany({
     include: {
-      Users: {
+      user: {
         select: { name: true },
       },
     },
+    orderBy: {
+      [sortBy]: sortOrder,
+    },
   });
-  return blogs.map((blog: Blog & { Users?: { name: string | null } | null }) => ({
-    id: blog.id,
-    userId: blog.userId,
-    title: blog.title,
-    summary: blog.summary,
-    content: blog.content,
-    section1: blog.section1,
-    section2: blog.section2,
-    mainImage: blog.mainImage,
-    subImage: blog.subImage,
-    image: blog.image,
-    createdAt: blog.createdAt,
-    authorName: blog.Users?.name ?? "Không rõ",
-  }));
+
+  const filteredBlogs = allBlogs.filter((blog) =>
+    blog.title?.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const paginatedBlogs = filteredBlogs.slice(skip, skip + limit);
+
+  return {
+    blogs: paginatedBlogs.map((blog) => ({
+      id: blog.id,
+      userId: blog.userId,
+      title: blog.title,
+      summary: blog.summary,
+      content: blog.content,
+      section1: blog.section1,
+      section2: blog.section2,
+      mainImage: blog.mainImage,
+      subImage: blog.subImage,
+      image: blog.image,
+      createdAt: blog.createdAt,
+      authorName: blog.user?.name ?? 'Không rõ',
+    })),
+    total: filteredBlogs.length,
+  };
 };
 
-// Lấy blog theo id, trả về BlogWithAuthor hoặc null
-export const getBlogById = async (id: number): Promise<(BlogWithAuthor & { authorEmail?: string | null }) | null> => {
+
+export const getBlogById = async (
+  id: number
+): Promise<(BlogWithAuthor & { authorEmail?: string | null }) | null> => {
   const blog = await prisma.blogs.findUnique({
     where: { id },
     include: {
-      Users: {
-        select: {
-          name: true,
-          email: true,
-        },
+      user: {
+        select: { name: true, email: true },
       },
     },
   });
@@ -75,12 +93,10 @@ export const getBlogById = async (id: number): Promise<(BlogWithAuthor & { autho
     subImage: blog.subImage,
     image: blog.image,
     createdAt: blog.createdAt,
-    authorName: blog.Users?.name ?? "Không rõ",
-    authorEmail: blog.Users?.email ?? null,
+    authorName: blog.user?.name ?? 'Không rõ',
+    authorEmail: blog.user?.email ?? null,
   };
 };
-
-// Các hàm create, update, delete giữ nguyên
 
 export const createBlog = async (data: {
   userId?: string;
@@ -92,14 +108,28 @@ export const createBlog = async (data: {
   mainImage?: string;
   subImage?: string;
   image?: string;
+  authorName?: string;
+  authorEmail?: string;
 }) => {
-  return await prisma.blogs.create({ data });
+  const createPayload: any = { ...data };
+
+  delete createPayload.id;
+  delete createPayload.authorName;
+  delete createPayload.authorEmail;
+
+  if (createPayload.userId) {
+    createPayload.user = { connect: { id: createPayload.userId } };
+    delete createPayload.userId;
+  }
+
+  return await prisma.blogs.create({ data: createPayload });
 };
 
 export const updateBlog = async (
   id: number,
   data: Partial<{
-    userId?: string;
+    id?: number;
+    userId?: string | null;
     title?: string;
     summary?: string;
     content?: string;
@@ -108,16 +138,35 @@ export const updateBlog = async (
     mainImage?: string;
     subImage?: string;
     image?: string;
+    authorName?: string;
+    authorEmail?: string;
   }>
 ) => {
+  const updatePayload: any = { ...data };
+
+  delete updatePayload.id;
+  delete updatePayload.authorName;
+  delete updatePayload.authorEmail;
+
+  if (Object.prototype.hasOwnProperty.call(updatePayload, 'userId')) {
+    const userIdValue = updatePayload.userId;
+    delete updatePayload.userId;
+
+    if (userIdValue === null) {
+      updatePayload.user = { disconnect: true };
+    } else if (userIdValue !== undefined && userIdValue !== '') {
+      updatePayload.user = { connect: { id: userIdValue } };
+    } else {
+      updatePayload.user = { disconnect: true };
+    }
+  }
+
   return await prisma.blogs.update({
     where: { id },
-    data,
+    data: updatePayload,
   });
 };
 
 export const deleteBlog = async (id: number) => {
-  return await prisma.blogs.delete({
-    where: { id },
-  });
+  return await prisma.blogs.delete({ where: { id } });
 };
