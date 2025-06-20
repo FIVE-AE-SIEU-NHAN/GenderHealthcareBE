@@ -8,8 +8,8 @@ import adminUserRoute from './routers/user/admin.users.router'
 import questionRouter from './routers/question/question.routers'
 import adminQuestionRouter from './routers/question/admin.question.router'
 import consultantRouter from './routers/consultant/consultant.router'
-import adminConsultantRouter from './routers/consultant/admin.consultant.router'
 import managerConsultantRouter from './routers/consultant/manager.consultant.routers'
+import appointmentRouter from './routers/appointment/appointment.router'
 const app = express()
 const port = 3000
 
@@ -30,7 +30,8 @@ app.use(express.json())
 
 app.use('/user', usersRouter, adminUserRoute)
 app.use('/question', questionRouter, adminQuestionRouter)
-app.use('/consultant', consultantRouter, adminConsultantRouter, managerConsultantRouter)
+app.use('/consultant', consultantRouter, managerConsultantRouter)
+app.use('/appointment', appointmentRouter)
 
 // error handler
 app.use(defaultErorHandler)

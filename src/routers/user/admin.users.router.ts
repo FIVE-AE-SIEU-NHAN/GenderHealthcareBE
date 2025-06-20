@@ -4,7 +4,12 @@ import {
   editStatusUserController,
   getUsersController
 } from '~/controllers/admin/admin.users.controller'
-import { createUserValidator, editStatusUserValidator, getUsersValidator } from '~/middlewares/user.middlewares'
+import {
+  accessTokenValidator,
+  createUserValidator,
+  editStatusUserValidator,
+  getUsersValidator
+} from '~/middlewares/user.middlewares'
 import { wrapAsync } from '~/utils/handler'
 
 const adminUserRoute = express.Router()
@@ -32,7 +37,7 @@ adminUserRoute.get(
  */
 adminUserRoute.patch(
   '/:id/edit-status',
-  // accessTokenValidator,
+  accessTokenValidator,
   // requireRole(USER_ROLE.Admin),
   editStatusUserValidator,
   wrapAsync(editStatusUserController)

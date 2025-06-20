@@ -1,6 +1,5 @@
 import { Topic } from '@prisma/client'
 import { checkSchema } from 'express-validator'
-import _, { isBoolean } from 'lodash'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { QUESTIONS_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'

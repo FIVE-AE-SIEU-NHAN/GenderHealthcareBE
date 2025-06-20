@@ -146,25 +146,9 @@ export const logoutController = async (
   res: Response,
   next: NextFunction
 ) => {
-  console.log('144.users.controllers.ts', req.decode_authorization, req.decode_refresh_token)
-  const { refresh_token } = req.body
+  const { user_id } = req.decode_refresh_token as TokenPayLoad
 
-  const { user_id: user_id_at } = req.decode_authorization as TokenPayLoad
-  const { user_id: user_id_rf } = req.decode_refresh_token as TokenPayLoad
-
-  console.log('user_id_at', user_id_at)
-  console.log('user_id_rf', user_id_rf)
-  // kiểm tra access token và refresh token có cùng user_id hay không
-  if (user_id_at != user_id_rf) {
-    throw new ErrorWithStatus({
-      status: HTTP_STATUS.UNAUTHORIZED, // 401
-      message: USERS_MESSAGES.REFRESH_TOKEN_IS_INVALID
-    })
-  }
-  // kiểm tra refresh token có tồn tại trong db hay không
-  await refreshTokenServices.checkRefreshTokenExist(refresh_token)
-  // nếu có thì xóa refresh token trong db
-  await usersServices.logout(refresh_token)
+  await usersServices.logout(user_id)
   res.status(HTTP_STATUS.OK).json({
     message: USERS_MESSAGES.LOGOUT_SUCCESS
   })
@@ -224,7 +208,6 @@ export const refreshTokenController = async (
 ) => {
   const { user_id } = req.decode_refresh_token as TokenPayLoad
   const { refresh_token } = req.body
-  await refreshTokenServices.checkRefreshToken(user_id, refresh_token)
 
   const result = await refreshTokenServices.refreshToken(user_id, refresh_token)
   res.status(HTTP_STATUS.OK).json({

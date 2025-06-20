@@ -26,12 +26,12 @@ class RedisUtils {
 
   async saveOTP({ email }: OTPReqBody) {
     const otp = generateOTP()
-    await client.set(`${otp}:${email}`, otp, { EX: Number(process.env.REDIS_OTP_TOKEN_TTL) })
+    await client.set(`otp:${email}`, otp, { EX: Number(process.env.REDIS_OTP_TOKEN_TTL) })
     return otp
   }
 
   async verifyOTP(email: string, otp: string) {
-    const key = `${otp}:${email}`
+    const key = `$otp:${email}`
 
     // Kiểm tra OTP có tồn tại và đúng không
     const storedOTP = await client.get(key)
@@ -77,6 +77,33 @@ class RedisUtils {
     const index = (indexInRedis - 1) % numberOfConsultants
 
     return index
+  }
+
+  async saveRefreshToken(user_id: string, token: string) {
+    const key = `refresh_token:${user_id}`
+    // Xóa token cũ nếu có
+    await client.del(key)
+    // Lưu token mới với TTL từ biến môi trường
+    await client.set(key, token, { EX: Number(process.env.REDIS_REFRESH_TOKEN_TTL) })
+  }
+
+  async deleteRefreshToken(user_id: string) {
+    const key = `refresh_token:${user_id}`
+    await client.del(key)
+  }
+
+  async verifyRefreshToken(user_id: string, token: string) {
+    const key = `refresh_token:${user_id}`
+    const storedToken = await client.get(key)
+
+    if (!storedToken || storedToken !== token) {
+      await client.del(key)
+      return false
+    }
+
+    // Token hợp lệ - xóa token sau khi đã sử dụng thành công
+    await client.del(key)
+    return true
   }
 }
 

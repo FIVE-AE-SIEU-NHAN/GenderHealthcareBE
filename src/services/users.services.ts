@@ -80,7 +80,7 @@ class UsersServices {
       this.signRefreshToken(user_id.toString(), USER_ROLE.User)
     ])
 
-    await refreshTokenServices.createRefreshToken(user_id, refresh_token)
+    await redisUtils.saveRefreshToken(user_id.toString(), refresh_token)
 
     return {
       access_token,
@@ -127,7 +127,7 @@ class UsersServices {
       this.signRefreshToken(user_id, user!.role as USER_ROLE)
     ])
 
-    await refreshTokenServices.createRefreshToken(user_id, refresh_token)
+    await redisUtils.saveRefreshToken(user_id.toString(), refresh_token)
 
     return {
       access_token,
@@ -164,7 +164,7 @@ class UsersServices {
         this.signRefreshToken(user.id, user.role as USER_ROLE)
       ])
 
-      await refreshTokenServices.createRefreshToken(user.id, refresh_token)
+      await redisUtils.saveRefreshToken(user.id.toString(), refresh_token)
 
       return {
         haveAccount: true,
@@ -182,7 +182,7 @@ class UsersServices {
         this.signRefreshToken(user.id, user.role as USER_ROLE)
       ])
 
-      await refreshTokenServices.createRefreshToken(user.id, refresh_token)
+      await redisUtils.saveRefreshToken(user.id.toString(), refresh_token)
 
       return {
         haveAccount: true,
@@ -223,7 +223,7 @@ class UsersServices {
       this.signRefreshToken(user_id, user.role as USER_ROLE)
     ])
 
-    await refreshTokenServices.createRefreshToken(user_id, refresh_token)
+    await redisUtils.saveRefreshToken(user_id.toString(), refresh_token)
 
     return {
       access_token,
@@ -231,8 +231,9 @@ class UsersServices {
     }
   }
 
-  async logout(refresh_token: string) {
-    await refreshTokenServices.deleteRefreshToken(refresh_token)
+  async logout(user_id: string) {
+    await redisUtils.deleteRefreshToken(user_id)
+
     return {
       message: USERS_MESSAGES.LOGOUT_SUCCESS
     }

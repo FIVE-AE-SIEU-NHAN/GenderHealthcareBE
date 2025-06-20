@@ -7,17 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Refresh_tokens {
-  id            String    @id @map("_id") @db.VarChar(36)
-  user_id       String    @db.VarChar(36)
-  refresh_token String    @db.VarChar(255) @unique
-  created_at    DateTime? @default(now()) @db.Timestamp(0)
-  user         Users     @relation(fields: [user_id], references: [id], onDelete: Cascade)
-
-  @@index([user_id], map: "idx_user_id")
-  @@index([refresh_token], map: "idx_refresh_token") 
-}
-
 model Users {
   id                    String    @id @map("_id") @db.VarChar(36)
   name                  String?   @default("") @db.VarChar(100)
@@ -33,9 +22,9 @@ model Users {
   verify                Int?      @default(0) @db.TinyInt
   role                  Int?      @default(0) @db.TinyInt
 
-  Refresh_tokens        Refresh_tokens[]
   ConsultantProfiles     ConsultantProfiles?
   Questions             Questions[]
+  Appointments  Appointments[]
 
   @@index([google_id], map: "idx_google_id")
   @@index([forgot_password_token], map: "idx_forgot_token")
@@ -62,6 +51,7 @@ model ConsultantProfiles {
   user             Users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   Questions        Questions[]
+  Appointments  Appointments[]
 }
 
 model Questions {
@@ -79,4 +69,36 @@ model Questions {
 
   user           Users?   @relation(fields: [user_id], references: [id], onDelete: SetNull)
   consultant     ConsultantProfiles @relation(fields: [consultant_id], references: [id], onDelete: Cascade)
+}
+
+enum BookingStatus {
+  PENDING
+  ONGOING
+  COMPLETED
+  CANCELLED
+}
+
+enum TimeSlot {
+  SLOT_08_10
+  SLOT_10_12
+  SLOT_13_15
+  SLOT_15_17
+}
+
+
+model Appointments {
+  id           String   @id @map("_id") @db.VarChar(36)
+  user_id       String   @db.VarChar(36)
+  consultant_id String   @db.VarChar(36)
+  topic         Topic
+
+  booking_date  DateTime
+  time_slot     TimeSlot
+
+  created_at    DateTime @default(now())
+  status        BookingStatus @default(PENDING)
+  socket_room_id String? @db.VarChar(100)
+
+  user       Users             @relation(fields: [user_id], references: [id])
+  consultant ConsultantProfiles @relation(fields: [consultant_id], references: [id])
 }

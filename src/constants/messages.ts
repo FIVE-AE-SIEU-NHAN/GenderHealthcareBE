@@ -148,3 +148,12 @@ export const QUESTIONS_MESSAGES = {
   QUESTION_NOT_FOUNDOR_OR_NOT_PUBLIC: 'Question not found or not public',
   STATUS_IS_INVALID: 'Status is invalid'
 }
+
+export const APPOINTMENT_MESSAGES = {
+  TOPIC_IS_REQUIRED: 'Topic is required',
+  TOPIC_IS_INVALID: 'Topic is invalid',
+  BOOKING_DATE_IS_REQUIRED: 'Booking date is required',
+  BOOKING_DATE_MUST_BE_A_DATE: 'Booking date must be a date',
+  TIME_SLOT_IS_REQUIRED: 'Time slot is required',
+  TIME_SLOT_IS_INVALID: 'Time slot is invalid'
+}

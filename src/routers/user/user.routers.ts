@@ -68,7 +68,6 @@ userRouter.post('/login-google', loginGoogleValidator, wrapAsync(loginGoogleCont
  * Description: Logout
  * Path: /user/logout
  * Method: POST
- * Header: {Authorization: Bearer <access_token>}
  * Body: {refresh_token: string}
  */
 userRouter.post('/logout', logoutValidator, wrapAsync(logoutController))
