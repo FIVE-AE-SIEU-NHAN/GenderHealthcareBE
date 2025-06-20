@@ -105,6 +105,28 @@ class RedisUtils {
     await client.del(key)
     return true
   }
+
+  async getIndexNextConsultantForBookingAppointment(topic: string, numberOfConsultants: number) {
+    const redisKey = `consultant_booking_appointment_index:${topic}`
+
+    // mỗi ngày reset index
+    const ttl = await client.ttl(redisKey)
+    if (ttl === -1) {
+      await client.expire(redisKey, Number(process.env.REDIS_GET_NEXT_CONSULTANT_TTL))
+    }
+    // Tăng chỉ số index trong Redis
+    const indexInRedis = await client.incr(redisKey) // 1
+    // Tính vị trí consultant
+    const index = (indexInRedis - 1) % numberOfConsultants
+
+    return index
+  }
+
+  async setNextConsultantIndex(topic: string, index: number) {
+    const redisKey = `consultant_booking_appointment_index:${topic}`
+    // Lưu index mới với TTL từ biến môi trường
+    await client.set(redisKey, index, { EX: Number(process.env.REDIS_GET_NEXT_CONSULTANT_TTL) })
+  }
 }
 
 const redisUtils = new RedisUtils()

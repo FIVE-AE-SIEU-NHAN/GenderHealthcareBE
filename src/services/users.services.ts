@@ -545,6 +545,10 @@ class UsersServices {
   async getConsultantProfile(user_id: string) {
     return await this.consultantRepository.getConsultantById(user_id)
   }
+
+  async getConsultantByTopicAndIndex(topic: Topic, index: number) {
+    return await this.consultantRepository.getConsultantIdByIndexAndTopic(index, topic)
+  }
 }
 
 const usersServices = new UsersServices()

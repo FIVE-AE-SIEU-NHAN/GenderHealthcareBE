@@ -25,11 +25,12 @@ export const bookAppointmentValidator = validate(
         }
       },
       booking_date: {
-        notEmpty: {
-          errorMessage: APPOINTMENT_MESSAGES.BOOKING_DATE_IS_REQUIRED
-        },
-        isDate: {
-          errorMessage: APPOINTMENT_MESSAGES.BOOKING_DATE_MUST_BE_A_DATE
+        isISO8601: {
+          options: {
+            strict: true,
+            strictSeparator: true
+          },
+          errorMessage: APPOINTMENT_MESSAGES.CREATED_AT_BE_ISO8601
         }
       },
       time_slot: {

@@ -155,5 +155,9 @@ export const APPOINTMENT_MESSAGES = {
   BOOKING_DATE_IS_REQUIRED: 'Booking date is required',
   BOOKING_DATE_MUST_BE_A_DATE: 'Booking date must be a date',
   TIME_SLOT_IS_REQUIRED: 'Time slot is required',
-  TIME_SLOT_IS_INVALID: 'Time slot is invalid'
+  TIME_SLOT_IS_INVALID: 'Time slot is invalid',
+  CREATED_AT_BE_ISO8601: 'Created at must be ISO8601',
+  TOPIC_DO_NOT_HAVE_CONSULTANT: 'Topic do not have consultant',
+  BOOKING_CREATED_SUCCESSFULLY: 'Booking created successfully',
+  NO_AVAILABLE_CONSULTANT: 'No available consultant at this time slot'
 }

@@ -9,7 +9,10 @@ export default class ConsultantProfileRepository {
     return prisma.consultantProfiles.count({
       where: {
         OR: [{ specialization_1: topic }, { specialization_2: topic }],
-        status: 1
+        status: 1,
+        user: {
+          verify: 0
+        }
       }
     })
   }
