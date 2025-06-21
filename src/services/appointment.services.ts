@@ -91,6 +91,14 @@ class AppointmentServices {
       total: appointments.length
     }
   }
+
+  // async checkValidBookingTime(bookingId: string, userId: string) {
+  //   const booking = await this.appointmentRepository.checkAppointmentExists(bookingId, userId)
+  //   if (!booking || booking.userId !== userId) return false
+
+  //   const now = new Date()
+  //   return isAfter(now, booking.startTime) && isBefore(now, booking.endTime)
+  // }
 }
 
 const appointmentServices = new AppointmentServices()

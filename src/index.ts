@@ -12,47 +12,18 @@ import managerConsultantRouter from './routers/consultant/manager.consultant.rou
 import appointmentRouter from './routers/appointment/appointment.router'
 import { createServer } from 'http'
 import { Server } from 'socket.io'
+import initChatSocket from './socket/chat.socket'
 
-const app = express()
 const port = 3000
+const app = express()
+const serverHttp = createServer(app)
 
-// const server = createServer(app)
-// const io = new Server(server, {
-//   cors: { origin: '*' }
-// })
-
-// console.log('🚀 Initializing Socket.IO...')
-// io.on('connection', (socket) => {
-//   console.log('✅ Client connected:', socket.id)
-
-//   socket.on('join_room', (roomId) => {
-//     socket.join(roomId)
-
-//     const room = io.sockets.adapter.rooms.get(roomId)
-//     const numClients = room ? room.size : 0
-
-//     console.log(`🧑‍💼 Client ${socket.id} joined room ${roomId}. Total: ${numClients}`)
-
-//     io.to(roomId).emit('room_status', {
-//       roomId,
-//       clients: numClients
-//     })
-//   })
-
-//   socket.on('send_message', ({ roomId, message }) => {
-//     console.log('📨 Message received from', socket.id, ':', message)
-
-//     io.to(roomId).emit('receive_message', {
-//       message,
-//       from: socket.id,
-//       timestamp: new Date().toISOString()
-//     })
-//   })
-
-//   socket.on('disconnect', () => {
-//     console.log('❌ Client disconnected:', socket.id)
-//   })
-// })
+// Khởi tạo Socket.IO server
+const io = new Server(serverHttp, {
+  cors: {
+    origin: '*'
+  }
+})
 
 // cấu hình cors
 app.use(
@@ -74,9 +45,12 @@ app.use('/question', questionRouter, adminQuestionRouter)
 app.use('/consultant', consultantRouter, managerConsultantRouter)
 app.use('/appointment', appointmentRouter)
 
+// socket.io
+initChatSocket(io)
+
 // error handler
 app.use(defaultErorHandler)
 
-app.listen(port, () => {
+serverHttp.listen(port, () => {
   console.log(`PROJECT GenderHealthcareBE OPEN ON PORT: ${port}`)
 })

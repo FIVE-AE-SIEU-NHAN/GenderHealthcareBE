@@ -119,4 +119,8 @@ export default class AppointmentRepository {
       }
     })
   }
+
+  async checkValidBookingTime(bookingId: string, userId: string) {
+    const booking = await prisma.appointments.findUnique({ where: { id: bookingId } })
+  }
 }

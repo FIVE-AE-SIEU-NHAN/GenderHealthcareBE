@@ -92,7 +92,8 @@ export default class QuestionRepository {
         topic: true,
         question: true,
         answer: true,
-        created_at: true
+        created_at: true,
+        status: true
       }
     })
   }
