@@ -367,7 +367,6 @@ export const refreshTokenValidator = validate(
               })
               ;(req as Request).decode_refresh_token = decode_refresh_token
             } catch (error) {
-              console.log((error as JsonWebTokenError).message)
               throw new ErrorWithStatus({
                 status: HTTP_STATUS.UNAUTHORIZED,
                 message: capitalize((error as JsonWebTokenError).message)

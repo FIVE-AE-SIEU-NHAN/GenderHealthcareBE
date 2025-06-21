@@ -1,23 +1,22 @@
 import { ErrorWithStatus } from '~/models/Errors'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { USERS_MESSAGES } from '~/constants/messages'
-import { signToken } from '~/utils/jwt'
-import { TokenType } from '~/constants/enums'
+import { signToken, verifyToken } from '~/utils/jwt'
+import { TokenType, USER_ROLE } from '~/constants/enums'
 import redisUtils from '~/utils/redis'
 
 class RefreshTokenServices {
-  // chữ ký access token và refresh token
-  private signAccessToken(user_id: string) {
+  private signAccessToken(user_id: string, role: USER_ROLE) {
     return signToken({
-      payload: { user_id, token_type: TokenType.AccessToken },
+      payload: { user_id, role, token_type: TokenType.AccessToken },
       privateKey: process.env.JWT_SECRET_ACCESS_TOKEN as string,
       options: { expiresIn: Number(process.env.ACCESS_TOKEN_EXPIRE_IN) }
     })
   }
 
-  private signRefreshToken(user_id: string) {
+  private signRefreshToken(user_id: string, role: USER_ROLE) {
     return signToken({
-      payload: { user_id, token_type: TokenType.RefreshToken },
+      payload: { user_id, role, token_type: TokenType.RefreshToken },
       privateKey: process.env.JWT_SECRET_REFRESH_TOKEN as string,
       options: { expiresIn: Number(process.env.REFRESH_TOKEN_EXPIRE_IN) }
     })
@@ -25,6 +24,11 @@ class RefreshTokenServices {
 
   async refreshToken(user_id: string, refresh_token: string) {
     const result = await redisUtils.verifyRefreshToken(user_id, refresh_token)
+
+    const decode_authorization = await verifyToken({
+      token: refresh_token,
+      privateKey: process.env.JWT_SECRET_REFRESH_TOKEN as string
+    })
 
     if (!result) {
       throw new ErrorWithStatus({
@@ -35,8 +39,8 @@ class RefreshTokenServices {
 
     // nếu hợp lệ thì tạo access token mới
     const [new_access_token, new_refresh_token] = await Promise.all([
-      this.signAccessToken(user_id),
-      this.signRefreshToken(user_id)
+      this.signAccessToken(user_id, decode_authorization.role),
+      this.signRefreshToken(user_id, decode_authorization.role)
     ])
 
     await redisUtils.saveRefreshToken(user_id.toString(), new_refresh_token)

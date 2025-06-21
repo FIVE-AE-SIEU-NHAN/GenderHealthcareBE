@@ -75,7 +75,7 @@ export const consultantQuestionsController = async (
   const { user_id } = req.decode_authorization as TokenPayLoad
 
   const consultant_id = await usersServices.getConsultantIdByUserId(user_id)
-  console.log('>>> ', consultant_id)
+
   const result = await questionServices.getConsultantQuestions(consultant_id, req.query)
 
   res.status(200).json({
