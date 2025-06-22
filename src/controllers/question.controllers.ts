@@ -7,7 +7,6 @@ import {
   AnswerQuestionReqBody,
   AskQuestionReqBody,
   EditReqQuery,
-  EditStateQuestionReqBody,
   GetQuestionReqQuery
 } from '~/models/requests/question.requests'
 import { TokenPayLoad } from '~/models/requests/users.requests'

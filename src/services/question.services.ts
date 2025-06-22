@@ -155,7 +155,7 @@ class QuestionServices {
   }
 
   async getManagerQuestions(payload: GetQuestionReqQuery) {
-    const { _page, _limit, _sort, _order, _topic, _status, _question_like, _answer_like, _all } = payload
+    const { _page, _limit, _sort, _order, _topic, _status, _created_at, _question_like, _answer_like, _all } = payload
     const page = parseInt(_page as string, 10) || 1
     const limit = parseInt(_limit as string, 10) || 10
     const _skip = (page - 1) * limit
@@ -163,12 +163,19 @@ class QuestionServices {
     const topic = Array.isArray(_topic) ? _topic : _topic ? [_topic] : undefined
     const status = Array.isArray(_status) ? _status.map((v) => parseInt(v)) : _status ? [parseInt(_status)] : undefined
 
+    const created_at = Array.isArray(_created_at)
+      ? _created_at.map((created_at) => new Date(created_at)).sort((a, b) => a.getTime() - b.getTime())
+      : _created_at
+        ? [new Date(_created_at)]
+        : undefined
+
     const questions = await this.questionRepository.getManagerQuestions({
       limit,
       _sort,
       _order,
       topic,
       status,
+      created_at,
       _question_like,
       _answer_like,
       _skip,
@@ -178,6 +185,7 @@ class QuestionServices {
     const total = await this.questionRepository.countManagerQuestions({
       topic,
       status,
+      created_at,
       _question_like,
       _answer_like,
       _all

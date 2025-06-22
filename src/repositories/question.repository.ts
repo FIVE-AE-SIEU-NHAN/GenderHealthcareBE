@@ -387,6 +387,7 @@ export default class QuestionRepository {
     _order,
     topic,
     status,
+    created_at,
     _question_like,
     _answer_like,
     _all
@@ -397,6 +398,7 @@ export default class QuestionRepository {
     _order?: string
     topic?: Topic[]
     status?: number[]
+    created_at?: Date[]
     _question_like?: string
     _answer_like?: string
     _all?: string
@@ -406,12 +408,36 @@ export default class QuestionRepository {
         ? {
             ...(topic && { topic: { in: topic } }),
             ...(status && { status: { in: status } }),
+            ...(created_at?.length === 2 && {
+              created_at: {
+                gte: `${created_at[0].toISOString().split('T')[0]}T00:00:00.000Z`,
+                lte: `${created_at[1].toISOString().split('T')[0]}T23:59:59.999Z`
+              }
+            }),
+            ...(created_at?.length === 1 && {
+              created_at: {
+                gte: `${created_at[0].toISOString().split('T')[0]}T00:00:00.000Z`,
+                lte: `${created_at[0].toISOString().split('T')[0]}T23:59:59.999Z`
+              }
+            }),
             OR: [{ question: { contains: _all } }, { answer: { contains: _all } }],
             is_public: true
           }
         : {
             ...(topic && { topic: { in: topic } }),
             ...(status && { status: { in: status } }),
+            ...(created_at?.length === 2 && {
+              created_at: {
+                gte: `${created_at[0].toISOString().split('T')[0]}T00:00:00.000Z`,
+                lte: `${created_at[1].toISOString().split('T')[0]}T23:59:59.999Z`
+              }
+            }),
+            ...(created_at?.length === 1 && {
+              created_at: {
+                gte: `${created_at[0].toISOString().split('T')[0]}T00:00:00.000Z`,
+                lte: `${created_at[0].toISOString().split('T')[0]}T23:59:59.999Z`
+              }
+            }),
             ...(_question_like && {
               question: {
                 contains: _question_like
@@ -434,12 +460,14 @@ export default class QuestionRepository {
   async countManagerQuestions({
     topic,
     status,
+    created_at,
     _question_like,
     _answer_like,
     _all
   }: {
     topic?: Topic[]
     status?: number[]
+    created_at?: Date[]
     _question_like?: string
     _answer_like?: string
     _all?: string
@@ -449,12 +477,36 @@ export default class QuestionRepository {
         ? {
             ...(topic && { topic: { in: topic } }),
             ...(status && { status: { in: status } }),
+            ...(created_at?.length === 2 && {
+              created_at: {
+                gte: `${created_at[0].toISOString().split('T')[0]}T00:00:00.000Z`,
+                lte: `${created_at[1].toISOString().split('T')[0]}T23:59:59.999Z`
+              }
+            }),
+            ...(created_at?.length === 1 && {
+              created_at: {
+                gte: `${created_at[0].toISOString().split('T')[0]}T00:00:00.000Z`,
+                lte: `${created_at[0].toISOString().split('T')[0]}T23:59:59.999Z`
+              }
+            }),
             OR: [{ question: { contains: _all } }, { answer: { contains: _all } }],
             is_public: true
           }
         : {
             ...(topic && { topic: { in: topic } }),
             ...(status && { status: { in: status } }),
+            ...(created_at?.length === 2 && {
+              created_at: {
+                gte: `${created_at[0].toISOString().split('T')[0]}T00:00:00.000Z`,
+                lte: `${created_at[1].toISOString().split('T')[0]}T23:59:59.999Z`
+              }
+            }),
+            ...(created_at?.length === 1 && {
+              created_at: {
+                gte: `${created_at[0].toISOString().split('T')[0]}T00:00:00.000Z`,
+                lte: `${created_at[0].toISOString().split('T')[0]}T23:59:59.999Z`
+              }
+            }),
             ...(_question_like && {
               question: {
                 contains: _question_like
