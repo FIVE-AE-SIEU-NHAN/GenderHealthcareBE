@@ -6,6 +6,7 @@ import prismaService from './services/prisma.services'
 import usersRouter from './routers/user/user.routers'
 import adminUserRoute from './routers/user/admin.users.router'
 import questionRouter from './routers/question/question.routers'
+import managerQuestionRouter from './routers/question/manager.question.router'
 import consultantRouter from './routers/consultant/consultant.router'
 import managerConsultantRouter from './routers/consultant/manager.consultant.routers'
 import appointmentRouter from './routers/appointment/appointment.router'
@@ -40,7 +41,7 @@ redisService.connect()
 app.use(express.json())
 
 app.use('/user', usersRouter, adminUserRoute)
-app.use('/question', questionRouter, managerConsultantRouter)
+app.use('/question', questionRouter, managerQuestionRouter)
 app.use('/consultant', consultantRouter, managerConsultantRouter)
 app.use('/appointment', appointmentRouter)
 

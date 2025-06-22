@@ -558,7 +558,13 @@ export const getUsersValidator = validate(
         custom: {
           options: (value) => {
             value = Array.isArray(value) ? value.map((role) => parseInt(role)) : [parseInt(value)]
-            const validRoles = [USER_ROLE.Admin, USER_ROLE.Consultant, USER_ROLE.Staff, USER_ROLE.User]
+            const validRoles = [
+              USER_ROLE.Admin,
+              USER_ROLE.Consultant,
+              USER_ROLE.Manager,
+              USER_ROLE.User,
+              USER_ROLE.Staff
+            ]
             if (!value.every((role: number) => validRoles.includes(role))) {
               throw new ErrorWithStatus({
                 status: HTTP_STATUS.BAD_REQUEST,
@@ -701,7 +707,13 @@ export const createUserValidator = validate(
         },
         custom: {
           options: (value) => {
-            const validRoles = [USER_ROLE.Admin, USER_ROLE.Consultant, USER_ROLE.Staff, USER_ROLE.User]
+            const validRoles = [
+              USER_ROLE.Admin,
+              USER_ROLE.Consultant,
+              USER_ROLE.Staff,
+              USER_ROLE.User,
+              USER_ROLE.Manager
+            ]
             if (!validRoles.includes(value)) {
               throw new Error(USERS_MESSAGES.ROLE_IS_INVALID)
             }

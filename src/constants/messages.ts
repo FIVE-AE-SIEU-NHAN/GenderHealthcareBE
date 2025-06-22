@@ -146,7 +146,8 @@ export const QUESTIONS_MESSAGES = {
   QUESTION_UPDATED_SUCCESSFULLY: 'Question updated successfully',
   QUESTION_DELETED_SUCCESSFULLY: 'Question deleted successfully',
   QUESTION_NOT_FOUNDOR_OR_NOT_PUBLIC: 'Question not found or not public',
-  STATUS_IS_INVALID: 'Status is invalid'
+  STATUS_IS_INVALID: 'Status is invalid',
+  CREATED_AT_BE_ISO8601: 'Created at must be ISO8601'
 }
 
 export const APPOINTMENT_MESSAGES = {

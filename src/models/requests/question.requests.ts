@@ -13,6 +13,7 @@ export interface GetQuestionReqQuery extends ParsedQs {
   _order?: string
   _topic?: Topic[]
   _status?: string[]
+  _created_at?: string[]
   _question_like?: string
   _answer_like?: string
   _all?: string

@@ -137,6 +137,16 @@ export const getQuestionValidator = validate(
           }
         }
       },
+      _created_at: {
+        optional: true,
+        isISO8601: {
+          options: {
+            strict: true,
+            strictSeparator: true
+          },
+          errorMessage: QUESTIONS_MESSAGES.CREATED_AT_BE_ISO8601
+        }
+      },
       _all: {
         optional: true
       }
