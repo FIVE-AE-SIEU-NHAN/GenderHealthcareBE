@@ -9,6 +9,7 @@ import {
   EditStatusUserReqBody,
   GetAppointmentReqQuery
 } from '~/models/requests/appointment.requests'
+import { TokenPayLoad } from '~/models/requests/users.requests'
 import appointmentServices from '~/services/appointment.services'
 import questionServices from '~/services/question.services'
 import usersServices from '~/services/users.services'
@@ -20,8 +21,7 @@ export const bookAppointmentController = async (
   next: NextFunction
 ) => {
   const { topic, booking_date, time_slot } = req.body
-  //   const { user_id } = req.decode_authorization as TokenPayLoad
-  const user_id = 'e1fceb1b-49c8-11f0-bfde-0242ac110002'
+  const { user_id } = req.decode_authorization as TokenPayLoad
 
   // lấy danh sách consultant theo topic
   const numberOfCounsultant = await questionServices.getNumberOfConsultantsByTopic(topic)
@@ -77,8 +77,9 @@ export const consultantAppointmentsController = async (
   res: Response,
   next: NextFunction
 ) => {
-  //   const { consultant_id } = req.decode_authorization as TokenPayLoad
-  const consultant_id = 'aad5adb4-48bc-11f0-bfde-0242ac110002'
+  const { user_id } = req.decode_authorization as TokenPayLoad
+
+  const consultant_id = await usersServices.getConsultantIdByUserId(user_id)
 
   const result = await appointmentServices.getConsultantAppointments(consultant_id, req.query)
 
@@ -93,8 +94,7 @@ export const customerAppointmentsController = async (
   res: Response,
   next: NextFunction
 ) => {
-  //   const { customer_id } = req.decode_authorization as TokenPayLoad
-  const user_id = 'e1fceb1b-49c8-11f0-bfde-0242ac110002'
+  const { user_id } = req.decode_authorization as TokenPayLoad
 
   const result = await appointmentServices.getCustomerAppointments(user_id)
 
@@ -131,4 +131,3 @@ export const managerAppointmentsController = async (
     result
   })
 }
-// manager xem lịch hẹn của consultant

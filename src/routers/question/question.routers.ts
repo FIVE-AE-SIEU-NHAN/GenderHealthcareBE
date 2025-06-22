@@ -20,7 +20,13 @@ const questionRouter = express.Router()
  * Method: POST
  * Request body: { title: string, description: string}
  */
-questionRouter.post('/ask', accessTokenValidator, askQuestionValidator, wrapAsync(askQuestionController))
+questionRouter.post(
+  '/ask',
+  accessTokenValidator,
+  requireRole(USER_ROLE.User),
+  askQuestionValidator,
+  wrapAsync(askQuestionController)
+)
 
 /**
  * Description: Get questions of customer
@@ -29,8 +35,8 @@ questionRouter.post('/ask', accessTokenValidator, askQuestionValidator, wrapAsyn
  */
 questionRouter.get(
   '/customer',
-  // accessTokenValidator,
-  // requireRole(USER_ROLE.User),
+  accessTokenValidator,
+  requireRole(USER_ROLE.User),
   getQuestionValidator,
   wrapAsync(customerQuestionsController)
 )
@@ -43,7 +49,7 @@ questionRouter.get(
 questionRouter.get(
   '/consultant',
   accessTokenValidator,
-  // requireRole(USER_ROLE.Consultant),
+  requireRole(USER_ROLE.Consultant),
   getQuestionValidator,
   wrapAsync(consultantQuestionsController)
 )
@@ -56,22 +62,22 @@ questionRouter.get(
  */
 questionRouter.patch(
   '/:id/answer',
-  // accessTokenValidator,
-  // requireRole(USER_ROLE.Consultant),
+  accessTokenValidator,
+  requireRole(USER_ROLE.Consultant),
   answerQuestionValidator,
   wrapAsync(answerQuestionsController)
 )
 
 /**
  * Description: Edit a answer for consultant
- * Path: question/:id/consultant-edit
+ * Path: question/:id/edit-answer
  * Method: PATCH
  * Request body: { answer: string }
  */
 questionRouter.patch(
-  '/:id/consultant-edit',
-  // accessTokenValidator,
-  // requireRole(USER_ROLE.Consultant),
+  '/:id/edit-answer',
+  accessTokenValidator,
+  requireRole(USER_ROLE.Consultant),
   answerQuestionValidator,
   wrapAsync(editAnswerQuestionsController)
 )

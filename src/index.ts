@@ -6,7 +6,6 @@ import prismaService from './services/prisma.services'
 import usersRouter from './routers/user/user.routers'
 import adminUserRoute from './routers/user/admin.users.router'
 import questionRouter from './routers/question/question.routers'
-import adminQuestionRouter from './routers/question/admin.question.router'
 import consultantRouter from './routers/consultant/consultant.router'
 import managerConsultantRouter from './routers/consultant/manager.consultant.routers'
 import appointmentRouter from './routers/appointment/appointment.router'
@@ -19,11 +18,11 @@ const app = express()
 const serverHttp = createServer(app)
 
 // Khởi tạo Socket.IO server
-const io = new Server(serverHttp, {
-  cors: {
-    origin: '*'
-  }
-})
+// const io = new Server(serverHttp, {
+//   cors: {
+//     origin: '*'
+//   }
+// })
 
 // cấu hình cors
 app.use(
@@ -41,12 +40,12 @@ redisService.connect()
 app.use(express.json())
 
 app.use('/user', usersRouter, adminUserRoute)
-app.use('/question', questionRouter, adminQuestionRouter)
+app.use('/question', questionRouter, managerConsultantRouter)
 app.use('/consultant', consultantRouter, managerConsultantRouter)
 app.use('/appointment', appointmentRouter)
 
 // socket.io
-initChatSocket(io)
+// initChatSocket(io)
 
 // error handler
 app.use(defaultErorHandler)

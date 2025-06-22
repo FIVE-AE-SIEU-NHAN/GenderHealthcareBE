@@ -4,15 +4,15 @@ import { QUESTIONS_MESSAGES } from '~/constants/messages'
 import { EditReqQuery, EditStateQuestionReqBody, GetQuestionReqQuery } from '~/models/requests/question.requests'
 import questionServices from '~/services/question.services'
 
-export const adminQuestionsController = async (
+export const managerQuestionsController = async (
   req: Request<ParamsDictionary, any, any, GetQuestionReqQuery>,
   res: Response,
   next: NextFunction
 ) => {
-  const result = await questionServices.getAdminQuestions(req.query)
+  const result = await questionServices.getManagerQuestions(req.query)
 
   res.status(200).json({
-    message: QUESTIONS_MESSAGES.GET_ADMIN_QUESTIONS_SUCCESSFULLY,
+    message: QUESTIONS_MESSAGES.GET_MANAGER_QUESTIONS_SUCCESSFULLY,
     result
   })
 }

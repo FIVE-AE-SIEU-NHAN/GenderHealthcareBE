@@ -1,4 +1,5 @@
 import express from 'express'
+import { USER_ROLE } from '~/constants/enums'
 import {
   bookAppointmentController,
   consultantAppointmentsController,
@@ -11,6 +12,8 @@ import {
   editStatusAppointmentValidator,
   getAppointmentValidator
 } from '~/middlewares/appointment.middlewares'
+import { requireRole } from '~/middlewares/decentralization .middlewares'
+import { accessTokenValidator } from '~/middlewares/user.middlewares'
 import { wrapAsync } from '~/utils/handler'
 
 const appointmentRouter = express.Router()
@@ -21,7 +24,13 @@ const appointmentRouter = express.Router()
  * Method: POST
  * Request Body: { topic: Topic, schedule: Date}
  */
-appointmentRouter.post('/book', bookAppointmentValidator, wrapAsync(bookAppointmentController))
+appointmentRouter.post(
+  '/book',
+  accessTokenValidator,
+  requireRole(USER_ROLE.User),
+  bookAppointmentValidator,
+  wrapAsync(bookAppointmentController)
+)
 
 /**
  * Description: Get appointments for customer
@@ -30,20 +39,20 @@ appointmentRouter.post('/book', bookAppointmentValidator, wrapAsync(bookAppointm
  */
 appointmentRouter.get(
   '/customer',
-  // accessTokenValidator,
-  // requireRole(USER_ROLE.User),
+  accessTokenValidator,
+  requireRole(USER_ROLE.User),
   wrapAsync(customerAppointmentsController)
 )
 
 /**
  * Description: Get appointments for consultant
- * Path: appointment/customer
+ * Path: appointment/consultant
  * Method: GET
  */
 appointmentRouter.get(
   '/consultant',
-  // accessTokenValidator,
-  // requireRole(USER_ROLE.User),
+  accessTokenValidator,
+  requireRole(USER_ROLE.Consultant),
   getAppointmentValidator,
   wrapAsync(consultantAppointmentsController)
 )
@@ -57,21 +66,21 @@ appointmentRouter.get(
  */
 appointmentRouter.patch(
   '/:id/edit-status',
-  // accessTokenValidator,
-  // requireRole(USER_ROLE.Consultant, USER_ROLE.Manager),
+  accessTokenValidator,
+  requireRole(USER_ROLE.Consultant, USER_ROLE.Manager),
   editStatusAppointmentValidator,
   wrapAsync(editStatusAppointmentController)
 )
 
 /**
- * Description: Get appointments for consultant
- * Path: appointment/customer
+ * Description: Get appointments for manager
+ * Path: appointment/manager
  * Method: GET
  */
 appointmentRouter.get(
   '/manager',
-  // accessTokenValidator,
-  // requireRole(USER_ROLE.Manager),
+  accessTokenValidator,
+  requireRole(USER_ROLE.Manager),
   getAppointmentValidator,
   wrapAsync(managerAppointmentsController)
 )

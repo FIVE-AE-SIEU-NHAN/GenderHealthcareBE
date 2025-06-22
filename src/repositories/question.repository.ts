@@ -276,7 +276,7 @@ export default class QuestionRepository {
     })
   }
 
-  async getAdminQuestions({
+  async getManagerQuestions({
     _skip,
     limit,
     _sort,
@@ -327,7 +327,7 @@ export default class QuestionRepository {
     })
   }
 
-  async countAdminQuestions({
+  async countManagerQuestions({
     topic,
     status,
     _question_like,

@@ -1,7 +1,9 @@
 import express from 'express'
+import { USER_ROLE } from '~/constants/enums'
 import { getConsultantController } from '~/controllers/admin/admin.users.controller'
 import { getConsultantProfileController } from '~/controllers/users.controllers'
-import { getConsultantValidator } from '~/middlewares/user.middlewares'
+import { requireRole } from '~/middlewares/decentralization .middlewares'
+import { accessTokenValidator, getConsultantValidator } from '~/middlewares/user.middlewares'
 import { wrapAsync } from '~/utils/handler'
 
 const consultantRouter = express.Router()
@@ -13,18 +15,23 @@ const consultantRouter = express.Router()
  */
 consultantRouter.get(
   '/get-consultant',
-  // accessTokenValidator,
-  // requireRole(USER_ROLE.Admin),
+  accessTokenValidator,
+  requireRole(USER_ROLE.Admin),
   getConsultantValidator,
   wrapAsync(getConsultantController)
 )
 
 /**
- * Description: get consultant profile
+ * Description: Get consultant profile
  * Path: /consultant/profile
  * Method: GET
  * Header: {Authorization: Bearer <access_token>}
  */
-consultantRouter.get('/profile' /*, accessTokenValidator*/, wrapAsync(getConsultantProfileController))
+consultantRouter.get(
+  '/profile',
+  accessTokenValidator,
+  requireRole(USER_ROLE.Consultant),
+  wrapAsync(getConsultantProfileController)
+)
 
 export default consultantRouter

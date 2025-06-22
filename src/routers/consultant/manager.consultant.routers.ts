@@ -5,7 +5,11 @@ import { editStatusConsultantController } from '~/controllers/admin/admin.users.
 import { updateConsultantProfileController } from '~/controllers/users.controllers'
 import { requireRole } from '~/middlewares/decentralization .middlewares'
 import { filterMiddlewares } from '~/middlewares/filter.middlewares'
-import { editStatusConsultantValidator, updateConsultantProfileValidator } from '~/middlewares/user.middlewares'
+import {
+  accessTokenValidator,
+  editStatusConsultantValidator,
+  updateConsultantProfileValidator
+} from '~/middlewares/user.middlewares'
 import { UpdateConsultantProfileReqBody } from '~/models/requests/users.requests'
 import { wrapAsync } from '~/utils/handler'
 
@@ -19,22 +23,22 @@ const managerConsultantRouter = express.Router()
  */
 managerConsultantRouter.patch(
   '/:id/edit-status',
-  // accessTokenValidator,
-  // requireRole(USER_ROLE.Consultant),
+  accessTokenValidator,
+  requireRole(USER_ROLE.Manager),
   editStatusConsultantValidator,
   wrapAsync(editStatusConsultantController)
 )
 
 /**
  * Description: Update profile of a consultant by the manager.
- * Path: /consultant/profile
+ * Path: /consultant/update-profile
  * Method: PATCH
  * Body: { name: string, email: string }
  */
 managerConsultantRouter.patch(
-  '/profile',
-  // accessTokenValidator,
-  // requireRole(USER_ROLE.Consultant),
+  '/:id/update-profile',
+  accessTokenValidator,
+  requireRole(USER_ROLE.Manager),
   filterMiddlewares<UpdateConsultantProfileReqBody>([
     'specialization_1',
     'specialization_2',

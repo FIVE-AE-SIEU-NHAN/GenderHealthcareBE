@@ -5,7 +5,7 @@ export enum UserVerifyStatus {
 export enum USER_ROLE {
   Admin, //0
   Consultant, //1
-  Staff, //2
+  Manager, //2
   User //3
 }
 export enum TokenType {

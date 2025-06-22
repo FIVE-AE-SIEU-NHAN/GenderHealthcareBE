@@ -1,4 +1,5 @@
 import express from 'express'
+import { USER_ROLE } from '~/constants/enums'
 import {
   getOTPController,
   loginController,
@@ -12,6 +13,7 @@ import {
   getProfileController,
   updateProfileController
 } from '~/controllers/users.controllers'
+import { requireRole } from '~/middlewares/decentralization .middlewares'
 import { filterMiddlewares } from '~/middlewares/filter.middlewares'
 import {
   accessTokenValidator,
@@ -34,7 +36,7 @@ const userRouter = express.Router()
 
 /**
  * Description: Send email with token
- * Path: /otp/get-otp
+ * Path: /user/get-otp
  * Method: POST
  * Request body: { email: string }
  */
@@ -116,7 +118,7 @@ userRouter.post('/refresh-token', refreshTokenValidator, wrapAsync(refreshTokenC
  * Method: GET
  * Header: {Authorization: Bearer <access_token>}
  */
-userRouter.get('/profile' /*, accessTokenValidator*/, wrapAsync(getProfileController))
+userRouter.get('/profile', accessTokenValidator, wrapAsync(getProfileController))
 
 /**
  * Description: Update user profile

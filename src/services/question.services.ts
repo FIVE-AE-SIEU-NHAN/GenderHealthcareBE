@@ -138,7 +138,7 @@ class QuestionServices {
     await this.questionRepository.answerQuestion(id, answer)
   }
 
-  async getAdminQuestions(payload: GetQuestionReqQuery) {
+  async getManagerQuestions(payload: GetQuestionReqQuery) {
     const { _page, _limit, _sort, _order, _topic, _status, _question_like, _answer_like, _all } = payload
     const page = parseInt(_page as string, 10) || 1
     const limit = parseInt(_limit as string, 10) || 10
@@ -147,7 +147,7 @@ class QuestionServices {
     const topic = Array.isArray(_topic) ? _topic : _topic ? [_topic] : undefined
     const status = Array.isArray(_status) ? _status.map((v) => parseInt(v)) : _status ? [parseInt(_status)] : undefined
 
-    const questions = await this.questionRepository.getAdminQuestions({
+    const questions = await this.questionRepository.getManagerQuestions({
       limit,
       _sort,
       _order,
@@ -159,7 +159,7 @@ class QuestionServices {
       _all
     })
 
-    const total = await this.questionRepository.countAdminQuestions({
+    const total = await this.questionRepository.countManagerQuestions({
       topic,
       status,
       _question_like,

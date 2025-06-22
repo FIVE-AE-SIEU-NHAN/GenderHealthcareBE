@@ -5,6 +5,7 @@ import { USERS_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
 import {
   ChangePasswordReqBody,
+  EditReqQuery,
   ForgotPasswordReqBody,
   LoginGoogleReqBody,
   LoginReqBody,
@@ -217,8 +218,7 @@ export const refreshTokenController = async (
 }
 
 export const getProfileController = async (req: Request, res: Response, next: NextFunction) => {
-  // const { user_id } = req.decode_authorization as TokenPayLoad
-  const user_id = '1c1d0365-1d64-43d3-894f-d3f69949ebbc'
+  const { user_id } = req.decode_authorization as TokenPayLoad
   const user = await usersServices.getProfile(user_id)
   if (!user) {
     throw new ErrorWithStatus({
@@ -247,14 +247,14 @@ export const updateProfileController = async (
 }
 
 export const updateConsultantProfileController = async (
-  req: Request<ParamsDictionary, any, UpdateConsultantProfileReqBody>,
+  req: Request<ParamsDictionary, any, UpdateConsultantProfileReqBody, EditReqQuery>,
   res: Response,
   next: NextFunction
 ) => {
-  // const { user_id } = req.decode_authorization as TokenPayLoad
-  const user_id = '74e150aa-3f78-4618-b873-60f7da0b1248'
+  const { user_id } = req.query
+
   const payload = req.body
-  const consultantInfor = await usersServices.updateConsultantProfile(user_id, payload)
+  const consultantInfor = await usersServices.updateConsultantProfile(user_id as string, payload)
   res.status(HTTP_STATUS.OK).json({
     message: USERS_MESSAGES.UPDATE_CONSULTANT_PROFILE_SUCCESS,
     consultantInfor
@@ -262,8 +262,7 @@ export const updateConsultantProfileController = async (
 }
 
 export const getConsultantProfileController = async (req: Request, res: Response, next: NextFunction) => {
-  // const { user_id } = req.decode_authorization as TokenPayLoad
-  const user_id = '74e150aa-3f78-4618-b873-60f7da0b1248'
+  const { user_id } = req.decode_authorization as TokenPayLoad
   const result = await usersServices.getConsultantProfile(user_id)
 
   if (!result) {
