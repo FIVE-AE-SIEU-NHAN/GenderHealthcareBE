@@ -101,8 +101,6 @@ class RedisUtils {
       return false
     }
 
-    // Token hợp lệ - xóa token sau khi đã sử dụng thành công
-    await client.del(key)
     return true
   }
 

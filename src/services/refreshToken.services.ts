@@ -38,16 +38,11 @@ class RefreshTokenServices {
     }
 
     // nếu hợp lệ thì tạo access token mới
-    const [new_access_token, new_refresh_token] = await Promise.all([
-      this.signAccessToken(user_id, decode_authorization.role),
-      this.signRefreshToken(user_id, decode_authorization.role)
-    ])
-
-    await redisUtils.saveRefreshToken(user_id.toString(), new_refresh_token)
+    const new_access_token = await this.signAccessToken(user_id, decode_authorization.role)
 
     return {
       access_token: new_access_token,
-      refresh_token: new_refresh_token
+      refresh_token
     }
   }
 }
