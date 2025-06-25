@@ -226,6 +226,9 @@ export const getProfileController = async (req: Request, res: Response, next: Ne
       message: USERS_MESSAGES.USER_NOT_FOUND
     })
   }
+
+  ;(user as any).havePassword = user.password ? true : false
+
   res.status(HTTP_STATUS.OK).json({
     message: USERS_MESSAGES.GET_PROFILE_SUCCESS,
     user: omit(user, ['password'])

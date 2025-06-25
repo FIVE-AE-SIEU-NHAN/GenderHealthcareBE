@@ -52,7 +52,16 @@ class UserRepository {
     id: string
   ): Promise<Pick<
     User,
-    'id' | 'email' | 'name' | 'google_id' | 'date_of_birth' | 'gender' | 'password' | 'phone_number'
+    | 'id'
+    | 'email'
+    | 'name'
+    | 'google_id'
+    | 'date_of_birth'
+    | 'gender'
+    | 'password'
+    | 'phone_number'
+    | 'role'
+    | 'created_at'
   > | null> {
     return this.model.findUnique({
       where: { id },
@@ -64,7 +73,9 @@ class UserRepository {
         gender: true,
         password: true,
         phone_number: true,
-        google_id: true
+        google_id: true,
+        role: true,
+        created_at: true
       }
     })
   }
