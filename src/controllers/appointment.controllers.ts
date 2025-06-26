@@ -11,6 +11,7 @@ import {
 } from '~/models/requests/appointment.requests'
 import { TokenPayLoad } from '~/models/requests/users.requests'
 import appointmentServices from '~/services/appointment.services'
+import notificationService from '~/services/notification.services'
 import questionServices from '~/services/question.services'
 import usersServices from '~/services/users.services'
 import redisUtils from '~/utils/redis'
@@ -59,13 +60,21 @@ export const bookAppointmentController = async (
   }
 
   // tạo lịch hẹn
-  await appointmentServices.createAppointment({
+  const { id: appointment_id } = await appointmentServices.createAppointment({
     user_id,
     consultant_id: selectedConsultantId,
     topic,
     booking_date: new Date(booking_date),
     time_slot
   })
+
+  // lưu lịch hẹn vào redis để gửi thông báo và lưu vào database
+  await notificationService.addNotificationForConsultantAppointment(
+    user_id,
+    appointment_id,
+    new Date(booking_date),
+    time_slot
+  )
 
   res.status(HTTP_STATUS.CREATED).json({
     message: APPOINTMENT_MESSAGES.BOOKING_CREATED_SUCCESSFULLY

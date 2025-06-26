@@ -18,7 +18,7 @@ class RedisUtils {
   async connect() {
     try {
       await client.connect()
-      console.log('You successfully connected to Redis!')
+      console.log('You successfully connected to \x1b[36mRedis!\x1b[0m')
     } catch (error) {
       throw error
     }
@@ -31,12 +31,11 @@ class RedisUtils {
   }
 
   async verifyOTP(email: string, otp: string) {
-    const key = `$otp:${email}`
+    const key = `otp:${email}`
 
     // Kiểm tra OTP có tồn tại và đúng không
     const storedOTP = await client.get(key)
-
-    if (!storedOTP) {
+    if (!storedOTP || storedOTP !== otp) {
       return false
     }
 

@@ -25,6 +25,7 @@ model Users {
   ConsultantProfiles     ConsultantProfiles?
   Questions             Questions[]
   Appointments  Appointments[]
+  Notifications  Notifications[]
 
   @@index([google_id], map: "idx_google_id")
   @@index([forgot_password_token], map: "idx_forgot_token")
@@ -69,6 +70,7 @@ model Questions {
 
   user           Users?   @relation(fields: [user_id], references: [id], onDelete: SetNull)
   consultant     ConsultantProfiles @relation(fields: [consultant_id], references: [id], onDelete: Cascade)
+  notifications  Notifications?
 }
 
 enum BookingStatus {
@@ -101,4 +103,32 @@ model Appointments {
 
   user       Users             @relation(fields: [user_id], references: [id])
   consultant ConsultantProfiles @relation(fields: [consultant_id], references: [id])
+  notifications  Notifications?
+}
+
+enum NotificationType {
+  ANSWERED_QUESTION
+  APPOINTMENT_REMINDER_30M
+  SERVICE_REMINDER_1D
+  SYSTEM
+  OTHER
+}
+
+model Notifications {
+  id              String   @id @map("_id") @db.VarChar(36)
+  user_id         String   @db.VarChar(36)
+  type            NotificationType
+  content         String
+  is_read         Boolean  @default(false)
+  is_sent         Boolean  @default(false)
+  scheduled_time  DateTime?
+
+  appointment_id  String?  @unique @db.VarChar(36)
+  question_id     String?  @unique @db.VarChar(36)
+
+  created_at      DateTime @default(now())
+
+  user            Users     @relation(fields: [user_id], references: [id])
+  appointment     Appointments? @relation(fields: [appointment_id], references: [id])
+  question     Questions? @relation(fields: [question_id], references: [id])
 }

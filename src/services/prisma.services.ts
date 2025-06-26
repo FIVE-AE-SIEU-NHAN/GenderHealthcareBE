@@ -12,7 +12,7 @@ class PrismaService {
   async connect() {
     try {
       await this.prisma.$connect()
-      console.log('You successfully connected to MySQL via Prisma!')
+      console.log('You successfully connected to \x1b[36mMySQL via Prisma!\x1b[0m')
     } catch (error) {
       console.error('Prisma connection failed:', error)
       throw error

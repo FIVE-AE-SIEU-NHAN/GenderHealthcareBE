@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Thông báo Socket</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <style>
+      .notification-container {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+      }
+
+      .notification-badge {
+        position: absolute;
+        top: -5px;
+        right: -10px;
+        background: red;
+        color: white;
+        font-size: 14px;
+        padding: 8px 13px;
+        border-radius: 50%;
+        display: none;
+      }
+
+      .popup {
+        position: absolute;
+        top: 70px;
+        right: 0;
+        background: #fff;
+        border: 1px solid #ddd;
+        width: 250px;
+        max-height: 300px;
+        overflow-y: auto;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        display: none;
+        z-index: 100;
+      }
+
+      .popup-message {
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+      }
+    </style>
+  </head>
+  <body>
+    <div style="padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 10px">
+      <h2>Thông báo Socket.IO</h2>
+      <div class="notification-container" id="notificationBell">
+        <span style="font-size: 50px">🔔</span>
+        <span class="notification-badge" id="notificationCount">0</span>
+        <div class="popup" id="notificationPopup"></div>
+      </div>
+      <button id="conectButton">Kết nối</button>
+      <button id="disconectButton">Ngắt kết nối</button>
+    </div>
+
+    <script>
+      const socket = io('http://localhost:3000', {
+        auth: { userId: 'e1fcea3f-49c8-11f0-bfde-0242ac110002' },
+        autoConnect: false,
+        reconnection: false
+      })
+
+      const notificationCount = document.getElementById('notificationCount')
+      const notificationPopup = document.getElementById('notificationPopup')
+      const notificationBell = document.getElementById('notificationBell')
+      const conectButton = document.getElementById('conectButton')
+      const disconectButton = document.getElementById('disconectButton')
+
+      conectButton.addEventListener('click', () => {
+        socket.connect()
+        console.log('Socket connected')
+      })
+
+      disconectButton.addEventListener('click', () => {
+        socket.disconnect()
+        console.log('Socket disconnected')
+      })
+
+      let count = 0
+
+      // Bắt sự kiện notify:send
+      socket.on('notify:send', (data) => {
+        console.log('Received notification:', data)
+
+        if (!data || !data.content) {
+          console.warn('No content received in notification')
+          return
+        }
+
+        count++
+        notificationCount.innerText = count
+        notificationCount.style.display = 'inline'
+
+        const messageDiv = document.createElement('div')
+        messageDiv.className = 'popup-message'
+        messageDiv.innerText = data.content
+        notificationPopup.prepend(messageDiv)
+      })
+
+      // Toggle hiển thị popup
+      notificationBell.addEventListener('click', () => {
+        const isOpen = notificationPopup.style.display === 'block'
+        notificationPopup.style.display = isOpen ? 'none' : 'block'
+
+        if (!isOpen) {
+          count = 0
+          notificationCount.innerText = '0'
+          notificationCount.style.display = 'none'
+        }
+      })
+
+      // Đóng popup khi click ra ngoài
+      window.addEventListener('click', (e) => {
+        if (!notificationBell.contains(e.target)) {
+          notificationPopup.style.display = 'none'
+        }
+      })
+    </script>
+  </body>
+</html>

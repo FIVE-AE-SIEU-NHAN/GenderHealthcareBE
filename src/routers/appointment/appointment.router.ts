@@ -58,6 +58,19 @@ appointmentRouter.get(
 )
 
 /**
+ * Description: Get appointments for manager
+ * Path: appointment/manager
+ * Method: GET
+ */
+appointmentRouter.get(
+  '/manager',
+  accessTokenValidator,
+  requireRole(USER_ROLE.Manager),
+  getAppointmentValidator,
+  wrapAsync(managerAppointmentsController)
+)
+
+/**
  * Description: Edit appointment status
  * Path: appointment/:id/edit-status
  * Method: PATCH
@@ -70,19 +83,6 @@ appointmentRouter.patch(
   requireRole(USER_ROLE.Consultant, USER_ROLE.Manager),
   editStatusAppointmentValidator,
   wrapAsync(editStatusAppointmentController)
-)
-
-/**
- * Description: Get appointments for manager
- * Path: appointment/manager
- * Method: GET
- */
-appointmentRouter.get(
-  '/manager',
-  accessTokenValidator,
-  requireRole(USER_ROLE.Manager),
-  getAppointmentValidator,
-  wrapAsync(managerAppointmentsController)
 )
 
 export default appointmentRouter
