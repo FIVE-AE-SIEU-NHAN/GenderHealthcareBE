@@ -20,3 +20,7 @@ export interface GetBlogReqQuery extends ParsedQs {
 export interface IdReqQuery extends ParsedQs {
   id: string
 }
+
+export interface EditStatusBlogReqBody {
+  status: BlogStatus
+}

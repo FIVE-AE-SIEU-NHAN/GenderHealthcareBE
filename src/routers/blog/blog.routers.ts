@@ -13,23 +13,13 @@ const blogRouter = express.Router()
  * Path: blog/customer
  * Method: GET
  */
-blogRouter.get(
-  '/customer',
-  // accessTokenValidator,
-  getBlogsValidator,
-  wrapAsync(getBlogsController)
-)
+blogRouter.get('/customer', accessTokenValidator, getBlogsValidator, wrapAsync(getBlogsController))
 
 /**
  * Description: Get blog detail for customer
  * Path: blog/customer/:id
  * Method: GET
  */
-blogRouter.get(
-  '/customer/:id',
-  // accessTokenValidator,
-  getBlogsDetailValidator,
-  wrapAsync(getBlogsDetailController)
-)
+blogRouter.get('/customer/:id', accessTokenValidator, getBlogsDetailValidator, wrapAsync(getBlogsDetailController))
 
 export default blogRouter

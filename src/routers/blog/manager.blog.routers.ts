@@ -1,7 +1,7 @@
 import express from 'express'
 import { USER_ROLE } from '~/constants/enums'
-import { getManagerBlogsController } from '~/controllers/blog.controllers'
-import { getBlogsValidator } from '~/middlewares/blog.middlewares'
+import { editStatusBlogController, getManagerBlogsController } from '~/controllers/manager/manager.blog.controllers'
+import { editStatusBlogValidator, getBlogsValidator } from '~/middlewares/blog.middlewares'
 import { requireRole } from '~/middlewares/decentralization .middlewares'
 import { accessTokenValidator } from '~/middlewares/user.middlewares'
 import { wrapAsync } from '~/utils/handler'
@@ -9,18 +9,28 @@ import { wrapAsync } from '~/utils/handler'
 const managerBlogRouter = express.Router()
 
 /**
- * Description: Get blog for customer
- * Path: blog/customer
+ * Description: Get blog for manager
+ * Path: blog/manager
  * Method: GET
  */
 managerBlogRouter.get(
   '/manager',
-  // accessTokenValidator,
+  accessTokenValidator,
+  requireRole(USER_ROLE.Manager),
   getBlogsValidator,
   wrapAsync(getManagerBlogsController)
 )
 
+/**
+ * Description: Edit blog status
+ * Path: blog/manager/:id/edit-status
+ * Method: PATCH
+ */
+managerBlogRouter.patch(
+  '/manager/:id/edit-status',
+  accessTokenValidator,
+  requireRole(USER_ROLE.Manager),
+  editStatusBlogValidator,
+  wrapAsync(editStatusBlogController)
+)
 export default managerBlogRouter
-
-// staff: xem danh sách bài viết(của chính user_id đó), tạo bài viết, sửa bài viết
-// manager: xem danh sách bài viết, đổi trạng thái bài viết

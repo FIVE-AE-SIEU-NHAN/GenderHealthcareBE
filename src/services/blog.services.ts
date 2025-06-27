@@ -1,3 +1,4 @@
+import { BlogStatus } from '@prisma/client'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { BLOG_MESSAGES, QUESTIONS_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
@@ -112,6 +113,26 @@ class BlogServices {
       blogs,
       total
     }
+  }
+
+  async editStatusBlog(id: string, status: BlogStatus) {
+    const blog = await this.blogRepository.getBlogById(id)
+
+    if (!blog) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.NOT_FOUND,
+        message: BLOG_MESSAGES.BLOG_NOT_FOUND
+      })
+    }
+
+    if (blog.status === status) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.BAD_REQUEST,
+        message: BLOG_MESSAGES.BLOG_ALREADY_IN_THIS_STATUS
+      })
+    }
+
+    await this.blogRepository.updateBlogStatus(id, status)
   }
 }
 

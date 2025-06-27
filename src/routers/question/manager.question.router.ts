@@ -4,7 +4,7 @@ import {
   deleteQuestionController,
   editStateQuestionController,
   managerQuestionsController
-} from '~/controllers/manager/manager.questions.controller'
+} from '~/controllers/manager/manager.questions.controllers'
 import { requireRole } from '~/middlewares/decentralization .middlewares'
 import {
   deleteQuestionValidator,

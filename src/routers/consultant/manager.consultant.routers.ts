@@ -1,7 +1,7 @@
 import express from 'express'
 import { update } from 'lodash'
 import { USER_ROLE } from '~/constants/enums'
-import { editStatusConsultantController, getConsultantController } from '~/controllers/admin/admin.users.controller'
+import { editStatusConsultantController, getConsultantController } from '~/controllers/admin/admin.users.controllers'
 import { updateConsultantProfileController } from '~/controllers/users.controllers'
 import { requireRole } from '~/middlewares/decentralization .middlewares'
 import { filterMiddlewares } from '~/middlewares/filter.middlewares'

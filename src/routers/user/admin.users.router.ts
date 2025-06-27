@@ -4,7 +4,7 @@ import {
   createUserController,
   editStatusUserController,
   getUsersController
-} from '~/controllers/admin/admin.users.controller'
+} from '~/controllers/admin/admin.users.controllers'
 import { requireRole } from '~/middlewares/decentralization .middlewares'
 import {
   accessTokenValidator,

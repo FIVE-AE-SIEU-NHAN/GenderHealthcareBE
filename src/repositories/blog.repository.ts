@@ -285,4 +285,23 @@ export default class BlogRepository {
           }
     })
   }
+
+  async getBlogById(id: string) {
+    return this.model.findUnique({
+      where: {
+        id
+      }
+    })
+  }
+
+  async updateBlogStatus(id: string, status: BlogStatus) {
+    return this.model.update({
+      where: {
+        id
+      },
+      data: {
+        status
+      }
+    })
+  }
 }

@@ -68,6 +68,7 @@ export const getBlogsValidator = validate(
                 message: BLOG_MESSAGES.STATUS_IS_INVALID
               })
             }
+            return true
           }
         }
       },
@@ -103,4 +104,33 @@ export const getBlogsDetailValidator = validate(
     },
     ['params']
   )
+)
+
+export const editStatusBlogValidator = validate(
+  checkSchema({
+    id: {
+      in: ['params'],
+      notEmpty: {
+        errorMessage: BLOG_MESSAGES.BLOG_ID_IS_REQUIRED
+      },
+      isUUID: {
+        errorMessage: BLOG_MESSAGES.BLOG_ID_MUST_BE_A_UUID
+      }
+    },
+    status: {
+      in: ['body'],
+      custom: {
+        options: async (value) => {
+          const blogList = Object.values(BlogStatus)
+          if (!blogList.includes(value as BlogStatus)) {
+            throw new ErrorWithStatus({
+              status: HTTP_STATUS.BAD_REQUEST,
+              message: BLOG_MESSAGES.STATUS_IS_INVALID
+            })
+          }
+          return true
+        }
+      }
+    }
+  })
 )
