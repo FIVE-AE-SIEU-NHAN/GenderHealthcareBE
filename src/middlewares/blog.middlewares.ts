@@ -56,6 +56,21 @@ export const getBlogsValidator = validate(
           }
         }
       },
+      _status: {
+        optional: true,
+        custom: {
+          options: async (value) => {
+            value = Array.isArray(value) ? value : [value]
+            const blogList = Object.values(BlogStatus)
+            if (!value.every((blog: string) => blogList.includes(blog as BlogStatus))) {
+              throw new ErrorWithStatus({
+                status: HTTP_STATUS.BAD_REQUEST,
+                message: BLOG_MESSAGES.STATUS_IS_INVALID
+              })
+            }
+          }
+        }
+      },
       _created_at: {
         optional: true,
         isISO8601: {

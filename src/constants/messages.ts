@@ -198,5 +198,6 @@ export const BLOG_MESSAGES = {
   BLOG_ID_IS_REQUIRED: 'Blog id is required',
   BLOG_ID_MUST_BE_A_UUID: 'Blog id must be a UUID',
   GET_CUSTOMER_BLOG_DETAIL_SUCCESSFULLY: 'Get customer blog detail successfully',
-  BLOG_NOT_FOUND: 'Blog not found'
+  BLOG_NOT_FOUND: 'Blog not found',
+  GET_MANAGER_BLOGS_SUCCESSFULLY: 'Get manager blogs successfully'
 }

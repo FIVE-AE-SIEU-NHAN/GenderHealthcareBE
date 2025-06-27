@@ -31,3 +31,16 @@ export const getBlogsDetailController = async (
     result
   })
 }
+
+export const getManagerBlogsController = async (
+  req: Request<ParamsDictionary, any, any, GetBlogReqQuery>,
+  res: Response,
+  next: NextFunction
+) => {
+  const result = await blogsServices.getManagerBlogs(req.query)
+
+  res.status(HTTP_STATUS.OK).json({
+    message: BLOG_MESSAGES.GET_MANAGER_BLOGS_SUCCESSFULLY,
+    result
+  })
+}
