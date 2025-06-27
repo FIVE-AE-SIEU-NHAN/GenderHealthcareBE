@@ -429,6 +429,7 @@ class UsersServices {
       _order,
       _specialization,
       _gender,
+      _status,
       _date_of_birth,
       _created_at,
       _experienceYears,
@@ -463,6 +464,8 @@ class UsersServices {
         ? [new Date(_created_at)]
         : undefined
 
+    const status = Array.isArray(_status) ? _status.map((v) => parseInt(v)) : _status ? [parseInt(_status)] : undefined
+
     const experienceYears = _experienceYears ? parseInt(_experienceYears) : undefined
 
     const result = await this.consultantRepository.getConsultantsForAdmin({
@@ -472,6 +475,7 @@ class UsersServices {
       _skip,
       specialization,
       gender,
+      status,
       date_of_birth,
       created_at,
       experienceYears,
@@ -496,6 +500,7 @@ class UsersServices {
     const total = await this.consultantRepository.countConsultantsForAdmin({
       specialization,
       gender,
+      status,
       date_of_birth,
       created_at,
       experienceYears,

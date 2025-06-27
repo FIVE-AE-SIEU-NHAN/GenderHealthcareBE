@@ -858,7 +858,9 @@ export const getConsultantValidator = validate(
               'specialization_2',
               'certifications',
               'experienceYears',
-              'created_at'
+              'date_of_birth',
+              'created_at',
+              'status'
             ]
             if (!validOrders.includes(value)) {
               throw new ErrorWithStatus({
@@ -937,6 +939,20 @@ export const getConsultantValidator = validate(
             strictSeparator: true
           },
           errorMessage: USERS_MESSAGES.CREATED_AT_BE_ISO8601
+        }
+      },
+      _status: {
+        optional: true,
+        custom: {
+          options: async (values) => {
+            const verifyList = [ConsultantStatus.Active, ConsultantStatus.Inactive]
+            if (!verifyList.includes(parseInt(values))) {
+              throw new ErrorWithStatus({
+                status: HTTP_STATUS.BAD_REQUEST,
+                message: USERS_MESSAGES.STATUS_IS_INVALID
+              })
+            }
+          }
         }
       },
       _all: {

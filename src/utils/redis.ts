@@ -124,6 +124,27 @@ class RedisUtils {
     // Lưu index mới với TTL từ biến môi trường
     await client.set(redisKey, index, { EX: Number(process.env.REDIS_GET_NEXT_CONSULTANT_TTL) })
   }
+
+  async addOnlineUser(user_id: string, socket_id: string) {
+    const key = `online:${user_id}`
+    await client.sAdd(key, socket_id)
+  }
+
+  async removeOnlineSocket(user_id: string, socket_id: string) {
+    const key = `online:${user_id}`
+    await client.sRem(key, socket_id)
+    const remaining = await client.sCard(key)
+    if (remaining === 0) {
+      await client.del(key)
+    }
+  }
+
+  // Kiểm tra user có online không (true/false)
+  async isUserOnline(user_id: string): Promise<boolean> {
+    const key = `online:${user_id}`
+    const onlineSockets = await client.sCard(key)
+    return onlineSockets > 0
+  }
 }
 
 const redisUtils = new RedisUtils()

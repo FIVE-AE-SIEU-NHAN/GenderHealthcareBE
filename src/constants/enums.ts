@@ -17,6 +17,6 @@ export enum TokenType {
 }
 
 export enum ConsultantStatus {
-  Active, // 0
-  Inactive // 1
+  Inactive, // 0
+  Active // 1
 }

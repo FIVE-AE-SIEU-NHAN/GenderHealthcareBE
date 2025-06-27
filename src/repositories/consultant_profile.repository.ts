@@ -69,6 +69,7 @@ export default class ConsultantProfileRepository {
     _skip,
     specialization,
     gender,
+    status,
     date_of_birth,
     created_at,
     experienceYears,
@@ -82,6 +83,7 @@ export default class ConsultantProfileRepository {
     _order?: string
     specialization?: Topic[]
     gender?: string[]
+    status?: number[]
     date_of_birth?: Date[]
     created_at?: Date[]
     experienceYears?: number
@@ -111,6 +113,17 @@ export default class ConsultantProfileRepository {
             ...(specialization && {
               OR: [{ specialization_1: { in: specialization } }, { specialization_2: { in: specialization } }]
             }),
+            ...(experienceYears && {
+              experienceYears: {
+                equals: experienceYears
+              }
+            }),
+            ...(_certifications_like && {
+              certifications: {
+                contains: _certifications_like
+              }
+            }),
+            ...(status && { status: { in: status } }),
             user: {
               ...(gender && { gender: { in: gender } }),
               ...(date_of_birth?.length === 2 && {
@@ -153,6 +166,7 @@ export default class ConsultantProfileRepository {
                 contains: _certifications_like
               }
             }),
+            ...(status && { status: { in: status } }),
             user: {
               ...(gender && { gender: { in: gender } }),
               ...(date_of_birth?.length === 2 && {
@@ -185,9 +199,11 @@ export default class ConsultantProfileRepository {
               role: 1
             }
           },
-      orderBy: ['name', 'gender', 'created_at'].includes(_sort as string)
+      orderBy: ['name', 'gender', 'created_at', 'date_of_birth'].includes(_sort as string)
         ? { user: { [_sort as string]: _order || 'asc' } }
-        : ['specialization_1', 'specialization_2', 'certifications', 'experienceYears'].includes(_sort as string)
+        : ['specialization_1', 'specialization_2', 'certifications', 'experienceYears', 'status'].includes(
+              _sort as string
+            )
           ? { [_sort as string]: _order || 'asc' }
           : { user: { created_at: 'asc' } },
       skip: _skip,
@@ -198,6 +214,7 @@ export default class ConsultantProfileRepository {
   async countConsultantsForAdmin({
     specialization,
     gender,
+    status,
     date_of_birth,
     created_at,
     experienceYears,
@@ -207,6 +224,7 @@ export default class ConsultantProfileRepository {
   }: {
     specialization?: Topic[]
     gender?: string[]
+    status?: number[]
     date_of_birth?: Date[]
     created_at?: Date[]
     experienceYears?: number
@@ -220,6 +238,17 @@ export default class ConsultantProfileRepository {
             ...(specialization && {
               OR: [{ specialization_1: { in: specialization } }, { specialization_2: { in: specialization } }]
             }),
+            ...(experienceYears && {
+              experienceYears: {
+                equals: experienceYears
+              }
+            }),
+            ...(_certifications_like && {
+              certifications: {
+                contains: _certifications_like
+              }
+            }),
+            ...(status && { status: { in: status } }),
             user: {
               ...(gender && { gender: { in: gender } }),
               ...(date_of_birth?.length === 2 && {
@@ -262,6 +291,7 @@ export default class ConsultantProfileRepository {
                 contains: _certifications_like
               }
             }),
+            ...(status && { status: { in: status } }),
             user: {
               ...(gender && { gender: { in: gender } }),
               ...(date_of_birth?.length === 2 && {

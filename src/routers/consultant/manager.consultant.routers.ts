@@ -1,19 +1,33 @@
 import express from 'express'
 import { update } from 'lodash'
 import { USER_ROLE } from '~/constants/enums'
-import { editStatusConsultantController } from '~/controllers/admin/admin.users.controller'
+import { editStatusConsultantController, getConsultantController } from '~/controllers/admin/admin.users.controller'
 import { updateConsultantProfileController } from '~/controllers/users.controllers'
 import { requireRole } from '~/middlewares/decentralization .middlewares'
 import { filterMiddlewares } from '~/middlewares/filter.middlewares'
 import {
   accessTokenValidator,
   editStatusConsultantValidator,
+  getConsultantValidator,
   updateConsultantProfileValidator
 } from '~/middlewares/user.middlewares'
 import { UpdateConsultantProfileReqBody } from '~/models/requests/users.requests'
 import { wrapAsync } from '~/utils/handler'
 
 const managerConsultantRouter = express.Router()
+
+/**
+ * Description: Get consultant information for admin
+ * Path: /consultant/get-consultant
+ * Method: GET
+ */
+managerConsultantRouter.get(
+  '/get-consultant',
+  accessTokenValidator,
+  requireRole(USER_ROLE.Manager, USER_ROLE.Admin),
+  getConsultantValidator,
+  wrapAsync(getConsultantController)
+)
 
 /**
  * Description: This router is used for managing consultants by the manager.

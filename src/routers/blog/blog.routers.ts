@@ -31,4 +31,5 @@ blogRouter.get(
   getBlogsDetailValidator,
   wrapAsync(getBlogsDetailController)
 )
+
 export default blogRouter
