@@ -26,6 +26,7 @@ model Users {
   Questions             Questions[]
   Appointments  Appointments[]
   Notifications  Notifications[]
+  Blogs  Blogs[]
 
   @@index([google_id], map: "idx_google_id")
   @@index([forgot_password_token], map: "idx_forgot_token")
@@ -131,4 +132,29 @@ model Notifications {
   user            Users     @relation(fields: [user_id], references: [id])
   appointment     Appointments? @relation(fields: [appointment_id], references: [id])
   question     Questions? @relation(fields: [question_id], references: [id])
+}
+
+
+enum BlogStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model Blogs {
+  id         String   @id @map("_id") @db.VarChar(36)
+  user_id    String   @db.VarChar(36)
+  author_name String? @db.VarChar(100)
+  title      String?  @db.VarChar(255)
+  summary    String?  @db.Text
+  content    String?  @db.Text
+  section_1  String?  @db.Text
+  section_2  String?  @db.Text
+  cover_image String? @db.VarChar(255)
+  main_image String?  @db.VarChar(255)
+  sub_image  String?  @db.VarChar(255)
+  created_at DateTime @default(now())
+  status     BlogStatus @default(DRAFT)
+  
+  user       Users    @relation(fields: [user_id], references: [id])
 }
