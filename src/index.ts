@@ -13,7 +13,8 @@ import appointmentRouter from './routers/appointment/appointment.router'
 import './bull/notificationProcessor.bull'
 import { createServer } from 'http'
 import socketService from './socket/socket'
-import { TimeSlot } from '@prisma/client'
+import redisUtils from './utils/redis'
+import blogRouter from './routers/blog/blog.routers'
 
 // ---------------------------     SERVER    --------------------------- //
 const port = 3000
@@ -40,30 +41,7 @@ app.use('/user', usersRouter, adminUserRoute)
 app.use('/question', questionRouter, managerQuestionRouter)
 app.use('/consultant', consultantRouter, managerConsultantRouter)
 app.use('/appointment', appointmentRouter)
-app.post('/test', (req, res) => {
-  const { time_slot, booking_date } = req.body
-  const timeSlotStartMap: Record<TimeSlot, string> = {
-    SLOT_08_10: '09:07',
-    SLOT_10_12: '10:00',
-    SLOT_13_15: '13:00',
-    SLOT_15_17: '23:00'
-  }
-
-  const time = timeSlotStartMap[time_slot as TimeSlot]
-  const now = new Date()
-  const date_time = new Date(`${booking_date}T${time}:00`)
-
-  console.log(date_time)
-
-  const delay = date_time.getTime() - now.getTime() - 30 * 60 * 1000
-
-  res.status(200).json({
-    message: 'Welcome to GenderHealthcareBE API',
-    delay,
-    now,
-    date_time
-  })
-})
+app.use('/blog', blogRouter)
 
 // --------------------------- ERORR HANDLER --------------------------- //
 app.use(defaultErorHandler)
@@ -80,7 +58,6 @@ serverHttp.listen(port, () => {
 })
 
 // TODO:
-// done gửi lịch lưu redis
-// kiểm tra trạng thái customer có online không
-// nếu online thì gửi thông báo qua socket io
-// nếu không online thì lưu vào redis và gửi thông báo sau
+// chưa test user online
+// api xem thông báo, trả về số lượng thông báo chưa đọc
+// api đánh dấu thông báo đã đọc

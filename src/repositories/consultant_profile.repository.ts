@@ -89,7 +89,6 @@ export default class ConsultantProfileRepository {
     _certifications_like?: string
     _all?: string
   }) {
-    console.log('all', _all)
     return this.model.findMany({
       select: {
         id: true,
