@@ -45,14 +45,14 @@ managerConsultantRouter.patch(
 
 /**
  * Description: Update profile of a consultant by the manager.
- * Path: /consultant/update-profile
+ * Path: /consultant/:id/update-profile
  * Method: PATCH
  * Body: { name: string, email: string }
  */
 managerConsultantRouter.patch(
   '/:id/update-profile',
   accessTokenValidator,
-  requireRole(USER_ROLE.Manager),
+  requireRole(USER_ROLE.Manager, USER_ROLE.Admin),
   filterMiddlewares<UpdateConsultantProfileReqBody>([
     'specialization_1',
     'specialization_2',

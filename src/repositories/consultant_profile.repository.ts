@@ -365,9 +365,12 @@ export default class ConsultantProfileRepository {
     })
   }
 
-  async updateConsultantProfile(user_id: string, payload: UpdateConsultantProfileReqBody): Promise<ConsultantProfiles> {
+  async updateConsultantProfile(
+    consultant_id: string,
+    payload: UpdateConsultantProfileReqBody
+  ): Promise<ConsultantProfiles> {
     return this.model.update({
-      where: { user_id },
+      where: { id: consultant_id },
       data: {
         ...payload,
         user: {

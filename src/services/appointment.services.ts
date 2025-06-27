@@ -24,7 +24,6 @@ class AppointmentServices {
     booking_date: Date
     time_slot: TimeSlot
   }) {
-    console.log(data)
     return this.appointmentRepository.createAppointment(data)
   }
 

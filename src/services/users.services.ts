@@ -533,16 +533,8 @@ class UsersServices {
     return this.consultantRepository.updateStatusConsultant(id, status)
   }
 
-  async updateConsultantProfile(user_id: string, payload: UpdateConsultantProfileReqBody) {
-    const user = await this.userRepository.findUserById(user_id)
-    if (!user) {
-      throw new ErrorWithStatus({
-        status: HTTP_STATUS.NOT_FOUND,
-        message: USERS_MESSAGES.USER_NOT_FOUND
-      })
-    }
-
-    const consultantInfor = await this.consultantRepository.updateConsultantProfile(user_id, payload)
+  async updateConsultantProfile(consultant_id: string, payload: UpdateConsultantProfileReqBody) {
+    const consultantInfor = await this.consultantRepository.updateConsultantProfile(consultant_id, payload)
 
     return consultantInfor
   }

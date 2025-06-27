@@ -254,10 +254,10 @@ export const updateConsultantProfileController = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { user_id } = req.query
+  const { id: consultant_id } = req.params
 
   const payload = req.body
-  const consultantInfor = await usersServices.updateConsultantProfile(user_id as string, payload)
+  const consultantInfor = await usersServices.updateConsultantProfile(consultant_id as string, payload)
   res.status(HTTP_STATUS.OK).json({
     message: USERS_MESSAGES.UPDATE_CONSULTANT_PROFILE_SUCCESS,
     consultantInfor
