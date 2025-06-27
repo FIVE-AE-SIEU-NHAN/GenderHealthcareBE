@@ -1,9 +1,10 @@
 import express from 'express'
 import { USER_ROLE } from '~/constants/enums'
-import { getBlogsController } from '~/controllers/blog.controllers'
-import { getBlogsValidator } from '~/middlewares/blog.middlewares'
+import { getBlogsController, getBlogsDetailController } from '~/controllers/blog.controllers'
+import { getBlogsDetailValidator, getBlogsValidator } from '~/middlewares/blog.middlewares'
 import { requireRole } from '~/middlewares/decentralization .middlewares'
 import { accessTokenValidator } from '~/middlewares/user.middlewares'
+import { wrapAsync } from '~/utils/handler'
 
 const blogRouter = express.Router()
 
@@ -16,7 +17,18 @@ blogRouter.get(
   '/customer',
   // accessTokenValidator,
   getBlogsValidator,
-  getBlogsController
+  wrapAsync(getBlogsController)
 )
 
+/**
+ * Description: Get blog detail for customer
+ * Path: blog/customer/:id
+ * Method: GET
+ */
+blogRouter.get(
+  '/customer/:id',
+  // accessTokenValidator,
+  getBlogsDetailValidator,
+  wrapAsync(getBlogsDetailController)
+)
 export default blogRouter

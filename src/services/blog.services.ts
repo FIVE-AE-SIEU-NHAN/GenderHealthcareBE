@@ -1,3 +1,6 @@
+import HTTP_STATUS from '~/constants/httpStatus'
+import { BLOG_MESSAGES, QUESTIONS_MESSAGES } from '~/constants/messages'
+import { ErrorWithStatus } from '~/models/Errors'
 import { GetBlogReqQuery } from '~/models/requests/blog.requests'
 import BlogRepository from '~/repositories/blog.repository'
 
@@ -63,6 +66,21 @@ class BlogServices {
     return {
       blogs,
       total
+    }
+  }
+
+  async getCustomerBlogDetail(blog_id: string) {
+    const blog = await this.blogRepository.getCustomerBlogDetail(blog_id)
+
+    if (!blog) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.NOT_FOUND,
+        message: BLOG_MESSAGES.BLOG_NOT_FOUND
+      })
+    }
+
+    return {
+      blog
     }
   }
 }

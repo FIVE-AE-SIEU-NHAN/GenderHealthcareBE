@@ -183,3 +183,20 @@ export const APPOINTMENT_MESSAGES = {
   APPOINTMENT_ALREADY_IN_THIS_STATUS: 'Appointment already in this status',
   GET_MANAGER_APPOINTMENTS_SUCCESSFULLY: 'Get manager appointments successfully'
 }
+
+export const BLOG_MESSAGES = {
+  PAGE_IS_REQUIRED: 'Page is required',
+  PAGE_MUST_BE_A_POSITIVE_INTEGER: 'Page must be a positive integer',
+  LIMIT_IS_REQUIRED: 'Limit is required',
+  LIMIT_MUST_BE_A_POSITIVE_INTEGER_AND_LESS_THAN_100: 'Limit must be a positive integer and less than 100',
+  SORT_FIELD_IS_INVALID: 'Sort field is invalid',
+  ORDER_MUST_BE_ASC_OR_DESC: 'Order must be asc or desc',
+  STATUS_IS_REQUIRED: 'Status is required',
+  STATUS_IS_INVALID: 'Status is invalid',
+  CREATED_AT_BE_ISO8601: 'Created at must be ISO8601',
+  GET_CUSTOMER_BLOGS_SUCCESSFULLY: 'Get customer blogs successfully',
+  BLOG_ID_IS_REQUIRED: 'Blog id is required',
+  BLOG_ID_MUST_BE_A_UUID: 'Blog id must be a UUID',
+  GET_CUSTOMER_BLOG_DETAIL_SUCCESSFULLY: 'Get customer blog detail successfully',
+  BLOG_NOT_FOUND: 'Blog not found'
+}

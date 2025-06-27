@@ -74,4 +74,18 @@ export const getBlogsValidator = validate(
   )
 )
 
-// author_like, title, sumary, content, section_1, section_2
+export const getBlogsDetailValidator = validate(
+  checkSchema(
+    {
+      id: {
+        notEmpty: {
+          errorMessage: BLOG_MESSAGES.BLOG_ID_IS_REQUIRED
+        },
+        isUUID: {
+          errorMessage: BLOG_MESSAGES.BLOG_ID_MUST_BE_A_UUID
+        }
+      }
+    },
+    ['params']
+  )
+)

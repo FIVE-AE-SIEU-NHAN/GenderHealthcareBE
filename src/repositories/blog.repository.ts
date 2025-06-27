@@ -198,4 +198,26 @@ export default class BlogRepository {
           }
     })
   }
+
+  async getCustomerBlogDetail(blog_id: string) {
+    return this.model.findFirst({
+      where: {
+        id: blog_id,
+        status: BlogStatus.PUBLISHED
+      },
+      select: {
+        id: true,
+        author_name: true,
+        title: true,
+        summary: true,
+        content: true,
+        section_1: true,
+        section_2: true,
+        cover_image: true,
+        main_image: true,
+        sub_image: true,
+        created_at: true
+      }
+    })
+  }
 }

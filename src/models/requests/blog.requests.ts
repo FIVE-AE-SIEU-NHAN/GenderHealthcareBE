@@ -16,3 +16,7 @@ export interface GetBlogReqQuery extends ParsedQs {
   _section_2_like?: string
   _all?: string
 }
+
+export interface IdReqQuery extends ParsedQs {
+  id: string
+}
