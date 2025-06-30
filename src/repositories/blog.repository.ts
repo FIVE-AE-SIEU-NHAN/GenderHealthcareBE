@@ -521,4 +521,49 @@ export default class BlogRepository {
           }
     })
   }
+
+  async createBlog({
+    blog_id,
+    user_id,
+    author_name,
+    title,
+    summary,
+    content,
+    section_1,
+    section_2,
+    cover_image,
+    main_image,
+    sub_image
+  }: {
+    blog_id: string
+    user_id: string
+    author_name: string
+    title: string
+    summary: string
+    content: string
+    section_1: string
+    section_2: string
+    cover_image: string
+    main_image: string
+    sub_image: string
+  }) {
+    const newBlog = await this.model.create({
+      data: {
+        id: blog_id,
+        user_id,
+        author_name,
+        title,
+        summary,
+        content,
+        section_1,
+        section_2,
+        cover_image,
+        main_image,
+        sub_image,
+        created_at: new Date(),
+        status: BlogStatus.DRAFT
+      }
+    })
+    return newBlog
+  }
 }

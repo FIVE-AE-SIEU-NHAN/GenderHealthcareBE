@@ -202,5 +202,21 @@ export const BLOG_MESSAGES = {
   GET_MANAGER_BLOGS_SUCCESSFULLY: 'Get manager blogs successfully',
   BLOG_STATUS_UPDATED_SUCCESSFULLY: 'Blog status updated successfully',
   BLOG_ALREADY_IN_THIS_STATUS: 'Blog already in this status',
-  GET_STAFF_BLOGS_SUCCESSFULLY: 'Get staff blogs successfully'
+  GET_STAFF_BLOGS_SUCCESSFULLY: 'Get staff blogs successfully',
+  TITLE_IS_REQUIRED: 'Title is required',
+  TITLE_MUST_BE_A_STRING: 'Title must be a string',
+  TITLE_LENGTH_MUST_BE_BETWEEN_1_AND_255: 'Title length must be between 1 and 255 characters',
+  SUMMARY_IS_REQUIRED: 'Summary is required',
+  SUMMARY_MUST_BE_A_STRING: 'Summary must be a string',
+  CONTENT_IS_REQUIRED: 'Content is required',
+  CONTENT_MUST_BE_A_STRING: 'Content must be a string',
+  SECTION_1_MUST_BE_A_STRING: 'Section 1 must be a string',
+  SECTION_2_MUST_BE_A_STRING: 'Section 2 must be a string',
+  COVER_IMAGE_MUST_BE_A_STRING: 'Cover image must be a string',
+  COVER_IMAGE_LENGTH_MUST_BE_LESS_THAN_255: 'Cover image length must be less than 255 characters',
+  MAIN_IMAGE_MUST_BE_A_STRING: 'Main image must be a string',
+  MAIN_IMAGE_LENGTH_MUST_BE_LESS_THAN_255: 'Main image length must be less than 255 characters',
+  SUB_IMAGE_MUST_BE_A_STRING: 'Sub image must be a string',
+  SUB_IMAGE_LENGTH_MUST_BE_LESS_THAN_255: 'Sub image length must be less than 255 characters',
+  CREATE_BLOG_SUCCESSFULLY: 'Create blog successfully'
 }

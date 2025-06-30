@@ -2,8 +2,10 @@ import { BlogStatus } from '@prisma/client'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { BLOG_MESSAGES, QUESTIONS_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
-import { GetBlogReqQuery } from '~/models/requests/blog.requests'
+import { CreateBlogReqQuery, GetBlogReqQuery } from '~/models/requests/blog.requests'
 import BlogRepository from '~/repositories/blog.repository'
+import { v4 as ObjectId } from 'uuid'
+import usersServices from './users.services'
 
 class BlogServices {
   private blogRepository: BlogRepository
@@ -198,6 +200,29 @@ class BlogServices {
       blogs,
       total
     }
+  }
+
+  async createBlogs(user_id: string, payload: CreateBlogReqQuery) {
+    const { title, summary, content, section_1, section_2, cover_image, main_image, sub_image } = payload
+
+    const user = await usersServices.getProfile(user_id)
+
+    const blog_id = ObjectId()
+    const newBlog = await this.blogRepository.createBlog({
+      blog_id,
+      author_name: user!.name ?? 'Anonymous',
+      user_id,
+      title,
+      summary,
+      content,
+      section_1,
+      section_2,
+      cover_image,
+      main_image,
+      sub_image
+    })
+
+    return newBlog
   }
 }
 

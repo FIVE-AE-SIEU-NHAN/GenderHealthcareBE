@@ -24,3 +24,14 @@ export interface IdReqQuery extends ParsedQs {
 export interface EditStatusBlogReqBody {
   status: BlogStatus
 }
+
+export interface CreateBlogReqQuery {
+  title: string
+  summary: string
+  content: string
+  section_1: string
+  section_2: string
+  cover_image: string
+  main_image: string
+  sub_image: string
+}

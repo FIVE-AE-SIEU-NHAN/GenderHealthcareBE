@@ -62,3 +62,5 @@ serverHttp.listen(port, () => {
 // chưa test user online
 // api xem thông báo, trả về số lượng thông báo chưa đọc
 // api đánh dấu thông báo đã đọc
+
+// *** đã tạo bảng staff thì chuyển user_id trong blogs thành staff_id
