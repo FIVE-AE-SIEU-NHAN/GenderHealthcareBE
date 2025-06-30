@@ -201,5 +201,6 @@ export const BLOG_MESSAGES = {
   BLOG_NOT_FOUND: 'Blog not found',
   GET_MANAGER_BLOGS_SUCCESSFULLY: 'Get manager blogs successfully',
   BLOG_STATUS_UPDATED_SUCCESSFULLY: 'Blog status updated successfully',
-  BLOG_ALREADY_IN_THIS_STATUS: 'Blog already in this status'
+  BLOG_ALREADY_IN_THIS_STATUS: 'Blog already in this status',
+  GET_STAFF_BLOGS_SUCCESSFULLY: 'Get staff blogs successfully'
 }

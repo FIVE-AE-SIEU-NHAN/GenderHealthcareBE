@@ -11,6 +11,7 @@ import consultantRouter from './routers/consultant/consultant.router'
 import managerConsultantRouter from './routers/consultant/manager.consultant.routers'
 import appointmentRouter from './routers/appointment/appointment.router'
 import blogRouter from './routers/blog/blog.routers'
+import staffBlogRouter from './routers/blog/staff.blog.routers'
 import managerBlogRouter from './routers/blog/manager.blog.routers'
 import './bull/notificationProcessor.bull'
 import { createServer } from 'http'
@@ -41,7 +42,7 @@ app.use('/user', usersRouter, adminUserRoute)
 app.use('/question', questionRouter, managerQuestionRouter)
 app.use('/consultant', consultantRouter, managerConsultantRouter)
 app.use('/appointment', appointmentRouter)
-app.use('/blog', blogRouter, managerBlogRouter)
+app.use('/blog', blogRouter, staffBlogRouter, managerBlogRouter)
 
 // --------------------------- ERORR HANDLER --------------------------- //
 app.use(defaultErorHandler)

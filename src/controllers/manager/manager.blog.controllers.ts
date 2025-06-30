@@ -3,6 +3,7 @@ import { ParamsDictionary } from 'express-serve-static-core'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { BLOG_MESSAGES } from '~/constants/messages'
 import { EditStatusBlogReqBody, GetBlogReqQuery, IdReqQuery } from '~/models/requests/blog.requests'
+import { TokenPayLoad } from '~/models/requests/users.requests'
 import blogsServices from '~/services/blog.services'
 
 export const getManagerBlogsController = async (
