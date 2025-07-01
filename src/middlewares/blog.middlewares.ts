@@ -230,3 +230,83 @@ export const createBlogsValidator = validate(
     ['body']
   )
 )
+
+export const updateBlogsValidator = validate(
+  checkSchema(
+    {
+      title: {
+        optional: true,
+        isString: {
+          errorMessage: BLOG_MESSAGES.TITLE_MUST_BE_A_STRING
+        },
+        isLength: {
+          options: { min: 1, max: 255 },
+          errorMessage: BLOG_MESSAGES.TITLE_LENGTH_MUST_BE_BETWEEN_1_AND_255
+        },
+        trim: true
+      },
+      summary: {
+        optional: true,
+        isString: {
+          errorMessage: BLOG_MESSAGES.SUMMARY_MUST_BE_A_STRING
+        },
+        trim: true
+      },
+      content: {
+        optional: true,
+        isString: {
+          errorMessage: BLOG_MESSAGES.CONTENT_MUST_BE_A_STRING
+        },
+        trim: true
+      },
+      section_1: {
+        optional: true,
+        isString: {
+          errorMessage: BLOG_MESSAGES.SECTION_1_MUST_BE_A_STRING
+        },
+        trim: true
+      },
+      section_2: {
+        optional: true,
+        isString: {
+          errorMessage: BLOG_MESSAGES.SECTION_2_MUST_BE_A_STRING
+        },
+        trim: true
+      },
+      cover_image: {
+        optional: true,
+        isString: {
+          errorMessage: BLOG_MESSAGES.COVER_IMAGE_MUST_BE_A_STRING
+        },
+        isLength: {
+          options: { max: 255 },
+          errorMessage: BLOG_MESSAGES.COVER_IMAGE_LENGTH_MUST_BE_LESS_THAN_255
+        },
+        trim: true
+      },
+      main_image: {
+        optional: true,
+        isString: {
+          errorMessage: BLOG_MESSAGES.MAIN_IMAGE_MUST_BE_A_STRING
+        },
+        isLength: {
+          options: { max: 255 },
+          errorMessage: BLOG_MESSAGES.MAIN_IMAGE_LENGTH_MUST_BE_LESS_THAN_255
+        },
+        trim: true
+      },
+      sub_image: {
+        optional: true,
+        isString: {
+          errorMessage: BLOG_MESSAGES.SUB_IMAGE_MUST_BE_A_STRING
+        },
+        isLength: {
+          options: { max: 255 },
+          errorMessage: BLOG_MESSAGES.SUB_IMAGE_LENGTH_MUST_BE_LESS_THAN_255
+        },
+        trim: true
+      }
+    },
+    ['body']
+  )
+)

@@ -2,7 +2,7 @@ import { BlogStatus } from '@prisma/client'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { BLOG_MESSAGES, QUESTIONS_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
-import { CreateBlogReqQuery, GetBlogReqQuery } from '~/models/requests/blog.requests'
+import { CreateBlogReqQuery, GetBlogReqQuery, UpdateBlogReqQuery } from '~/models/requests/blog.requests'
 import BlogRepository from '~/repositories/blog.repository'
 import { v4 as ObjectId } from 'uuid'
 import usersServices from './users.services'
@@ -39,8 +39,8 @@ class BlogServices {
     }
   }
 
-  async getCustomerBlogDetail(blog_id: string) {
-    const blog = await this.blogRepository.getCustomerBlogDetail(blog_id)
+  async getBlogDetail(blog_id: string) {
+    const blog = await this.blogRepository.getBlogDetail(blog_id)
 
     if (!blog) {
       throw new ErrorWithStatus({
@@ -223,6 +223,10 @@ class BlogServices {
     })
 
     return newBlog
+  }
+
+  async updateBlog(blog_id: string, payload: UpdateBlogReqQuery) {
+    return await this.blogRepository.updateBlog(blog_id, payload)
   }
 }
 

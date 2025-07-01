@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { BLOG_MESSAGES } from '~/constants/messages'
-import { CreateBlogReqQuery, GetBlogReqQuery } from '~/models/requests/blog.requests'
+import { CreateBlogReqQuery, GetBlogReqQuery, UpdateBlogReqQuery } from '~/models/requests/blog.requests'
 import { TokenPayLoad } from '~/models/requests/users.requests'
 import blogsServices from '~/services/blog.services'
 
@@ -13,7 +13,6 @@ export const getStaffBlogsController = async (
 ) => {
   const { user_id } = req.decode_authorization as TokenPayLoad
   const result = await blogsServices.getStaffBlogs(user_id, req.query)
-
   res.status(HTTP_STATUS.OK).json({
     message: BLOG_MESSAGES.GET_STAFF_BLOGS_SUCCESSFULLY,
     result
@@ -26,9 +25,22 @@ export const createBlogsController = async (
   next: NextFunction
 ) => {
   const { user_id } = req.decode_authorization as TokenPayLoad
-  const result = await blogsServices.createBlogs(user_id, req.body)
+  await blogsServices.createBlogs(user_id, req.body)
 
   res.status(HTTP_STATUS.CREATED).json({
     message: BLOG_MESSAGES.CREATE_BLOG_SUCCESSFULLY
+  })
+}
+
+export const updateBlogController = async (
+  req: Request<ParamsDictionary, any, UpdateBlogReqQuery>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { id: blog_id } = req.params
+  await blogsServices.updateBlog(blog_id, req.body)
+
+  res.status(HTTP_STATUS.OK).json({
+    message: BLOG_MESSAGES.UPDATE_BLOG_SUCCESSFULLY
   })
 }

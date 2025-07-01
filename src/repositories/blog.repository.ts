@@ -1,4 +1,5 @@
 import { BlogStatus } from '@prisma/client'
+import { UpdateBlogReqQuery } from '~/models/requests/blog.requests'
 import { prisma } from '~/services/client'
 
 export default class BlogRepository {
@@ -55,11 +56,10 @@ export default class BlogRepository {
     })
   }
 
-  async getCustomerBlogDetail(blog_id: string) {
+  async getBlogDetail(blog_id: string) {
     return this.model.findFirst({
       where: {
-        id: blog_id,
-        status: BlogStatus.PUBLISHED
+        id: blog_id
       },
       select: {
         id: true,
@@ -565,5 +565,17 @@ export default class BlogRepository {
       }
     })
     return newBlog
+  }
+
+  async updateBlog(blog_id: string, payload: UpdateBlogReqQuery) {
+    return this.model.update({
+      where: {
+        id: blog_id
+      },
+      data: {
+        ...payload,
+        status: BlogStatus.DRAFT
+      }
+    })
   }
 }

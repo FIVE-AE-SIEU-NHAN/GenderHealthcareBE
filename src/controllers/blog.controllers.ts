@@ -24,7 +24,8 @@ export const getBlogsDetailController = async (
   next: NextFunction
 ) => {
   const { id: blog_id } = req.params
-  const result = await blogsServices.getCustomerBlogDetail(blog_id)
+
+  const result = await blogsServices.getBlogDetail(blog_id)
 
   res.status(HTTP_STATUS.OK).json({
     message: BLOG_MESSAGES.GET_CUSTOMER_BLOG_DETAIL_SUCCESSFULLY,

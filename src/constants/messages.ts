@@ -218,5 +218,6 @@ export const BLOG_MESSAGES = {
   MAIN_IMAGE_LENGTH_MUST_BE_LESS_THAN_255: 'Main image length must be less than 255 characters',
   SUB_IMAGE_MUST_BE_A_STRING: 'Sub image must be a string',
   SUB_IMAGE_LENGTH_MUST_BE_LESS_THAN_255: 'Sub image length must be less than 255 characters',
-  CREATE_BLOG_SUCCESSFULLY: 'Create blog successfully'
+  CREATE_BLOG_SUCCESSFULLY: 'Create blog successfully',
+  UPDATE_BLOG_SUCCESSFULLY: 'Update blog successfully'
 }
