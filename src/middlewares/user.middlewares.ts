@@ -10,7 +10,12 @@ import { verifyGoogleToken } from '~/utils/google'
 import { verifyToken } from '~/utils/jwt'
 import { validate } from '~/utils/validation'
 import { ConsultantStatus, USER_ROLE, UserVerifyStatus } from '~/constants/enums'
-import { Topic } from '@prisma/client'
+// Define Topic enum locally if not exported from @prisma/client
+export enum Topic {
+  TOPIC_1 = 'TOPIC_1',
+  TOPIC_2 = 'TOPIC_2'
+  // Add all valid topic values here
+}
 
 const nameSchema: ParamSchema = {
   notEmpty: {

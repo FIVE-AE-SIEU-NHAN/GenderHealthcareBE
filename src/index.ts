@@ -16,7 +16,9 @@ import managerBlogRouter from './routers/blog/manager.blog.routers'
 import './bull/notificationProcessor.bull'
 import { createServer } from 'http'
 import socketService from './socket/socket'
-
+import dotenv from 'dotenv'
+import cycleRouter from './routers/cycle/cycle.routers'
+dotenv.config()
 // ---------------------------     SERVER    --------------------------- //
 const port = 3000
 const app = express()
@@ -43,7 +45,7 @@ app.use('/question', questionRouter, managerQuestionRouter)
 app.use('/consultant', consultantRouter, managerConsultantRouter)
 app.use('/appointment', appointmentRouter)
 app.use('/blog', blogRouter, staffBlogRouter, managerBlogRouter)
-
+app.use('/cycle', cycleRouter)
 // --------------------------- ERORR HANDLER --------------------------- //
 app.use(defaultErorHandler)
 

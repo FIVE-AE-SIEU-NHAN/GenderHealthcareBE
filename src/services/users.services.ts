@@ -37,7 +37,7 @@ class UsersServices {
     return signToken({
       payload: { user_id, role, token_type: TokenType.AccessToken },
       privateKey: process.env.JWT_SECRET_ACCESS_TOKEN as string,
-      options: { expiresIn: Number(process.env.ACCESS_TOKEN_EXPIRE_IN) }
+      options: { expiresIn: (process.env.ACCESS_TOKEN_EXPIRE_IN || '1h') as any }
     })
   }
 
@@ -45,18 +45,16 @@ class UsersServices {
     return signToken({
       payload: { user_id, role, token_type: TokenType.RefreshToken },
       privateKey: process.env.JWT_SECRET_REFRESH_TOKEN as string,
-      options: { expiresIn: Number(process.env.REFRESH_TOKEN_EXPIRE_IN) }
+      options: { expiresIn: (process.env.REFRESH_TOKEN_EXPIRE_IN || '7d') as any }
     })
   }
-
   private signForgotPasswordToken(user_id: string) {
     return signToken({
       payload: { user_id, token_type: TokenType.ForgotPasswordToken },
       privateKey: process.env.JWT_SECRET_FORGOT_PASSWORD_TOKEN as string,
-      options: { expiresIn: Number(process.env.FORGOT_PASSWORD_TOKEN_EXPIRE_IN) }
+      options: { expiresIn: (process.env.FORGOT_PASSWORD_TOKEN_EXPIRE_IN || '15m') as any }
     })
   }
-
   async register(payload: RegisterReqBody) {
     const user_id = ObjectId()
     const user = await this.userRepository.createUser({
@@ -484,7 +482,7 @@ class UsersServices {
       _all
     })
 
-    const consultants = result.map((consultant) => ({
+    const consultants = result.map((consultant: any) => ({
       id: consultant.id,
       specialization_1: consultant.specialization_1,
       specialization_2: consultant.specialization_2,

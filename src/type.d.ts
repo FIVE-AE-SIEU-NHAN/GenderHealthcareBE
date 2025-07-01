@@ -7,5 +7,9 @@ declare module 'express' {
     decode_refresh_token?: TokenPayLoad
     decode_google_verify_token?: TokenGoogleVerifyPayload
     decode_forgot_password_token?: TokenPayLoad
+    user?: {
+      id: string;
+      [key: string]: any;
+    }
   }
-}
+  }
