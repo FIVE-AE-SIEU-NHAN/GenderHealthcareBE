@@ -557,6 +557,10 @@ class UsersServices {
     }
     return consultant.id
   }
+
+  async getUserIdOfConsultant(consultant_id: string) {
+    return await this.consultantRepository.getUserIdByConsultantId(consultant_id)
+  }
 }
 
 const usersServices = new UsersServices()

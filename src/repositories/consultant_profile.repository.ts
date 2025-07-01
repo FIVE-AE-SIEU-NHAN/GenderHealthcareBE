@@ -387,4 +387,13 @@ export default class ConsultantProfileRepository {
       where: { user_id }
     })
   }
+
+  async getUserIdByConsultantId(consultant_id: string) {
+    return this.model.findUnique({
+      where: { id: consultant_id },
+      select: {
+        user_id: true
+      }
+    })
+  }
 }

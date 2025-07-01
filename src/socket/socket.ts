@@ -2,6 +2,7 @@
 import { Server, Socket } from 'socket.io'
 // Import module HTTP của Node.js để dùng với express
 import http from 'http'
+import redisUtils from '~/utils/redis'
 
 class SocketService {
   private static instance: SocketService
@@ -25,26 +26,31 @@ class SocketService {
     })
 
     this.io.on('connection', (socket: Socket) => {
-      console.log(`Socket connected: ${socket.id}`)
+      console.log(`>>> Socket connected: \x1b[31m${socket.id}\x1b[0m`)
       const user_id = socket.handshake.auth.userId as string
+
+      // thêm trạng thái người dùng online
+      redisUtils.addOnlineUser(user_id, socket.id)
 
       // các event chính
       this.joinRoom(socket, user_id)
 
       // event disconnect
       socket.on('disconnect', (reason) => {
-        console.log(`Socket ${socket.id} disconnected. Reason: ${reason}`)
+        console.log(
+          `- Socket \x1b[31m${socket.id}\x1b[0m disconnected. Reason: \x1b[32m${reason.toLocaleUpperCase()}\x1b[0m`
+        )
+        redisUtils.removeOnlineSocket(user_id, socket.id)
       })
     })
   }
 
   private joinRoom(socket: Socket, user_id: string) {
     socket.join(user_id)
-    console.log(`Socket ${socket.id} joined room: ${user_id}`)
+    console.log(`- Socket \x1b[31m${socket.id}\x1b[0m joined room: \x1b[36m${user_id}\x1b[0m`)
   }
 
   sendNotification(user_id: string, appointment_id: string, content: string) {
-    console.log(content)
     this.getIO().to(user_id).emit('notify:send', {
       appointment_id,
       content

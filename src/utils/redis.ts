@@ -1,7 +1,6 @@
 import { createClient } from 'redis'
 import { generateOTP } from './nanoid'
 import { OTPReqBody } from '~/models/requests/users.requests'
-import { ConsultantProfiles } from '@prisma/client'
 
 const client = createClient({
   username: 'default',
@@ -139,8 +138,7 @@ class RedisUtils {
     }
   }
 
-  // Kiểm tra user có online không (true/false)
-  async isUserOnline(user_id: string): Promise<boolean> {
+  async isUserOnline(user_id: string) {
     const key = `online:${user_id}`
     const onlineSockets = await client.sCard(key)
     return onlineSockets > 0

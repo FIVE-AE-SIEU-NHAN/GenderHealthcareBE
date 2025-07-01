@@ -7,15 +7,16 @@ import usersRouter from './routers/user/user.routers'
 import adminUserRoute from './routers/user/admin.users.router'
 import questionRouter from './routers/question/question.routers'
 import managerQuestionRouter from './routers/question/manager.question.router'
-import consultantRouter from './routers/consultant/consultant.router'
+import consultantRouter from './routers/consultant/consultant.routers'
 import managerConsultantRouter from './routers/consultant/manager.consultant.routers'
 import appointmentRouter from './routers/appointment/appointment.router'
 import blogRouter from './routers/blog/blog.routers'
 import staffBlogRouter from './routers/blog/staff.blog.routers'
 import managerBlogRouter from './routers/blog/manager.blog.routers'
-import './bull/notificationProcessor.bull'
+import notificationRouter from './routers/notification/notification.routers'
 import { createServer } from 'http'
 import socketService from './socket/socket'
+import { notificationQueue } from './bull/queue'
 
 // ---------------------------     SERVER    --------------------------- //
 const port = 3000
@@ -43,6 +44,36 @@ app.use('/question', questionRouter, managerQuestionRouter)
 app.use('/consultant', consultantRouter, managerConsultantRouter)
 app.use('/appointment', appointmentRouter)
 app.use('/blog', blogRouter, staffBlogRouter, managerBlogRouter)
+app.use('/notification', notificationRouter)
+
+// 🧪 API test: Thêm job gửi thông báo vào hàng đợi BullMQ
+app.get('/test', async (req, res) => {
+  await notificationQueue.add(
+    'notification-for-customer',
+    {
+      userId: 'Người dùng',
+      content: 'Đây là thông báo test 1'
+    },
+    {
+      delay: 5000,
+      removeOnComplete: true
+    }
+  )
+
+  await notificationQueue.add(
+    'notification-for-customer',
+    {
+      userId: 'Tư vấn viên',
+      content: 'Đây là thông báo test 2'
+    },
+    {
+      delay: 5000,
+      removeOnComplete: true
+    }
+  )
+
+  res.status(200).json({ message: '✅ Test job added to queue!' })
+})
 
 // --------------------------- ERORR HANDLER --------------------------- //
 app.use(defaultErorHandler)
@@ -54,13 +85,5 @@ socketService.init(serverHttp)
 
 // ---------------------------   RUN SERVER  --------------------------- //
 serverHttp.listen(port, () => {
-  const port = 3000
   console.log(`\x1b[34mPROJECT GenderHealthcareBE OPEN ON PORT: \x1b[31m${port}\x1b[0m`)
 })
-
-// TODO:
-// chưa test user online
-// api xem thông báo, trả về số lượng thông báo chưa đọc
-// api đánh dấu thông báo đã đọc
-
-// *** đã tạo bảng staff thì chuyển user_id trong blogs thành staff_id

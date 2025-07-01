@@ -86,3 +86,7 @@ appointmentRouter.patch(
 )
 
 export default appointmentRouter
+
+// customer: book appointment, get our appointments, notification, chatroom, video call
+// consultant: get appointments, edit status appointment, notification, chatroom, video call
+// manager: get appointments, edit status appointment

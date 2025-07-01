@@ -1,6 +1,8 @@
 import { NotificationType, TimeSlot } from '@prisma/client'
-import { notificationQueue } from '~/bull/notificationQueue.bull'
 import NotificationRepository from '~/repositories/notification.repository'
+import usersServices from './users.services'
+import { ErrorWithStatus } from '~/models/Errors'
+import { notificationQueue } from '~/bull/queue'
 
 class NotificationService {
   private notificationRepository: NotificationRepository
@@ -11,31 +13,57 @@ class NotificationService {
 
   async addNotificationForConsultantAppointment(
     user_id: string,
+    consultant_id: string,
     appointment_id: string,
     booking_date: Date,
     time_slot: TimeSlot
   ) {
     // map time_slot
     const timeSlotStartMap: Record<TimeSlot, string> = {
-      SLOT_08_10: '09:38',
-      SLOT_10_12: '10:00',
-      SLOT_13_15: '13:00',
-      SLOT_15_17: '15:00'
+      SLOT_07_08: '07:00',
+      SLOT_08_09: '08:00',
+      SLOT_09_10: '09:00',
+      SLOT_10_11: '10:00',
+      SLOT_13_14: '13:00',
+      SLOT_14_15: '14:00',
+      SLOT_15_16: '15:00',
+      SLOT_16_17: '16:00'
     }
 
     // tạo content thông báo
     const date = booking_date.toLocaleDateString().split('/')
-    const content = `Bạn có một cuộc hẹn vào lúc ${timeSlotStartMap[time_slot]} ${date[1]}-${date[0]}-${date[2]}`
+    const customerContent = `You have an appointment at ${timeSlotStartMap[time_slot]} ${date[1]}-${date[0]}-${date[2]}`
+    const consultantContent = `You have an appointment with customer at ${timeSlotStartMap[time_slot]} ${date[1]}-${date[0]}-${date[2]}`
 
     // 1. Lưu thông báo vào database
-    const { id: notification_id } = await this.notificationRepository.createNotification({
-      user_id,
-      type: NotificationType.APPOINTMENT_REMINDER_30M,
-      content,
-      scheduled_time: booking_date,
-      question_id: '',
-      appointment_id
-    })
+    // lấy user_id của consultant
+    const consultant = await usersServices.getUserIdOfConsultant(consultant_id)
+
+    if (!consultant) {
+      throw new ErrorWithStatus({
+        status: 404,
+        message: 'Consultant not found'
+      })
+    }
+
+    const [{ id: notification_id_of_customer }, { id: notification_id_of_consultant }] = await Promise.all([
+      this.notificationRepository.createNotification({
+        user_id,
+        type: NotificationType.APPOINTMENT_REMINDER_30M,
+        content: customerContent,
+        scheduled_time: booking_date,
+        question_id: '',
+        appointment_id
+      }),
+      this.notificationRepository.createNotification({
+        user_id: consultant.user_id,
+        type: NotificationType.APPOINTMENT_REMINDER_30M,
+        content: consultantContent,
+        scheduled_time: booking_date,
+        question_id: '',
+        appointment_id
+      })
+    ])
 
     // 2. Gọi bull để lưu job thông báo và đặt thời gian gửi thông báo
     // map thời gian để tính toán delay
@@ -45,23 +73,45 @@ class NotificationService {
     const date_time = new Date(`${booking_date.toISOString().split('T')[0]}T${time}:00`)
 
     // tính thời gian gửi thông báo là 30 phút trước thời gian hẹn
-    const delay = date_time.getTime() - now.getTime() - 30 * 60 * 1000
+    // const delay = date_time.getTime() - now.getTime() - 30 * 60 * 1000
+
+    const delay = 10000
 
     console.log('Gửi thông báo sau: ', delay)
 
-    notificationQueue.add(
-      'send-noti-of-cosultant-booking',
+    /*========================Tạo job để thông báo=========================== */
+
+    await notificationQueue.add(
+      'notification-for-customer',
       {
         user_id,
         appointment_id,
-        content
+        content: customerContent
       },
       {
         delay,
-        jobId: notification_id,
+        jobId: `customer-${notification_id_of_customer}`,
         removeOnComplete: true
       }
     )
+
+    await notificationQueue.add(
+      'notification-for-customer',
+      {
+        user_id: consultant.user_id,
+        appointment_id,
+        content: consultantContent
+      },
+      {
+        delay,
+        jobId: `consultant-${notification_id_of_consultant}`,
+        removeOnComplete: true
+      }
+    )
+  }
+
+  async updateNotificationSendStatus(notification_id: string, is_send: boolean) {
+    return this.notificationRepository.updateNotificationSendStatus(notification_id, is_send)
   }
 }
 

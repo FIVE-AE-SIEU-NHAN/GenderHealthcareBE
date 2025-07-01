@@ -40,8 +40,10 @@ export const bookAppointmentController = async (
   for (let i = 0; i < numberOfCounsultant; i++) {
     const currentIndex = (startIndex + i) % numberOfCounsultant
 
+    // lấy consultant theo topic và index
     const consultant_id = await usersServices.getConsultantByTopicAndIndex(topic, currentIndex)
 
+    // để xử lý trường hợp consultant có 2 topic mà topic kia đã có lịch hẹn đúng booking_date và time_slot
     const isBusy = await appointmentServices.checkAppointmentExists(consultant_id, new Date(booking_date), time_slot)
 
     if (!isBusy) {
@@ -71,6 +73,7 @@ export const bookAppointmentController = async (
   // lưu lịch hẹn vào redis để gửi thông báo và lưu vào database
   await notificationService.addNotificationForConsultantAppointment(
     user_id,
+    selectedConsultantId,
     appointment_id,
     new Date(booking_date),
     time_slot

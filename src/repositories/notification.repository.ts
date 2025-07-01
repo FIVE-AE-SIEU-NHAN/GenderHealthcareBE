@@ -6,14 +6,6 @@ import { create } from 'lodash'
 export default class NotificationRepository {
   private model = prisma.notifications
 
-  async getNotifications() {
-    return this.model.findMany({
-      orderBy: {
-        created_at: 'desc'
-      }
-    })
-  }
-
   async createNotification({
     user_id,
     type,
@@ -41,6 +33,13 @@ export default class NotificationRepository {
         ...(question_id && { question_id }),
         created_at: new Date()
       }
+    })
+  }
+
+  async updateNotificationSendStatus(id: string, is_sent: boolean) {
+    return this.model.update({
+      where: { id },
+      data: { is_sent }
     })
   }
 }
