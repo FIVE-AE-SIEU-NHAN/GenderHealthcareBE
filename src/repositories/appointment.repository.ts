@@ -52,7 +52,7 @@ export default class AppointmentRepository {
         ...(status && { status: { in: status } }),
         ...(start_day &&
           end_day && {
-            created_at: {
+            booking_date: {
               gte: `${start_day.toISOString().split('T')[0]}T00:00:00.000Z`,
               lte: `${end_day.toISOString().split('T')[0]}T23:59:59.999Z`
             }

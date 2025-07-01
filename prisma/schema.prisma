@@ -82,12 +82,15 @@ enum BookingStatus {
 }
 
 enum TimeSlot {
-  SLOT_08_10
-  SLOT_10_12
-  SLOT_13_15
-  SLOT_15_17
+  SLOT_07_08
+  SLOT_08_09
+  SLOT_09_10
+  SLOT_10_11
+  SLOT_13_14
+  SLOT_14_15
+  SLOT_15_16
+  SLOT_16_17
 }
-
 
 model Appointments {
   id           String   @id @map("_id") @db.VarChar(36)
