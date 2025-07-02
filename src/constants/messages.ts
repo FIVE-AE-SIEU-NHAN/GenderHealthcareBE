@@ -223,5 +223,6 @@ export const BLOG_MESSAGES = {
 }
 
 export const NOTIFICATIONS_MESSAGES = {
-  GET_NOTIFICATIONS_SUCCESS: 'Get notifications successfully'
+  GET_NOTIFICATIONS_SUCCESS: 'Get notifications successfully',
+  UPDATE_NOTIFICATIONS_SUCCESS: 'Update notifications successfully'
 }

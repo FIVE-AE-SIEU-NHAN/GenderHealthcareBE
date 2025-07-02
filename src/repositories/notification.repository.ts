@@ -60,4 +60,11 @@ export default class NotificationRepository {
       where: { user_id, is_sent: true, is_read: false, scheduled_time: { lte: new Date() } }
     })
   }
+
+  async updateNotifications(user_id: string) {
+    return this.model.updateMany({
+      where: { user_id, is_sent: true, is_read: false, scheduled_time: { lte: new Date() } },
+      data: { is_read: true }
+    })
+  }
 }

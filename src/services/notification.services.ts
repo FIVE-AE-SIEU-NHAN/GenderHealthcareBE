@@ -115,15 +115,19 @@ class NotificationService {
   }
 
   async getNotifications(user_id: string) {
-    const [notifications, notSend] = await Promise.all([
+    const [notifications, isNotRead] = await Promise.all([
       this.notificationRepository.getNotifications(user_id),
       this.notificationRepository.getUnreadNotificationCount(user_id)
     ])
 
     return {
       notifications,
-      notSend
+      isNotRead
     }
+  }
+
+  async updateNotifications(user_id: string) {
+    return this.notificationRepository.updateNotifications(user_id)
   }
 }
 

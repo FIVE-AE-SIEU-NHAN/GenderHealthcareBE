@@ -18,3 +18,16 @@ export const getNotificationsController = async (
     result
   })
 }
+
+export const updateNotificationsController = async (
+  req: Request<ParamsDictionary, any, any>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { user_id } = req.decode_authorization as TokenPayLoad
+  await notificationServices.updateNotifications(user_id)
+
+  res.status(HTTP_STATUS.OK).json({
+    message: NOTIFICATIONS_MESSAGES.UPDATE_NOTIFICATIONS_SUCCESS
+  })
+}
