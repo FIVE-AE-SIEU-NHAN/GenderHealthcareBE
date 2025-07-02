@@ -17,6 +17,10 @@ import notificationRouter from './routers/notification/notification.routers'
 import { createServer } from 'http'
 import socketService from './socket/socket'
 import { notificationQueue } from './bull/queue'
+import redisUtils from './utils/redis'
+
+// ---------------------------      BULL     --------------------------- //
+import './bull/worker'
 
 // ---------------------------     SERVER    --------------------------- //
 const port = 3000
@@ -48,11 +52,15 @@ app.use('/notification', notificationRouter)
 
 // 🧪 API test: Thêm job gửi thông báo vào hàng đợi BullMQ
 app.get('/test', async (req, res) => {
+  const user_id = '1fe57d3b-4808-11f0-bfde-0242ac110002'
+  const notification_id = '1fe57d3b-4808-11f0-bfde-0242ac110002'
+  const content = 'Đây là thông báo test 1'
   await notificationQueue.add(
     'notification-for-customer',
     {
-      userId: 'Người dùng',
-      content: 'Đây là thông báo test 1'
+      user_id,
+      notification_id,
+      content
     },
     {
       delay: 5000,
@@ -60,19 +68,11 @@ app.get('/test', async (req, res) => {
     }
   )
 
-  await notificationQueue.add(
-    'notification-for-customer',
-    {
-      userId: 'Tư vấn viên',
-      content: 'Đây là thông báo test 2'
-    },
-    {
-      delay: 5000,
-      removeOnComplete: true
-    }
-  )
+  // socketService.sendNotification(user_id, notification_id, content)
 
-  res.status(200).json({ message: '✅ Test job added to queue!' })
+  res.status(200).json({
+    message: 'Test notification queue successfully!'
+  })
 })
 
 // --------------------------- ERORR HANDLER --------------------------- //

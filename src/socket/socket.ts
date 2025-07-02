@@ -50,9 +50,9 @@ class SocketService {
     console.log(`- Socket \x1b[31m${socket.id}\x1b[0m joined room: \x1b[36m${user_id}\x1b[0m`)
   }
 
-  sendNotification(user_id: string, appointment_id: string, content: string) {
+  sendNotification(user_id: string, notification_id: string, content: string) {
     this.getIO().to(user_id).emit('notify:send', {
-      appointment_id,
+      notification_id,
       content
     })
   }

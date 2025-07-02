@@ -20,7 +20,7 @@ class NotificationService {
   ) {
     // map time_slot
     const timeSlotStartMap: Record<TimeSlot, string> = {
-      SLOT_07_08: '07:00',
+      SLOT_07_08: '10:47',
       SLOT_08_09: '08:00',
       SLOT_09_10: '09:00',
       SLOT_10_11: '10:00',
@@ -73,19 +73,15 @@ class NotificationService {
     const date_time = new Date(`${booking_date.toISOString().split('T')[0]}T${time}:00`)
 
     // tính thời gian gửi thông báo là 30 phút trước thời gian hẹn
-    // const delay = date_time.getTime() - now.getTime() - 30 * 60 * 1000
-
-    const delay = 10000
+    const delay = date_time.getTime() - now.getTime() - 30 * 60 * 1000
 
     console.log('Gửi thông báo sau: ', delay)
-
-    /*========================Tạo job để thông báo=========================== */
 
     await notificationQueue.add(
       'notification-for-customer',
       {
         user_id,
-        appointment_id,
+        notification_id: notification_id_of_customer,
         content: customerContent
       },
       {
@@ -99,7 +95,7 @@ class NotificationService {
       'notification-for-customer',
       {
         user_id: consultant.user_id,
-        appointment_id,
+        notification_id: notification_id_of_consultant,
         content: consultantContent
       },
       {
@@ -110,8 +106,8 @@ class NotificationService {
     )
   }
 
-  async updateNotificationSendStatus(notification_id: string, is_send: boolean) {
-    return this.notificationRepository.updateNotificationSendStatus(notification_id, is_send)
+  async updateNotificationSendStatus(notification_id: string) {
+    return this.notificationRepository.updateNotificationSendStatus(notification_id)
   }
 
   async getNotifications(user_id: string) {

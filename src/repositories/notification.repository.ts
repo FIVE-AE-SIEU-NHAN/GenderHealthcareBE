@@ -36,10 +36,10 @@ export default class NotificationRepository {
     })
   }
 
-  async updateNotificationSendStatus(id: string, is_sent: boolean) {
+  async updateNotificationSendStatus(notification_id: string) {
     return this.model.update({
-      where: { id },
-      data: { is_sent }
+      where: { id: notification_id },
+      data: { is_sent: true }
     })
   }
 
