@@ -113,7 +113,19 @@ class NotificationService {
   async updateNotificationSendStatus(notification_id: string, is_send: boolean) {
     return this.notificationRepository.updateNotificationSendStatus(notification_id, is_send)
   }
+
+  async getNotifications(user_id: string) {
+    const [notifications, notSend] = await Promise.all([
+      this.notificationRepository.getNotifications(user_id),
+      this.notificationRepository.getUnreadNotificationCount(user_id)
+    ])
+
+    return {
+      notifications,
+      notSend
+    }
+  }
 }
 
-const notificationService = new NotificationService()
-export default notificationService
+const notificationServices = new NotificationService()
+export default notificationServices

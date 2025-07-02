@@ -42,4 +42,22 @@ export default class NotificationRepository {
       data: { is_sent }
     })
   }
+
+  async getNotifications(user_id: string) {
+    return this.model.findMany({
+      select: {
+        id: true,
+        type: true,
+        content: true
+      },
+      where: { user_id, is_sent: true, scheduled_time: { lte: new Date() } },
+      orderBy: { created_at: 'desc' }
+    })
+  }
+
+  async getUnreadNotificationCount(user_id: string) {
+    return this.model.count({
+      where: { user_id, is_sent: true, is_read: false, scheduled_time: { lte: new Date() } }
+    })
+  }
 }

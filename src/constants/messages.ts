@@ -221,3 +221,7 @@ export const BLOG_MESSAGES = {
   CREATE_BLOG_SUCCESSFULLY: 'Create blog successfully',
   UPDATE_BLOG_SUCCESSFULLY: 'Update blog successfully'
 }
+
+export const NOTIFICATIONS_MESSAGES = {
+  GET_NOTIFICATIONS_SUCCESS: 'Get notifications successfully'
+}

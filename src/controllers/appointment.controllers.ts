@@ -11,7 +11,7 @@ import {
 } from '~/models/requests/appointment.requests'
 import { TokenPayLoad } from '~/models/requests/users.requests'
 import appointmentServices from '~/services/appointment.services'
-import notificationService from '~/services/notification.services'
+import notificationServices from '~/services/notification.services'
 import questionServices from '~/services/question.services'
 import usersServices from '~/services/users.services'
 import redisUtils from '~/utils/redis'
@@ -71,7 +71,7 @@ export const bookAppointmentController = async (
   })
 
   // lưu lịch hẹn vào redis để gửi thông báo và lưu vào database
-  await notificationService.addNotificationForConsultantAppointment(
+  await notificationServices.addNotificationForConsultantAppointment(
     user_id,
     selectedConsultantId,
     appointment_id,
