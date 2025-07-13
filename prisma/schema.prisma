@@ -108,7 +108,19 @@ model Appointments {
   user       Users             @relation(fields: [user_id], references: [id])
   consultant ConsultantProfiles @relation(fields: [consultant_id], references: [id])
   notifications  Notifications?
+  messages     Messages[]
 }
+
+model Messages {
+  id             String   @id @map("_id") @db.VarChar(36)
+  appointment_id String   @db.VarChar(36)
+  sender_id      String   @db.VarChar(36)
+  content        String
+  created_at     DateTime @default(now())
+
+  appointment    Appointments @relation(fields: [appointment_id], references: [id])
+}
+
 
 enum NotificationType {
   ANSWERED_QUESTION
@@ -160,4 +172,22 @@ model Blogs {
   status     BlogStatus @default(DRAFT)
   
   user       Users    @relation(fields: [user_id], references: [id])
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  CANCELLED
+}
+
+model Payments {
+  id              String @id @map("_id") @db.VarChar(36)
+  appointment_id  String @db.VarChar(36)
+  user_id         String @db.VarChar(36)
+  amount          Int
+  payos_order_code String @db.VarChar(6) @unique
+  status          PaymentStatus  @default(PENDING)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
 }
