@@ -111,7 +111,7 @@ export default class AppointmentRepository {
         ...(status && { status: { in: status } }),
         ...(start_day &&
           end_day && {
-            created_at: {
+            booking_date: {
               gte: `${start_day.toISOString().split('T')[0]}T00:00:00.000Z`,
               lte: `${end_day.toISOString().split('T')[0]}T23:59:59.999Z`
             }
@@ -122,5 +122,24 @@ export default class AppointmentRepository {
 
   async checkValidBookingTime(bookingId: string, userId: string) {
     const booking = await prisma.appointments.findUnique({ where: { id: bookingId } })
+  }
+
+  async deleteAppointmentById(id: string) {
+    return this.model.delete({
+      where: { id }
+    })
+  }
+
+  async getAppointmentById(id: string) {
+    return this.model.findUnique({
+      where: { id },
+      select: {
+        topic: true,
+        booking_date: true,
+        time_slot: true,
+        consultant_id: true,
+        user_id: true
+      }
+    })
   }
 }

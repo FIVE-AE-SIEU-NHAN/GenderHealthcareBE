@@ -8,13 +8,11 @@ export default class PaymentRepository {
   async createPayment({
     appointment_id,
     user_id,
-    consultant_id,
     amount,
     payos_order_code
   }: {
     appointment_id: string
     user_id: string
-    consultant_id: string
     amount: number
     payos_order_code: string
   }) {
@@ -24,7 +22,6 @@ export default class PaymentRepository {
         id,
         appointment_id,
         user_id,
-        consultant_id,
         amount,
         payos_order_code,
         status: PaymentStatus.PENDING

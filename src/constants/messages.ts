@@ -148,7 +148,7 @@ export const QUESTIONS_MESSAGES = {
   QUESTION_NOT_FOUNDOR_OR_NOT_PUBLIC: 'Question not found or not public',
   STATUS_IS_INVALID: 'Status is invalid',
   CREATED_AT_BE_ISO8601: 'Created at must be ISO8601'
-}
+} as const
 
 export const APPOINTMENT_MESSAGES = {
   TOPIC_IS_REQUIRED: 'Topic is required',
@@ -182,7 +182,7 @@ export const APPOINTMENT_MESSAGES = {
   APPOINTMENT_NOT_FOUND: 'Appointment not found',
   APPOINTMENT_ALREADY_IN_THIS_STATUS: 'Appointment already in this status',
   GET_MANAGER_APPOINTMENTS_SUCCESSFULLY: 'Get manager appointments successfully'
-}
+} as const
 
 export const BLOG_MESSAGES = {
   PAGE_IS_REQUIRED: 'Page is required',
@@ -220,9 +220,15 @@ export const BLOG_MESSAGES = {
   SUB_IMAGE_LENGTH_MUST_BE_LESS_THAN_255: 'Sub image length must be less than 255 characters',
   CREATE_BLOG_SUCCESSFULLY: 'Create blog successfully',
   UPDATE_BLOG_SUCCESSFULLY: 'Update blog successfully'
-}
+} as const
 
 export const NOTIFICATIONS_MESSAGES = {
   GET_NOTIFICATIONS_SUCCESS: 'Get notifications successfully',
   UPDATE_NOTIFICATIONS_SUCCESS: 'Update notifications successfully'
-}
+} as const
+
+export const PAYMENT_MESSAGES = {
+  CREATE_PAYMENT_LINK_SUCCESS: 'Create payment link successfully',
+  CANCEL_PAYMENT_SUCCESS: 'Cancel payment successfully',
+  WEBHOOK_RECEIVED: 'Webhook received'
+} as const

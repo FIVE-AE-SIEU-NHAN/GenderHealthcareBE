@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
+import { result } from 'lodash'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { APPOINTMENT_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
@@ -12,6 +13,7 @@ import {
 import { TokenPayLoad } from '~/models/requests/users.requests'
 import appointmentServices from '~/services/appointment.services'
 import notificationServices from '~/services/notification.services'
+import paymentServices from '~/services/payment.services'
 import questionServices from '~/services/question.services'
 import usersServices from '~/services/users.services'
 import redisUtils from '~/utils/redis'
@@ -70,17 +72,18 @@ export const bookAppointmentController = async (
     time_slot
   })
 
-  // lưu lịch hẹn vào redis để gửi thông báo và lưu vào database
-  await notificationServices.addNotificationForConsultantAppointment(
-    user_id,
-    selectedConsultantId,
+  // tạo đơn thanh toán qua PayOS
+  const amount = 2000
+  const result = await paymentServices.createConsultantPaymentLink({
+    amount,
+    topic,
     appointment_id,
-    new Date(booking_date),
-    time_slot
-  )
+    user_id
+  })
 
   res.status(HTTP_STATUS.CREATED).json({
-    message: APPOINTMENT_MESSAGES.BOOKING_CREATED_SUCCESSFULLY
+    message: APPOINTMENT_MESSAGES.BOOKING_CREATED_SUCCESSFULLY,
+    result
   })
 }
 

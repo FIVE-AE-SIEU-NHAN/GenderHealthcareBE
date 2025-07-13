@@ -91,13 +91,20 @@ class AppointmentServices {
     }
   }
 
-  // async checkValidBookingTime(bookingId: string, userId: string) {
-  //   const booking = await this.appointmentRepository.checkAppointmentExists(bookingId, userId)
-  //   if (!booking || booking.userId !== userId) return false
+  async deleteAppointment(appointment_id: string) {
+    return this.appointmentRepository.deleteAppointmentById(appointment_id)
+  }
 
-  //   const now = new Date()
-  //   return isAfter(now, booking.startTime) && isBefore(now, booking.endTime)
-  // }
+  async getAppointmentById(appointment_id: string) {
+    const appointment = await this.appointmentRepository.getAppointmentById(appointment_id)
+    if (!appointment) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.NOT_FOUND,
+        message: APPOINTMENT_MESSAGES.APPOINTMENT_NOT_FOUND
+      })
+    }
+    return appointment
+  }
 }
 
 const appointmentServices = new AppointmentServices()

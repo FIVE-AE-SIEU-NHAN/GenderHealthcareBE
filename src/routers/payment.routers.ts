@@ -1,5 +1,5 @@
 import express from 'express'
-import { cancelPaymentController } from '~/controllers/payment.controllers'
+import { cancelPaymentController, webhookPaymentController } from '~/controllers/payment.controllers'
 import { wrapAsync } from '~/utils/handler'
 
 const paymentRoute = express.Router()
@@ -16,10 +16,6 @@ paymentRoute.post('/cancel', wrapAsync(cancelPaymentController))
  * Path: /payment/webhook
  * Method: POST
  */
-paymentRoute.post('/webhook', (req, res) => {
-  // This route is for PayOS to send payment status updates.
-  // You can implement the logic to handle the webhook here.
-  res.status(200).send('Webhook received')
-})
+paymentRoute.post('/webhook', wrapAsync(webhookPaymentController))
 
 export default paymentRoute

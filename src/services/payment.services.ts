@@ -19,14 +19,12 @@ class PaymentService {
     topic,
     amount,
     appointment_id,
-    user_id,
-    consultant_id
+    user_id
   }: {
     topic: string
     amount: number
     appointment_id: string
     user_id: string
-    consultant_id: string
   }) {
     const orderCode = Number(String(Date.now()).slice(-6))
     const description = `PAYMENT FOR CONSULTATION`
@@ -50,7 +48,6 @@ class PaymentService {
     await this.paymentRepository.createPayment({
       appointment_id,
       user_id,
-      consultant_id,
       amount,
       payos_order_code: String(response.orderCode)
     })
@@ -58,8 +55,8 @@ class PaymentService {
     return response
   }
 
-  async cancelConsultantPayment(orderCode: string) {
-    return await this.paymentRepository.updatePaymentStatus(orderCode, PaymentStatus.CANCELLED)
+  async updatePaymentStatus(orderCode: string, status: PaymentStatus) {
+    return await this.paymentRepository.updatePaymentStatus(orderCode, status)
   }
 }
 
