@@ -73,7 +73,7 @@ export const bookAppointmentController = async (
   })
 
   // tạo đơn thanh toán qua PayOS
-  const amount = 2000
+  const amount = 5000
   const result = await paymentServices.createConsultantPaymentLink({
     amount,
     topic,

@@ -46,48 +46,25 @@ export const webhookPaymentController = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { orderCode, status } = req.body
+  const { code, data } = req.body
+  if (code === '00') {
+    const { orderCode } = data
 
-  switch (status) {
-    case 'PAID': {
-      // cập nhật trạng thái thanh toán thành SUCCESS trong database
-      const { appointment_id } = await paymentServices.updatePaymentStatus(orderCode, PaymentStatus.SUCCESS)
+    // cập nhật trạng thái thanh toán thành SUCCESS trong database
+    const { appointment_id } = await paymentServices.updatePaymentStatus(String(orderCode), PaymentStatus.SUCCESS)
 
-      // lấy thông tin lịch hẹn
-      const { user_id, consultant_id, booking_date, time_slot } =
-        await appointmentServices.getAppointmentById(appointment_id)
+    // lấy thông tin lịch hẹn
+    const { user_id, consultant_id, booking_date, time_slot } =
+      await appointmentServices.getAppointmentById(appointment_id)
 
-      // lưu lịch hẹn vào redis để gửi thông báo và lưu vào database
-      await notificationServices.addNotificationForConsultantAppointment(
-        user_id,
-        consultant_id,
-        appointment_id,
-        new Date(booking_date),
-        time_slot
-      )
-
-      break
-    }
-
-    case 'CANCELLED':
-      console.log(`Payment with orderCode ${orderCode} was cancelled.`)
-      break
-
-    case 'FAILED':
-      console.log(`Payment with orderCode ${orderCode} failed.`)
-      break
-
-    case 'EXPIRED':
-      console.log(`Payment with orderCode ${orderCode} expired.`)
-      break
-
-    case 'REFUNDED':
-      console.log(`Payment with orderCode ${orderCode} was refunded.`)
-      break
-
-    default:
-      console.warn(`Unknown payment status received: ${status}`)
-      break
+    // lưu lịch hẹn vào redis để gửi thông báo và lưu vào database
+    await notificationServices.addNotificationForConsultantAppointment(
+      user_id,
+      consultant_id,
+      appointment_id,
+      new Date(booking_date),
+      time_slot
+    )
   }
 
   res.status(HTTP_STATUS.OK).json({

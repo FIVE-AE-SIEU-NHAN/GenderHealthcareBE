@@ -9,3 +9,5 @@ const redisOptions = {
 }
 
 export const notificationQueue = new Bull('notificationQueue', redisOptions)
+
+export const paymentQueue = new Bull('paymentQueue', redisOptions)

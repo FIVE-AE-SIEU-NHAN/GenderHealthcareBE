@@ -20,7 +20,7 @@ class NotificationService {
   ) {
     // map time_slot
     const timeSlotStartMap: Record<TimeSlot, string> = {
-      SLOT_07_08: '10:47',
+      SLOT_07_08: '13:50',
       SLOT_08_09: '08:00',
       SLOT_09_10: '09:00',
       SLOT_10_11: '10:00',
@@ -77,33 +77,34 @@ class NotificationService {
 
     console.log('Gửi thông báo sau: ', delay)
 
-    await notificationQueue.add(
-      'notification-for-customer',
-      {
-        user_id,
-        notification_id: notification_id_of_customer,
-        content: customerContent
-      },
-      {
-        delay,
-        jobId: `customer-${notification_id_of_customer}`,
-        removeOnComplete: true
-      }
-    )
-
-    await notificationQueue.add(
-      'notification-for-customer',
-      {
-        user_id: consultant.user_id,
-        notification_id: notification_id_of_consultant,
-        content: consultantContent
-      },
-      {
-        delay,
-        jobId: `consultant-${notification_id_of_consultant}`,
-        removeOnComplete: true
-      }
-    )
+    await Promise.all([
+      notificationQueue.add(
+        'notification-for-customer',
+        {
+          user_id,
+          notification_id: notification_id_of_customer,
+          content: customerContent
+        },
+        {
+          delay,
+          jobId: `customer-${notification_id_of_customer}`,
+          removeOnComplete: true
+        }
+      ),
+      notificationQueue.add(
+        'notification-for-customer',
+        {
+          user_id: consultant.user_id,
+          notification_id: notification_id_of_consultant,
+          content: consultantContent
+        },
+        {
+          delay,
+          jobId: `consultant-${notification_id_of_consultant}`,
+          removeOnComplete: true
+        }
+      )
+    ])
   }
 
   async updateNotificationSendStatus(notification_id: string) {

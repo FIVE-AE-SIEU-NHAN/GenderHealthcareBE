@@ -1,5 +1,5 @@
 import redisUtils from '~/utils/redis'
-import { notificationQueue } from './queue'
+import { notificationQueue, paymentQueue } from './queue'
 import notificationServices from '~/services/notification.services'
 import socketService from '~/socket/socket'
 

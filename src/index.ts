@@ -14,10 +14,11 @@ import blogRouter from './routers/blog/blog.routers'
 import staffBlogRouter from './routers/blog/staff.blog.routers'
 import managerBlogRouter from './routers/blog/manager.blog.routers'
 import notificationRouter from './routers/notification/notification.routers'
+import paymentServices from './services/payment.services'
+import paymentRoute from './routers/payment.routers'
 import { createServer } from 'http'
 import socketService from './socket/socket'
-import { notificationQueue } from './bull/queue'
-import redisUtils from './utils/redis'
+import notificationServices from './services/notification.services'
 
 // ---------------------------      BULL     --------------------------- //
 import './bull/worker'
@@ -49,33 +50,33 @@ app.use('/consultant', consultantRouter, managerConsultantRouter)
 app.use('/appointment', appointmentRouter)
 app.use('/blog', blogRouter, staffBlogRouter, managerBlogRouter)
 app.use('/notification', notificationRouter)
+app.use('/payment', paymentRoute)
 
 // 🧪 API test: Thêm job gửi thông báo vào hàng đợi BullMQ
-app.get('/test', async (req, res) => {
-  const user_id = '1fe57d3b-4808-11f0-bfde-0242ac110002'
-  const notification_id = '1fe57d3b-4808-11f0-bfde-0242ac110002'
-  const content = 'Đây là thông báo test 1'
-  await notificationQueue.add(
-    'notification-for-customer',
-    {
-      user_id,
-      notification_id,
-      content
-    },
-    {
-      delay: 5000,
-      removeOnComplete: true
-    }
-  )
-
-  // socketService.sendNotification(user_id, notification_id, content)
+app.post('/test', async (req, res) => {
+  // const amount = 2000
+  // const { appointment_id, user_id, topic, booking_date, time_slot } = req.body as {
+  //   appointment_id: string
+  //   user_id: string
+  //   topic: string
+  //   booking_date: string
+  //   time_slot: string
+  // }
+  // const payment = await paymentServices.createConsultantPaymentLink({
+  //   appointment_id,
+  //   user_id,
+  //   topic,
+  //   booking_date: new Date(booking_date).toISOString(),
+  //   time_slot,
+  //   amount
+  // })
 
   res.status(200).json({
-    message: 'Test notification queue successfully!'
+    message: 'Test API is working'
   })
 })
 
-// --------------------------- ERORR HANDLER --------------------------- //
+// --------------------------- ERROR HANDLER --------------------------- //
 app.use(defaultErorHandler)
 
 // ---------------------------   SOCKET IO   --------------------------- //
@@ -87,3 +88,9 @@ socketService.init(serverHttp)
 serverHttp.listen(port, () => {
   console.log(`\x1b[34mPROJECT GenderHealthcareBE OPEN ON PORT: \x1b[31m${port}\x1b[0m`)
 })
+
+// xong flow thanh toán thành công và gửi thông báo
+// chưa ghép thông báo
+// thiếu job kiểm tra sau 15p hủy thanh toán nếu chưa thanh toán
+// optional: gửi thông báo thanh toán đã bị hủy
+// thiếu api kiểm tra trạng thái thanh toán cho fe để xử lý thành công hoặc hủy thanh toán
