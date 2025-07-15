@@ -48,7 +48,7 @@ export const webhookPaymentController = async (
   next: NextFunction
 ) => {
   const { code, data } = req.body
-  if (code === '00') {
+  if (code === '00' && data?.orderCode !== 123) {
     const { orderCode } = data
 
     // xóa job hủy thanh toán sau 15 phút nếu đã thanh toán
