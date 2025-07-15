@@ -230,5 +230,6 @@ export const NOTIFICATIONS_MESSAGES = {
 export const PAYMENT_MESSAGES = {
   CREATE_PAYMENT_LINK_SUCCESS: 'Create payment link successfully',
   CANCEL_PAYMENT_SUCCESS: 'Cancel payment successfully',
-  WEBHOOK_RECEIVED: 'Webhook received'
+  WEBHOOK_RECEIVED: 'Webhook received',
+  PAYMENT_ALREADY_CANCELLED: 'Payment already cancelled'
 } as const

@@ -35,4 +35,10 @@ export default class PaymentRepository {
       data: { status }
     })
   }
+
+  async getPaymentByOrderCode(orderCode: string) {
+    return this.model.findUnique({
+      where: { payos_order_code: orderCode }
+    })
+  }
 }

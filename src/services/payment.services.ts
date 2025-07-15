@@ -1,5 +1,6 @@
 import PayOS from '@payos/node'
 import { PaymentStatus } from '@prisma/client'
+import axios from 'axios'
 import PaymentRepository from '~/repositories/payment.repository'
 
 const payOSInstance = new PayOS(
@@ -57,6 +58,24 @@ class PaymentService {
 
   async updatePaymentStatus(orderCode: string, status: PaymentStatus) {
     return await this.paymentRepository.updatePaymentStatus(orderCode, status)
+  }
+
+  async cancelPaymentOnPayOS(orderCode: string) {
+    return axios.post(
+      `https://api-merchant.payos.vn/v2/payment-requests/${orderCode}/cancel`,
+      {},
+      {
+        headers: {
+          'x-client-id': process.env.PAYOS_CLIENT_ID!,
+          'x-api-key': process.env.PAYOS_API_KEY!,
+          'Content-Type': 'application/json'
+        }
+      }
+    )
+  }
+
+  async getPaymentByOrderCode(orderCode: string) {
+    return await this.paymentRepository.getPaymentByOrderCode(orderCode)
   }
 }
 

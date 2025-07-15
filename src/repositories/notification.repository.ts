@@ -48,7 +48,8 @@ export default class NotificationRepository {
       select: {
         id: true,
         type: true,
-        content: true
+        content: true,
+        is_read: true
       },
       where: { user_id, is_sent: true, scheduled_time: { lte: new Date() } },
       orderBy: { created_at: 'desc' }

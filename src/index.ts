@@ -18,7 +18,6 @@ import paymentServices from './services/payment.services'
 import paymentRoute from './routers/payment.routers'
 import { createServer } from 'http'
 import socketService from './socket/socket'
-import notificationServices from './services/notification.services'
 
 // ---------------------------      BULL     --------------------------- //
 import './bull/worker'
@@ -71,6 +70,8 @@ app.post('/test', async (req, res) => {
   //   amount
   // })
 
+  const { orderCode } = req.body as { orderCode: string }
+  await paymentServices.cancelPaymentOnPayOS(orderCode)
   res.status(200).json({
     message: 'Test API is working'
   })
@@ -83,14 +84,13 @@ app.use(defaultErorHandler)
 // Khởi tạo Socket.IO server
 const serverHttp = createServer(app)
 socketService.init(serverHttp)
+console.log('\x1b[33mSocket.IO\x1b[0m is running...')
 
 // ---------------------------   RUN SERVER  --------------------------- //
 serverHttp.listen(port, () => {
   console.log(`\x1b[34mPROJECT GenderHealthcareBE OPEN ON PORT: \x1b[31m${port}\x1b[0m`)
 })
 
-// xong flow thanh toán thành công và gửi thông báo
-// chưa ghép thông báo
-// thiếu job kiểm tra sau 15p hủy thanh toán nếu chưa thanh toán
-// optional: gửi thông báo thanh toán đã bị hủy
-// thiếu api kiểm tra trạng thái thanh toán cho fe để xử lý thành công hoặc hủy thanh toán
+// TODO:
+// thanh toán thành công: thiếu thông báo cho người dùng qua socket - webhookController
+// hết hạn thanh toán: gửi thông báo cho người dùng qua socket - paymentQueue

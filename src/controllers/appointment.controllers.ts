@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { result } from 'lodash'
+import { paymentQueue } from '~/bull/queue'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { APPOINTMENT_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
@@ -80,6 +81,20 @@ export const bookAppointmentController = async (
     appointment_id,
     user_id
   })
+
+  // tạo job hủy thanh toán nếu sau 15 phút không thanh toán
+  paymentQueue.add(
+    'cancel-payment-after-15-minutes',
+    {
+      user_id,
+      orderCode: result.orderCode.toString()
+    },
+    {
+      delay: 15 * 60 * 1000,
+      jobId: result.orderCode,
+      removeOnComplete: true
+    }
+  )
 
   res.status(HTTP_STATUS.CREATED).json({
     message: APPOINTMENT_MESSAGES.BOOKING_CREATED_SUCCESSFULLY,
