@@ -5,6 +5,18 @@
     <title>Thông báo Socket</title>
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <style>
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #f4f6f9;
+        margin: 0;
+        padding: 20px;
+      }
+
+      h2 {
+        margin-bottom: 10px;
+        color: #333;
+      }
+
       .notification-container {
         position: relative;
         display: inline-block;
@@ -13,58 +25,133 @@
 
       .notification-badge {
         position: absolute;
-        top: -5px;
-        right: -10px;
-        background: red;
+        top: -8px;
+        right: -8px;
+        background: crimson;
         color: white;
-        font-size: 14px;
-        padding: 8px 13px;
+        font-size: 12px;
+        padding: 5px 10px;
         border-radius: 50%;
         display: none;
+        font-weight: bold;
+        animation: bounce 0.4s;
+      }
+
+      @keyframes bounce {
+        0% {
+          transform: scale(0.5);
+        }
+        60% {
+          transform: scale(1.2);
+        }
+        100% {
+          transform: scale(1);
+        }
       }
 
       .popup {
         position: absolute;
-        top: 70px;
+        top: 60px;
         right: 0;
         background: #fff;
         border: 1px solid #ddd;
-        width: 250px;
-        max-height: 300px;
+        border-radius: 10px;
+        width: 300px;
+        max-height: 350px;
         overflow-y: auto;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
         display: none;
-        z-index: 100;
+        z-index: 1000;
       }
 
       .popup-message {
-        padding: 10px;
-        border-bottom: 1px solid #eee;
+        padding: 12px 16px;
+        border-bottom: 1px solid #f0f0f0;
+        color: #333;
+      }
+
+      .popup-message:last-child {
+        border-bottom: none;
+      }
+
+      .popup::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .popup::-webkit-scrollbar-thumb {
+        background-color: #ccc;
+        border-radius: 4px;
+      }
+
+      input,
+      button {
+        padding: 8px 12px;
+        margin: 5px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        outline: none;
+      }
+
+      input {
+        width: 300px;
+      }
+
+      button {
+        background-color: #4caf50;
+        color: white;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+
+      button:hover {
+        background-color: #45a049;
+      }
+
+      #disconnectButton {
+        width: 100px;
+        background-color: #f44336;
+      }
+
+      #disconnectButton:hover {
+        background-color: #d7372b;
+      }
+
+      #connectButton {
+        width: 100px;
+      }
+      .user-id-display {
+        margin-top: 8px;
+        font-style: italic;
+        color: #666;
+        font-size: 14px;
       }
     </style>
   </head>
   <body>
-    <div style="padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 10px">
-      <h2>Thông báo Socket.IO</h2>
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 10px">
+      <h2>🔔 Notificastions Test</h2>
 
-      <!-- Ô nhập user_id -->
-      <input type="text" id="userIdInput" placeholder="Nhập user_id" style="padding: 5px; width: 300px" />
-
+      <input type="text" id="userIdInput" placeholder="Input user_id" />
       <div class="notification-container" id="notificationBell">
-        <span style="font-size: 50px">🔔</span>
+        <span style="font-size: 48px">🔔</span>
         <span class="notification-badge" id="notificationCount">0</span>
         <div class="popup" id="notificationPopup"></div>
       </div>
 
-      <button id="connectButton">Kết nối</button>
-      <button id="disconnectButton">Ngắt kết nối</button>
+      <div>
+        <button id="connectButton">Connect</button>
+        <button id="disconnectButton">Disconnect</button>
+      </div>
+
+      <div class="user-id-display" id="userIdDisplay"></div>
     </div>
 
     <script>
       let count = 0
 
       const socket = io('http://localhost:3000', {
-        auth: { userId: '' }, // ban đầu rỗng
+        auth: { userId: '' },
         autoConnect: false,
         reconnection: false
       })
@@ -75,6 +162,7 @@
       const connectButton = document.getElementById('connectButton')
       const disconnectButton = document.getElementById('disconnectButton')
       const userIdInput = document.getElementById('userIdInput')
+      const userIdDisplay = document.getElementById('userIdDisplay')
 
       connectButton.addEventListener('click', () => {
         const userId = userIdInput.value.trim()
@@ -83,13 +171,14 @@
           return
         }
 
-        // Cập nhật userId vào auth rồi kết nối
         socket.auth.userId = userId
         socket.connect()
+        userIdDisplay.innerText = `Connect with user_id: ${userId}`
       })
 
       disconnectButton.addEventListener('click', () => {
         socket.disconnect()
+        userIdDisplay.innerText = 'Disconnected !'
       })
 
       socket.on('connect', () => {
@@ -106,7 +195,7 @@
         if (!data || !data.content) return
 
         count++
-        notificationCount.innerText = count
+        notificationCount.innerText = count > 9 ? '9' : count
         notificationCount.style.display = 'inline'
 
         const messageDiv = document.createElement('div')
@@ -115,7 +204,6 @@
         notificationPopup.prepend(messageDiv)
       })
 
-      // Toggle popup
       notificationBell.addEventListener('click', () => {
         const isOpen = notificationPopup.style.display === 'block'
         notificationPopup.style.display = isOpen ? 'none' : 'block'
@@ -127,7 +215,6 @@
         }
       })
 
-      // Đóng popup khi click ra ngoài
       window.addEventListener('click', (e) => {
         if (!notificationBell.contains(e.target)) {
           notificationPopup.style.display = 'none'
