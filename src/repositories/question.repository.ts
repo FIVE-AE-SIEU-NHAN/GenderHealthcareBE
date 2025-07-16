@@ -533,4 +533,11 @@ export default class QuestionRepository {
       where: { id }
     })
   }
+
+  async reportQuestion(id: string) {
+    return this.model.update({
+      where: { id },
+      data: { status: 2 }
+    })
+  }
 }

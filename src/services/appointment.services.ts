@@ -23,6 +23,7 @@ class AppointmentServices {
     topic: Topic
     booking_date: Date
     time_slot: TimeSlot
+    note?: string
   }) {
     return this.appointmentRepository.createAppointment(data)
   }

@@ -5,6 +5,7 @@ export interface BookAppointmentReqBody {
   topic: Topic
   booking_date: Date
   time_slot: TimeSlot
+  note?: string
 }
 
 export interface GetAppointmentReqQuery {

@@ -48,6 +48,18 @@ export const bookAppointmentValidator = validate(
             }
           }
         }
+      },
+      note: {
+        optional: true,
+        isString: {
+          errorMessage: APPOINTMENT_MESSAGES.NOTE_MUST_BE_STRING
+        },
+        isLength: {
+          options: {
+            max: 500
+          },
+          errorMessage: APPOINTMENT_MESSAGES.NOTE_MUST_BE_LENGTH
+        }
       }
     },
     ['body']

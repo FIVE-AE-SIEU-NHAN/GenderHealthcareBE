@@ -1,14 +1,21 @@
 import express from 'express'
+import { report } from 'process'
 import { USER_ROLE } from '~/constants/enums'
 import {
   answerQuestionsController,
   askQuestionController,
   consultantQuestionsController,
   customerQuestionsController,
-  editAnswerQuestionsController
+  editAnswerQuestionsController,
+  reportQuestionController
 } from '~/controllers/question.controllers'
 import { requireRole } from '~/middlewares/decentralization .middlewares'
-import { answerQuestionValidator, askQuestionValidator, getQuestionValidator } from '~/middlewares/question.middlewares'
+import {
+  answerQuestionValidator,
+  askQuestionValidator,
+  getQuestionValidator,
+  reportQuestionValidator
+} from '~/middlewares/question.middlewares'
 import { accessTokenValidator } from '~/middlewares/user.middlewares'
 import { wrapAsync } from '~/utils/handler'
 
@@ -80,6 +87,19 @@ questionRouter.patch(
   requireRole(USER_ROLE.Consultant),
   answerQuestionValidator,
   wrapAsync(editAnswerQuestionsController)
+)
+
+/**
+ * Description: Report a question
+ * Path: question/:id/report
+ * Method: POST
+ */
+questionRouter.post(
+  '/:id/report',
+  accessTokenValidator,
+  requireRole(USER_ROLE.Consultant),
+  reportQuestionValidator,
+  wrapAsync(reportQuestionController)
 )
 
 export default questionRouter

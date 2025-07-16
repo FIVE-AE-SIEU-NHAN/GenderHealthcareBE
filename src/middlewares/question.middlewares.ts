@@ -126,7 +126,7 @@ export const getQuestionValidator = validate(
         custom: {
           options: (value) => {
             value = Array.isArray(value) ? value.map((role) => parseInt(role)) : [parseInt(value)]
-            const validStatus = [0, 1]
+            const validStatus = [0, 1, 2]
             if (!value.every((status: number) => validStatus.includes(status))) {
               throw new ErrorWithStatus({
                 status: HTTP_STATUS.BAD_REQUEST,
@@ -210,6 +210,20 @@ export const editStateQuestionValidator = validate(
 )
 
 export const deleteQuestionValidator = validate(
+  checkSchema({
+    id: {
+      in: ['params'],
+      notEmpty: {
+        errorMessage: QUESTIONS_MESSAGES.QUESTION_ID_IS_REQUIRED
+      },
+      isUUID: {
+        errorMessage: QUESTIONS_MESSAGES.ID_MUST_BE_UUID
+      }
+    }
+  })
+)
+
+export const reportQuestionValidator = validate(
   checkSchema({
     id: {
       in: ['params'],

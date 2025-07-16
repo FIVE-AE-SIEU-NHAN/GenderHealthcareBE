@@ -21,6 +21,7 @@ export default class AppointmentRepository {
     topic: Topic
     booking_date: Date
     time_slot: TimeSlot
+    note?: string
   }) {
     const id = ObjectId()
     return await this.model.create({
@@ -71,7 +72,8 @@ export default class AppointmentRepository {
         booking_date: true,
         time_slot: true,
         status: true,
-        socket_room_id: true
+        chat_room_id: true,
+        note: true
       }
     })
   }

@@ -21,6 +21,7 @@ import socketService from './socket/socket'
 
 // ---------------------------      BULL     --------------------------- //
 import './bull/worker'
+import { paymentQueue } from './bull/queue'
 
 // ---------------------------     SERVER    --------------------------- //
 const port = 3000
@@ -51,29 +52,39 @@ app.use('/blog', blogRouter, staffBlogRouter, managerBlogRouter)
 app.use('/notification', notificationRouter)
 app.use('/payment', paymentRoute)
 
-// 🧪 API test: Thêm job gửi thông báo vào hàng đợi BullMQ
-app.post('/test', async (req, res) => {
-  // const amount = 2000
-  // const { appointment_id, user_id, topic, booking_date, time_slot } = req.body as {
-  //   appointment_id: string
-  //   user_id: string
-  //   topic: string
-  //   booking_date: string
-  //   time_slot: string
-  // }
-  // const payment = await paymentServices.createConsultantPaymentLink({
-  //   appointment_id,
-  //   user_id,
-  //   topic,
-  //   booking_date: new Date(booking_date).toISOString(),
-  //   time_slot,
-  //   amount
-  // })
+// --------------------------- 🧪 API TEST ----------------------------- //
+app.get('/test', async (req, res) => {
+  const user_id = '123'
+  const result = {
+    orderCode: 'order123',
+    amount: 1000,
+    user_id
+  }
 
-  const { orderCode } = req.body as { orderCode: string }
-  await paymentServices.cancelPaymentOnPayOS(orderCode)
+  paymentQueue.add(
+    'cancel-payment-after-15-minutes',
+    {
+      user_id,
+      orderCode: result.orderCode.toString()
+    },
+    {
+      delay: 15 * 60 * 1000,
+      jobId: result.orderCode,
+      removeOnComplete: true
+    }
+  )
+
   res.status(200).json({
     message: 'Test API is working'
+  })
+})
+
+app.get('/test2', async (req, res) => {
+  const job = await paymentQueue.getJob('order123')
+  job && (await job.remove())
+
+  res.status(200).json({
+    message: 'Test API2 is working'
   })
 })
 
@@ -84,7 +95,7 @@ app.use(defaultErorHandler)
 // Khởi tạo Socket.IO server
 const serverHttp = createServer(app)
 socketService.init(serverHttp)
-console.log('\x1b[33mSocket.IO\x1b[0m is running...')
+console.log('\x1b[35mSocket.IO\x1b[0m is running...')
 
 // ---------------------------   RUN SERVER  --------------------------- //
 serverHttp.listen(port, () => {
@@ -92,5 +103,3 @@ serverHttp.listen(port, () => {
 })
 
 // TODO:
-// thanh toán thành công: thiếu thông báo cho người dùng qua socket - webhookController
-// hết hạn thanh toán: gửi thông báo cho người dùng qua socket - paymentQueue

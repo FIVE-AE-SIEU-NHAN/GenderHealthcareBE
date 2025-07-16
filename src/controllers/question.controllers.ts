@@ -110,3 +110,17 @@ export const editAnswerQuestionsController = async (
     message: QUESTIONS_MESSAGES.ANSWER_QUESTION_SUCCESSFULLY
   })
 }
+
+export const reportQuestionController = async (
+  req: Request<ParamsDictionary, any, any, EditReqQuery>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { id } = req.params
+
+  await questionServices.reportQuestion(id)
+
+  res.status(200).json({
+    message: QUESTIONS_MESSAGES.REPORT_QUESTION_SUCCESSFULLY
+  })
+}

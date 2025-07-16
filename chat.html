@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Socket Chat</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <style>
+      body {
+        font-family: sans-serif;
+        padding: 20px;
+        background: #f0f0f0;
+      }
+
+      #messages {
+        border: 1px solid #ccc;
+        padding: 10px;
+        height: 300px;
+        overflow-y: auto;
+        background-color: #fff;
+        margin-bottom: 10px;
+      }
+
+      #typingIndicator {
+        font-style: italic;
+        color: gray;
+        height: 20px;
+        margin-bottom: 8px;
+      }
+
+      input,
+      button {
+        padding: 8px;
+        margin: 4px 0;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      #chatSection {
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h2>Join Chat Room</h2>
+    <input type="text" id="userId" placeholder="User ID (e.g. user123)" />
+    <input type="text" id="roomId" placeholder="Room ID (e.g. room456)" />
+    <button onclick="connect()">Connect</button>
+
+    <div id="chatSection" style="display: none">
+      <h3>Chat</h3>
+      <div id="typingIndicator"></div>
+      <div id="messages"></div>
+      <input type="text" id="messageInput" placeholder="Type your message..." />
+      <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+      let socket
+      let typingTimeout
+
+      function connect() {
+        const userId = document.getElementById('userId').value
+        const roomId = document.getElementById('roomId').value
+
+        if (!userId || !roomId) {
+          alert('Please enter both User ID and Room ID')
+          return
+        }
+
+        socket = io('http://localhost:3000', {
+          auth: {
+            userId: userId
+          }
+        })
+
+        socket.on('connect', () => {
+          console.log('Connected as:', socket.id)
+          document.getElementById('chatSection').style.display = 'block'
+          socket.emit('chat:joinRoom', roomId)
+        })
+
+        socket.on('chat:message', ({ sender_id, content, created_at }) => {
+          const messages = document.getElementById('messages')
+          const message = document.createElement('div')
+          message.innerHTML = `<strong>${sender_id}</strong>: ${content} <small style="color:gray">(${new Date(created_at).toLocaleTimeString()})</small>`
+          messages.appendChild(message)
+          messages.scrollTop = messages.scrollHeight
+        })
+
+        socket.on('chat:message:error', ({ error }) => {
+          alert('Error: ' + error)
+        })
+
+        socket.on('chat:typing', ({ sender_id, is_typing }) => {
+          const currentUser = document.getElementById('userId').value
+          const typingIndicator = document.getElementById('typingIndicator')
+
+          if (sender_id === currentUser) return
+
+          typingIndicator.innerText = is_typing ? `${sender_id} is typing...` : ''
+        })
+
+        const messageInput = document.getElementById('messageInput')
+        messageInput.addEventListener('input', () => {
+          const sender_id = document.getElementById('userId').value
+          const room_id = document.getElementById('roomId').value
+
+          socket.emit('chat:typing', {
+            sender_id,
+            room_id,
+            is_typing: true
+          })
+
+          clearTimeout(typingTimeout)
+          typingTimeout = setTimeout(() => {
+            socket.emit('chat:typing', {
+              sender_id,
+              room_id,
+              is_typing: false
+            })
+          }, 2000)
+        })
+      }
+
+      function sendMessage() {
+        const message = document.getElementById('messageInput').value
+        const sender_id = document.getElementById('userId').value
+        const room_id = document.getElementById('roomId').value
+
+        if (message.trim()) {
+          socket.emit('chat:message', {
+            room_id,
+            sender_id,
+            message
+          })
+          document.getElementById('messageInput').value = ''
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -147,7 +147,8 @@ export const QUESTIONS_MESSAGES = {
   QUESTION_DELETED_SUCCESSFULLY: 'Question deleted successfully',
   QUESTION_NOT_FOUNDOR_OR_NOT_PUBLIC: 'Question not found or not public',
   STATUS_IS_INVALID: 'Status is invalid',
-  CREATED_AT_BE_ISO8601: 'Created at must be ISO8601'
+  CREATED_AT_BE_ISO8601: 'Created at must be ISO8601',
+  REPORT_QUESTION_SUCCESSFULLY: 'Report question successfully'
 } as const
 
 export const APPOINTMENT_MESSAGES = {
@@ -181,7 +182,9 @@ export const APPOINTMENT_MESSAGES = {
   APPOINTMENT_STATUS_UPDATED_SUCCESSFULLY: 'Appointment status updated successfully',
   APPOINTMENT_NOT_FOUND: 'Appointment not found',
   APPOINTMENT_ALREADY_IN_THIS_STATUS: 'Appointment already in this status',
-  GET_MANAGER_APPOINTMENTS_SUCCESSFULLY: 'Get manager appointments successfully'
+  GET_MANAGER_APPOINTMENTS_SUCCESSFULLY: 'Get manager appointments successfully',
+  NOTE_MUST_BE_STRING: 'Note must be a string',
+  NOTE_MUST_BE_LENGTH: 'Note length must be less than 500 characters'
 } as const
 
 export const BLOG_MESSAGES = {

@@ -24,7 +24,7 @@ export const bookAppointmentController = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { topic, booking_date, time_slot } = req.body
+  const { topic, booking_date, time_slot, note } = req.body
   const { user_id } = req.decode_authorization as TokenPayLoad
 
   // lấy danh sách consultant theo topic
@@ -70,7 +70,8 @@ export const bookAppointmentController = async (
     consultant_id: selectedConsultantId,
     topic,
     booking_date: new Date(booking_date),
-    time_slot
+    time_slot,
+    note
   })
 
   // tạo đơn thanh toán qua PayOS

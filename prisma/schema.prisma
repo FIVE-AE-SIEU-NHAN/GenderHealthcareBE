@@ -93,17 +93,18 @@ enum TimeSlot {
 }
 
 model Appointments {
-  id           String   @id @map("_id") @db.VarChar(36)
+  id            String   @id @map("_id") @db.VarChar(36)
   user_id       String   @db.VarChar(36)
   consultant_id String   @db.VarChar(36)
   topic         Topic
+  note          String?  @db.Text
 
   booking_date  DateTime
   time_slot     TimeSlot
 
   created_at    DateTime @default(now())
   status        BookingStatus @default(PENDING)
-  socket_room_id String? @db.VarChar(100)
+  chat_room_id String? @db.VarChar(100)
 
   user       Users             @relation(fields: [user_id], references: [id])
   consultant ConsultantProfiles @relation(fields: [consultant_id], references: [id])
