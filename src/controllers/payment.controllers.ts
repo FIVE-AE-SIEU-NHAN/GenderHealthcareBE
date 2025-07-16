@@ -19,6 +19,10 @@ export const cancelPaymentController = async (
 ) => {
   const { orderCode } = req.body
 
+  // xóa job hủy thanh toán sau 15 phút nếu hủy thanh toán
+  const job = await paymentQueue.getJob('order123')
+  job && (await job.remove())
+
   const result = await paymentServices.getPaymentByOrderCode(orderCode)
   if (result?.status === PaymentStatus.CANCELLED) {
     throw new ErrorWithStatus({
