@@ -1,4 +1,7 @@
 import { Gender, PackageLevel, TimeSlot } from '@prisma/client'
+import HTTP_STATUS from '~/constants/httpStatus'
+import { APPOINTMENT_MESSAGES } from '~/constants/messages'
+import { ErrorWithStatus } from '~/models/Errors'
 import TestPackageRepository from '~/repositories/testPackage.repository'
 import TestPackageServiceRepository from '~/repositories/testPackageService.repository'
 import TestServiceAppointmentsRepository from '~/repositories/testServiceAppoinment.repository'
@@ -52,6 +55,18 @@ class TestSericeServices {
       time_slot
     )
     return consultant ? true : false
+  }
+
+  async getTestServiceAppointmentById(appointment_id: string) {
+    const testServiceAppointment =
+      await this.testServiceAppointmentsRepository.getTestServiceAppointmentById(appointment_id)
+    if (!testServiceAppointment) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.NOT_FOUND,
+        message: APPOINTMENT_MESSAGES.TEST_SERVICE_APPOINTMENT_NOT_FOUND
+      })
+    }
+    return testServiceAppointment
   }
 }
 

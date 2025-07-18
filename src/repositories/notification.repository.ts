@@ -12,7 +12,8 @@ export default class NotificationRepository {
     content,
     scheduled_time,
     appointment_id,
-    question_id
+    question_id,
+    test_service_appointment_id
   }: {
     user_id: string
     type: NotificationType
@@ -20,6 +21,7 @@ export default class NotificationRepository {
     scheduled_time: Date
     appointment_id?: string
     question_id?: string
+    test_service_appointment_id?: string
   }) {
     const id = ObjectId()
     return this.model.create({
@@ -31,6 +33,7 @@ export default class NotificationRepository {
         scheduled_time,
         ...(appointment_id && { appointment_id }),
         ...(question_id && { question_id }),
+        ...(test_service_appointment_id && { test_service_appointment_id }),
         created_at: new Date()
       }
     })

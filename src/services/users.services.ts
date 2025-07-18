@@ -682,6 +682,10 @@ class UsersServices {
   async getStaffByIndex(index: number) {
     return await this.staffRepository.getStaffByIndex(index)
   }
+
+  async getUserIdOfStaff(staff_id: string) {
+    return await this.staffRepository.getUserIdByStaffId(staff_id)
+  }
 }
 
 const usersServices = new UsersServices()

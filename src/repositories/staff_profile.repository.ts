@@ -290,4 +290,13 @@ export default class StaffProfileRepository {
     })
     return staff[0].id
   }
+
+  async getUserIdByStaffId(staff_id: string) {
+    return this.model.findUnique({
+      where: { id: staff_id },
+      select: {
+        user_id: true
+      }
+    })
+  }
 }

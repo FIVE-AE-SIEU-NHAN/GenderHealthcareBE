@@ -10,6 +10,7 @@ import { CancelPaymentReqBody } from '~/models/requests/payment.requests'
 import appointmentServices from '~/services/appointment.services'
 import notificationServices from '~/services/notification.services'
 import paymentServices from '~/services/payment.services'
+import testServiceServices from '~/services/testService.services'
 import socketService from '~/socket/socket'
 
 export const cancelPaymentController = async (
@@ -52,6 +53,7 @@ export const webhookPaymentController = async (
   next: NextFunction
 ) => {
   const { code, data } = req.body
+
   if (code === '00' && data?.orderCode !== 123) {
     const { orderCode } = data
 
@@ -62,22 +64,41 @@ export const webhookPaymentController = async (
     // cập nhật trạng thái thanh toán thành SUCCESS trong database
     const { appointment_id } = await paymentServices.updatePaymentStatus(String(orderCode), PaymentStatus.SUCCESS)
 
-    // lấy thông tin lịch hẹn
-    const { user_id, consultant_id, booking_date, time_slot } =
-      await appointmentServices.getAppointmentById(appointment_id)
+    const { description } = data
+    if (description.includes('CONSULTATION')) {
+      // lấy thông tin lịch hẹn
+      const { user_id, consultant_id, booking_date, time_slot } =
+        await appointmentServices.getAppointmentById(appointment_id)
+      // lưu lịch hẹn vào redis để gửi thông báo và lưu vào database
+      await notificationServices.addNotificationForConsultantAppointment(
+        user_id,
+        consultant_id,
+        appointment_id,
+        new Date(booking_date),
+        time_slot
+      )
 
-    // lưu lịch hẹn vào redis để gửi thông báo và lưu vào database
-    await notificationServices.addNotificationForConsultantAppointment(
-      user_id,
-      consultant_id,
-      appointment_id,
-      new Date(booking_date),
-      time_slot
-    )
+      // gửi thông báo thành công cho người dùng qua socket
+      const content = `Book consultant successfully`
+      socketService.sendStatusPayment(user_id, PaymentStatus.SUCCESS, content)
+    } else if (description.includes('TEST SERVICE')) {
+      // lấy thông tin lịch hẹn
+      const { user_id, staff_id, booking_date, time_slot } =
+        await testServiceServices.getTestServiceAppointmentById(appointment_id)
 
-    // gửi thông báo thành công cho người dùng qua socket
-    const content = `Book consultant successfully`
-    socketService.sendStatusPayment(user_id, PaymentStatus.SUCCESS, content)
+      // lưu lịch hẹn vào redis để gửi thông báo và lưu vào database
+      await notificationServices.addNotificationForStaffAppointment(
+        user_id,
+        staff_id,
+        appointment_id,
+        new Date(booking_date),
+        time_slot
+      )
+
+      // gửi thông báo thành công cho người dùng qua socket
+      const content = `Book test service successfully`
+      socketService.sendStatusPayment(user_id, PaymentStatus.SUCCESS, content)
+    }
   }
 
   res.status(HTTP_STATUS.OK).json({

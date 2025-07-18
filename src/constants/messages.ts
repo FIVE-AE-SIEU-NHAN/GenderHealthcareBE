@@ -198,7 +198,8 @@ export const APPOINTMENT_MESSAGES = {
   LEVEL_MUST_BE_A_STRING: 'Level must be a string',
   LEVEL_IS_INVALID: 'Level is invalid',
   TEST_SERVICE_PACKAGE_NOT_FOUND: 'Test service package not found',
-  NO_AVAILABLE_STAFF: 'No available staff at this time slot'
+  NO_AVAILABLE_STAFF: 'No available staff at this time slot',
+  TEST_SERVICE_APPOINTMENT_NOT_FOUND: 'Test service appointment not found'
 } as const
 
 export const BLOG_MESSAGES = {
@@ -241,7 +242,8 @@ export const BLOG_MESSAGES = {
 
 export const NOTIFICATIONS_MESSAGES = {
   GET_NOTIFICATIONS_SUCCESS: 'Get notifications successfully',
-  UPDATE_NOTIFICATIONS_SUCCESS: 'Update notifications successfully'
+  UPDATE_NOTIFICATIONS_SUCCESS: 'Update notifications successfully',
+  STAFF_NOT_FOUND: 'Staff not found'
 } as const
 
 export const PAYMENT_MESSAGES = {

@@ -32,4 +32,16 @@ export default class TestServiceAppointmentsRepository {
       }
     })
   }
+
+  async getTestServiceAppointmentById(id: string) {
+    return this.model.findUnique({
+      where: { id },
+      select: {
+        booking_date: true,
+        time_slot: true,
+        staff_id: true,
+        user_id: true
+      }
+    })
+  }
 }
