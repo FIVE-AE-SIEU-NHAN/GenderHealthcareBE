@@ -8,6 +8,7 @@ import {
   EditReqQuery,
   EditStatusUserReqBody,
   GetConsultantReqQuery,
+  GetStaffReqQuery,
   GetUserReqQuery
 } from '~/models/requests/users.requests'
 import usersServices from '~/services/users.services'
@@ -97,5 +98,32 @@ export const editStatusConsultantController = async (
 
   res.status(200).json({
     message: USERS_MESSAGES.CONSULTANT_STATUS_UPDATED_SUCCESSFULLY
+  })
+}
+
+export const getStaffController = async (
+  req: Request<ParamsDictionary, any, any, GetStaffReqQuery>,
+  res: Response,
+  next: NextFunction
+) => {
+  const result = await usersServices.getStaffsForAdmin(req.query)
+
+  res.status(200).json({
+    message: USERS_MESSAGES.GET_STAFF_FOR_ADMIN_SUCCESSFULLY,
+    result
+  })
+}
+
+export const editStatusStaffController = async (
+  req: Request<ParamsDictionary, any, EditStatusUserReqBody, EditReqQuery>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { id } = req.params
+  const { status } = req.body
+  await usersServices.editStatusStaff(id, status)
+
+  res.status(200).json({
+    message: USERS_MESSAGES.STAFF_STATUS_UPDATED_SUCCESSFULLY
   })
 }

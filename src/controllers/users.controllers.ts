@@ -16,7 +16,8 @@ import {
   ResetPasswordReqBody,
   TokenPayLoad,
   UpdateConsultantProfileReqBody,
-  UpdateProfileReqBody
+  UpdateProfileReqBody,
+  UpdateStaffProfileReqBody
 } from '~/models/requests/users.requests'
 import usersServices from '~/services/users.services'
 import { ParamsDictionary } from 'express-serve-static-core'
@@ -282,5 +283,42 @@ export const getConsultantProfileController = async (req: Request, res: Response
       ...user,
       ...consultantData
     }
+  })
+}
+
+export const getStaffProfileController = async (req: Request, res: Response, next: NextFunction) => {
+  const { user_id } = req.decode_authorization as TokenPayLoad
+  const result = await usersServices.getStaffProfile(user_id)
+
+  if (!result) {
+    throw new ErrorWithStatus({
+      status: HTTP_STATUS.NOT_FOUND,
+      message: USERS_MESSAGES.USER_NOT_FOUND
+    })
+  }
+
+  const { user, ...staffData } = result
+  res.status(HTTP_STATUS.OK).json({
+    message: USERS_MESSAGES.GET_STAFF_PROFILE_SUCCESS,
+    staff: {
+      ...user,
+      ...staffData
+    }
+  })
+}
+
+export const updateStaffProfileController = async (
+  req: Request<ParamsDictionary, any, UpdateStaffProfileReqBody, EditReqQuery>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { id: staff_id } = req.params
+
+  const payload = req.body
+
+  const consultantInfor = await usersServices.updateStaffProfile(staff_id as string, payload)
+  res.status(HTTP_STATUS.OK).json({
+    message: USERS_MESSAGES.UPDATE_CONSULTANT_PROFILE_SUCCESS,
+    consultantInfor
   })
 }

@@ -9,7 +9,7 @@ import redisUtils from '~/utils/redis'
 import { verifyGoogleToken } from '~/utils/google'
 import { verifyToken } from '~/utils/jwt'
 import { validate } from '~/utils/validation'
-import { ConsultantStatus, USER_ROLE, UserVerifyStatus } from '~/constants/enums'
+import { ConsultantStatus, StaffStatus, USER_ROLE, UserVerifyStatus } from '~/constants/enums'
 import { Topic } from '@prisma/client'
 
 const nameSchema: ParamSchema = {
@@ -1039,6 +1039,156 @@ export const updateConsultantProfileValidator = validate(
           options: { min: 0 },
           errorMessage: USERS_MESSAGES.EXPERIENCE_YEARS_MUST_BE_A_POSITIVE_NUMBER
         }
+      }
+    },
+    ['body']
+  )
+)
+
+export const editStatusStaffValidator = validate(
+  checkSchema({
+    id: {
+      in: ['params'],
+      notEmpty: {
+        errorMessage: USERS_MESSAGES.USER_ID_IS_REQUIRED
+      },
+      isUUID: {
+        errorMessage: USERS_MESSAGES.USER_ID_MUST_BE_A_UUID
+      }
+    },
+    status: {
+      notEmpty: {
+        errorMessage: USERS_MESSAGES.STATUS_IS_REQUIRED
+      },
+      custom: {
+        options: async (values) => {
+          const verifyList = [StaffStatus.Active, StaffStatus.Inactive]
+          if (!verifyList.includes(parseInt(values))) {
+            throw new ErrorWithStatus({
+              status: HTTP_STATUS.BAD_REQUEST,
+              message: USERS_MESSAGES.STATUS_IS_INVALID
+            })
+          }
+        }
+      }
+    }
+  })
+)
+
+export const getStaffValidator = validate(
+  checkSchema(
+    {
+      _page: {
+        notEmpty: {
+          errorMessage: USERS_MESSAGES.PAGE_IS_REQUIRED
+        },
+        isInt: {
+          options: { min: 1 },
+          errorMessage: USERS_MESSAGES.PAGE_MUST_BE_A_POSITIVE_INTEGER
+        }
+      },
+      _limit: {
+        notEmpty: {
+          errorMessage: USERS_MESSAGES.LIMIT_IS_REQUIRED
+        },
+        isInt: {
+          options: { min: 1, max: 100 },
+          errorMessage: USERS_MESSAGES.LIMIT_MUST_BE_A_POSITIVE_INTEGER_AND_LESS_THAN_100
+        }
+      },
+      _sort: {
+        optional: true,
+        custom: {
+          options: (value) => {
+            const validOrders = ['id', 'name', 'gender', 'specialization', 'date_of_birth', 'created_at', 'status']
+            if (!validOrders.includes(value)) {
+              throw new ErrorWithStatus({
+                status: HTTP_STATUS.BAD_REQUEST,
+                message: USERS_MESSAGES.SORT_FIELD_IS_INVALID
+              })
+            }
+            return true
+          }
+        }
+      },
+      _order: {
+        optional: true,
+        custom: {
+          options: (value) => {
+            const validOrders = ['asc', 'desc']
+            if (!validOrders.includes(value)) {
+              throw new ErrorWithStatus({
+                status: HTTP_STATUS.BAD_REQUEST,
+                message: USERS_MESSAGES.ORDER_MUST_BE_ASC_OR_DESC
+              })
+            }
+            return true
+          }
+        }
+      },
+      _gender: {
+        optional: true,
+        custom: {
+          options: (value) => {
+            value = Array.isArray(value) ? value.map((gender) => gender.toLowerCase()) : [value.toLowerCase()]
+            const validGenders = ['male', 'female', 'other']
+            if (!value.every((gender: string) => validGenders.includes(gender))) {
+              throw new ErrorWithStatus({
+                status: HTTP_STATUS.BAD_REQUEST,
+                message: USERS_MESSAGES.GENDER_IS_INVALID
+              })
+            }
+            return true
+          }
+        }
+      },
+      _date_of_birth: {
+        optional: true,
+        isDate: {
+          errorMessage: USERS_MESSAGES.DATE_OF_BIRTH_MUST_BE_A_DATE
+        }
+      },
+      _created_at: {
+        optional: true,
+        isISO8601: {
+          options: {
+            strict: true,
+            strictSeparator: true
+          },
+          errorMessage: USERS_MESSAGES.CREATED_AT_BE_ISO8601
+        }
+      },
+      _status: {
+        optional: true,
+        custom: {
+          options: async (values) => {
+            const verifyList = [StaffStatus.Active, StaffStatus.Inactive]
+            if (!verifyList.includes(parseInt(values))) {
+              throw new ErrorWithStatus({
+                status: HTTP_STATUS.BAD_REQUEST,
+                message: USERS_MESSAGES.STATUS_IS_INVALID
+              })
+            }
+          }
+        }
+      },
+      _all: {
+        optional: true
+      }
+    },
+    ['query']
+  )
+)
+
+export const updateStaffProfileValidator = validate(
+  checkSchema(
+    {
+      specialization: {
+        optional: true,
+        isString: {
+          errorMessage: USERS_MESSAGES.SPECIALIZATION_MUST_BE_A_STRING
+        },
+        trim: true
       }
     },
     ['body']
