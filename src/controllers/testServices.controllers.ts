@@ -75,6 +75,13 @@ export const bookTestServiceAppointmentController = async (
     }
   }
 
+  if (!selectedStaffId) {
+    throw new ErrorWithStatus({
+      status: HTTP_STATUS.CONFLICT,
+      message: APPOINTMENT_MESSAGES.NO_AVAILABLE_STAFF
+    })
+  }
+
   // tạo lịch hẹn
   const { id: appointment_id } = await testServiceServices.createTestServiceAppointment({
     user_id,
