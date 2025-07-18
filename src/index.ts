@@ -4,24 +4,24 @@ import redisService from './utils/redis'
 import cors from 'cors'
 import prismaService from './services/prisma.services'
 import usersRouter from './routers/user/user.routers'
-import adminUserRoute from './routers/user/admin.users.router'
+import adminUserRoute from './routers/user/admin.users.routers'
 import questionRouter from './routers/question/question.routers'
-import managerQuestionRouter from './routers/question/manager.question.router'
+import managerQuestionRouter from './routers/question/manager.question.routers'
 import consultantRouter from './routers/consultant/consultant.routers'
 import managerConsultantRouter from './routers/consultant/manager.consultant.routers'
-import appointmentRouter from './routers/appointment/appointment.router'
+import appointmentRouter from './routers/appointment/appointment.routers'
 import blogRouter from './routers/blog/blog.routers'
 import staffBlogRouter from './routers/blog/staff.blog.routers'
 import managerBlogRouter from './routers/blog/manager.blog.routers'
 import notificationRouter from './routers/notification/notification.routers'
-import paymentServices from './services/payment.services'
 import paymentRoute from './routers/payment.routers'
 import { createServer } from 'http'
 import socketService from './socket/socket'
+import { paymentQueue } from './bull/queue'
 
 // ---------------------------      BULL     --------------------------- //
 import './bull/worker'
-import { paymentQueue } from './bull/queue'
+import testServiceRouter from './routers/testService/testService.user.routers'
 
 // ---------------------------     SERVER    --------------------------- //
 const port = 3000
@@ -51,6 +51,7 @@ app.use('/appointment', appointmentRouter)
 app.use('/blog', blogRouter, staffBlogRouter, managerBlogRouter)
 app.use('/notification', notificationRouter)
 app.use('/payment', paymentRoute)
+app.use('/test-service', testServiceRouter)
 
 // --------------------------- 🧪 API TEST ----------------------------- //
 app.get('/test', async (req, res) => {
@@ -103,3 +104,5 @@ serverHttp.listen(port, () => {
 })
 
 // TODO:
+// - [ ] Chức năng nhắn tin, call video, feedback sau khi tư vấn
+// - [ ] Full book services flow

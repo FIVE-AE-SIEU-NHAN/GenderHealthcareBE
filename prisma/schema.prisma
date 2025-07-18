@@ -192,3 +192,48 @@ model Payments {
   created_at      DateTime @default(now())
   updated_at      DateTime @updatedAt
 }
+
+model TestServices {
+  id          String           @id @map("_id") @default(uuid())
+  name        String
+  code        String           @unique
+  description String?
+  price       Int
+  is_active    Boolean          @default(true)
+  created_at   DateTime         @default(now()) @map("created_at")
+
+  testPackageServices TestPackageServices[]
+}
+
+model TestPackages {
+  id            String   @id @map("_id") @db.VarChar(36)
+  name          String           @unique
+  description   String?
+  price         Int
+  target_gender  Gender
+  level         PackageLevel
+  created_at     DateTime         @default(now()) @map("created_at")
+
+  testPackageServices TestPackageServices[]
+}
+
+model TestPackageServices {
+  test_package_id String
+  test_service_id String
+
+  testPackage   TestPackages   @relation(fields: [test_package_id], references: [id])
+  testService   TestServices   @relation(fields: [test_service_id], references: [id])
+
+  @@id([test_package_id, test_service_id])
+}
+
+enum Gender {
+  male
+  female
+}
+
+enum PackageLevel {
+  basic
+  advanced
+  full
+}

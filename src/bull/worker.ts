@@ -13,13 +13,23 @@ notificationQueue.process('notification-for-customer', async (job) => {
     socketService.sendNotification(user_id, notification_id, content)
   }
 
-  console.log('>>> ', notification_id)
-
+  // cập nhật trạng thái đã gửi thông báo
   await notificationServices.updateNotificationSendStatus(notification_id)
+
+  // gửi thông báo đến người dùng qua socket
+  socketService.sendNotification(user_id, notification_id, content)
 })
 
 paymentQueue.process('cancel-payment-after-15-minutes', async (job) => {
   const { orderCode, user_id } = job.data
+
+  // kiểm tra trạng thái cuối cùng của thanh toán trên PayOS
+  const { data } = await paymentServices.checkPaymentStatusOnPayOS(orderCode)
+  if (data.status === 'PAID') {
+    // nếu đã thanh toán thì không cần hủy, chỉ cần cập nhật trạng thái
+    await paymentServices.updatePaymentStatus(orderCode, PaymentStatus.SUCCESS)
+    return
+  }
 
   // nếu đã thanh toán thì webhook sẽ gọi paymentQueue để xóa job này rồi
   // nếu chưa thanh toán thì hủy:

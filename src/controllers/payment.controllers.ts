@@ -20,7 +20,7 @@ export const cancelPaymentController = async (
   const { orderCode } = req.body
 
   // xóa job hủy thanh toán sau 15 phút nếu hủy thanh toán
-  const job = await paymentQueue.getJob('order123')
+  const job = await paymentQueue.getJob(orderCode)
   job && (await job.remove())
 
   const result = await paymentServices.getPaymentByOrderCode(orderCode)
@@ -76,7 +76,7 @@ export const webhookPaymentController = async (
     )
 
     // gửi thông báo thành công cho người dùng qua socket
-    const content = `Your appointment has been successfully booked for ${booking_date} at ${time_slot}.`
+    const content = `Book consultant successfully`
     socketService.sendStatusPayment(user_id, PaymentStatus.SUCCESS, content)
   }
 

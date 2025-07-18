@@ -74,6 +74,16 @@ class PaymentService {
     )
   }
 
+  async checkPaymentStatusOnPayOS(orderCode: string) {
+    return axios.get(`https://api-merchant.payos.vn/v2/payment-requests/${orderCode}`, {
+      headers: {
+        'x-client-id': process.env.PAYOS_CLIENT_ID!,
+        'x-api-key': process.env.PAYOS_API_KEY!,
+        'Content-Type': 'application/json'
+      }
+    })
+  }
+
   async getPaymentByOrderCode(orderCode: string) {
     return await this.paymentRepository.getPaymentByOrderCode(orderCode)
   }
