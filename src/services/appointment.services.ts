@@ -97,14 +97,7 @@ class AppointmentServices {
   }
 
   async getAppointmentById(appointment_id: string) {
-    const appointment = await this.appointmentRepository.getAppointmentById(appointment_id)
-    if (!appointment) {
-      throw new ErrorWithStatus({
-        status: HTTP_STATUS.NOT_FOUND,
-        message: APPOINTMENT_MESSAGES.APPOINTMENT_NOT_FOUND
-      })
-    }
-    return appointment
+    return await this.appointmentRepository.getAppointmentById(appointment_id)
   }
 }
 

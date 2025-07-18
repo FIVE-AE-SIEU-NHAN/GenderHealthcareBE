@@ -4,7 +4,7 @@ import { NextFunction, Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { paymentQueue } from '~/bull/queue'
 import HTTP_STATUS from '~/constants/httpStatus'
-import { PAYMENT_MESSAGES } from '~/constants/messages'
+import { APPOINTMENT_MESSAGES, PAYMENT_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
 import { CancelPaymentReqBody } from '~/models/requests/payment.requests'
 import appointmentServices from '~/services/appointment.services'
@@ -73,8 +73,15 @@ export const webhookPaymentController = async (
     const { description } = data
     if (description.includes('CONSULTATION')) {
       // lấy thông tin lịch hẹn
-      const { user_id, consultant_id, booking_date, time_slot } =
-        await appointmentServices.getAppointmentById(appointment_id)
+      const appointment = await appointmentServices.getAppointmentById(appointment_id)
+
+      if (!appointment) {
+        throw new ErrorWithStatus({
+          status: HTTP_STATUS.NOT_FOUND,
+          message: APPOINTMENT_MESSAGES.APPOINTMENT_NOT_FOUND
+        })
+      }
+      const { user_id, consultant_id, booking_date, time_slot } = appointment
       // lưu lịch hẹn vào redis để gửi thông báo và lưu vào database
       await notificationServices.addNotificationForConsultantAppointment(
         user_id,
