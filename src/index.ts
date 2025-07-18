@@ -24,6 +24,14 @@ import managerStaffRouter from './routers/staff/manager.staff.routers'
 
 // ---------------------------      BULL     --------------------------- //
 import './bull/worker'
+import testServiceServices from './services/testService.services'
+import { TimeSlot } from '@prisma/client'
+import paymentServices from './services/payment.services'
+import usersServices from './services/users.services'
+import { ErrorWithStatus } from './models/Errors'
+import HTTP_STATUS from './constants/httpStatus'
+import { APPOINTMENT_MESSAGES } from './constants/messages'
+import redisUtils from './utils/redis'
 // ---------------------------     SERVER    --------------------------- //
 const port = 3000
 const app = express()
@@ -57,28 +65,36 @@ app.use('/staff', staffRouter, managerStaffRouter)
 
 // --------------------------- 🧪 API TEST ----------------------------- //
 app.get('/test', async (req, res) => {
-  const user_id = '123'
-  const result = {
-    orderCode: 'order123',
-    amount: 1000,
-    user_id
+  const numberOfStaff = await usersServices.getNumberOfStaff()
+  console.log(numberOfStaff)
+  if (!numberOfStaff) {
+    console.log('Lỗi')
   }
 
-  paymentQueue.add(
-    'cancel-payment-after-15-minutes',
-    {
-      user_id,
-      orderCode: result.orderCode.toString()
-    },
-    {
-      delay: 15 * 60 * 1000,
-      jobId: result.orderCode,
-      removeOnComplete: true
+  // kiểm tra xem có staff nào rảnh không
+  const startIndex = await redisUtils.getIndexNextStaff(numberOfStaff)
+  let selectedStaffId = ''
+
+  for (let i = 0; i < numberOfStaff; i++) {
+    const currentIndex = (startIndex + i) % numberOfStaff
+
+    // lấy staff theo index
+    const staff_id = await usersServices.getStaffByIndex(currentIndex)
+
+    // kiểm tra xem staff có lịch hẹn nào trùng với booking_date và time_slot không
+    const time_slot = TimeSlot.SLOT_07_08
+    const isBusy = await testServiceServices.checkTestServiceAppointmentExists(staff_id, new Date(), time_slot)
+
+    if (!isBusy) {
+      await redisUtils.setNextStaffIndex(currentIndex + 1)
+      selectedStaffId = staff_id
+      break
     }
-  )
+  }
 
   res.status(200).json({
-    message: 'Test API is working'
+    message: 'Test API is working',
+    selectedStaffId
   })
 })
 

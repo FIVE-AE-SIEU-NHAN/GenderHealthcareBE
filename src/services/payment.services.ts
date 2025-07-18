@@ -87,6 +87,44 @@ class PaymentService {
   async getPaymentByOrderCode(orderCode: string) {
     return await this.paymentRepository.getPaymentByOrderCode(orderCode)
   }
+
+  async createTestServicePaymentLink({
+    amount,
+    appointment_id,
+    user_id
+  }: {
+    amount: number
+    appointment_id: string
+    user_id: string
+  }) {
+    const orderCode = Number(String(Date.now()).slice(-6))
+    const description = `PAYMENT FOR TEST SERVICE`
+
+    const response = await payOSInstance.createPaymentLink({
+      orderCode,
+      amount,
+      description,
+      returnUrl: `localhost:5173`,
+      cancelUrl: `localhost:5173`,
+      items: [
+        {
+          name: `Test Service`,
+          quantity: 1,
+          price: amount
+        }
+      ]
+    })
+
+    // lưu thông tin thanh toán vào database
+    await this.paymentRepository.createPayment({
+      appointment_id,
+      user_id,
+      amount,
+      payos_order_code: String(response.orderCode)
+    })
+
+    return response
+  }
 }
 
 const paymentServices = new PaymentService()

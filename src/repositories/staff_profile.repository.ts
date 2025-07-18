@@ -264,4 +264,30 @@ export default class StaffProfileRepository {
       }
     })
   }
+
+  async getNumberOfStaff() {
+    return this.model.count({
+      where: {
+        user: {
+          verify: 0,
+          role: 4
+        },
+        status: 1
+      }
+    })
+  }
+
+  async getStaffByIndex(index: number) {
+    const staff = await this.model.findMany({
+      orderBy: {
+        id: 'asc'
+      },
+      skip: index,
+      take: 1,
+      select: {
+        id: true
+      }
+    })
+    return staff[0].id
+  }
 }

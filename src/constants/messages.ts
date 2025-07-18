@@ -190,7 +190,15 @@ export const APPOINTMENT_MESSAGES = {
   APPOINTMENT_ALREADY_IN_THIS_STATUS: 'Appointment already in this status',
   GET_MANAGER_APPOINTMENTS_SUCCESSFULLY: 'Get manager appointments successfully',
   NOTE_MUST_BE_STRING: 'Note must be a string',
-  NOTE_MUST_BE_LENGTH: 'Note length must be less than 500 characters'
+  NOTE_MUST_BE_LENGTH: 'Note length must be less than 500 characters',
+  TARGET_GENDER_IS_REQUIRED: 'Target gender is required',
+  TARGET_GENDER_MUST_BE_A_STRING: 'Target gender must be a string',
+  TARGET_GENDER_IS_INVALID: 'Target gender is invalid',
+  LEVEL_IS_REQUIRED: 'Level is required',
+  LEVEL_MUST_BE_A_STRING: 'Level must be a string',
+  LEVEL_IS_INVALID: 'Level is invalid',
+  TEST_SERVICE_PACKAGE_NOT_FOUND: 'Test service package not found',
+  NO_AVAILABLE_STAFF: 'No available staff at this time slot'
 } as const
 
 export const BLOG_MESSAGES = {

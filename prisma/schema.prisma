@@ -28,6 +28,7 @@ model Users {
   Appointments  Appointments[]
   Notifications  Notifications[]
   Blogs  Blogs[]
+  TestServiceAppointments  TestServiceAppointments[]
 
   @@index([google_id], map: "idx_google_id")
   @@index([forgot_password_token], map: "idx_forgot_token")
@@ -143,12 +144,14 @@ model Notifications {
 
   appointment_id  String?  @unique @db.VarChar(36)
   question_id     String?  @unique @db.VarChar(36)
+  test_service_appointment_id   String?  @unique @db.VarChar(36)
 
   created_at      DateTime @default(now())
 
   user            Users     @relation(fields: [user_id], references: [id])
   appointment     Appointments? @relation(fields: [appointment_id], references: [id])
   question     Questions? @relation(fields: [question_id], references: [id])
+  testServiceAppointment TestServiceAppointments? @relation(fields: [test_service_appointment_id], references: [id])
 }
 
 
@@ -216,6 +219,7 @@ model TestPackages {
   created_at     DateTime         @default(now()) @map("created_at")
 
   testPackageServices TestPackageServices[]
+  testServiceAppointments TestServiceAppointments[] 
 }
 
 model TestPackageServices {
@@ -246,4 +250,25 @@ model StaffProfiles {
   status           Int      @default(1) @db.TinyInt
 
   user             Users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  TestServiceAppointments  TestServiceAppointments[]
+}
+
+model TestServiceAppointments {
+  id            String   @id @map("_id") @db.VarChar(36)
+  user_id       String   @db.VarChar(36)
+  staff_id      String   @db.VarChar(36)
+
+  package_id    String   @db.VarChar(36)
+  note          String?  @db.Text
+
+  booking_date  DateTime
+  time_slot     TimeSlot
+
+  created_at    DateTime @default(now())
+  status        BookingStatus @default(PENDING)
+
+  user       Users             @relation(fields: [user_id], references: [id])
+  staff     StaffProfiles   @relation(fields: [staff_id], references: [id])
+  testPackage TestPackages @relation(fields: [package_id], references: [id])
+  notifications  Notifications?
 }

@@ -1,3 +1,4 @@
+import { Gender, PackageLevel } from '@prisma/client'
 import { prisma } from '~/services/client'
 
 export default class TestPackageRepository {
@@ -23,6 +24,18 @@ export default class TestPackageRepository {
             }
           }
         }
+      }
+    })
+  }
+
+  async getTestServicePackageId(target_gender: Gender, level: PackageLevel) {
+    return this.model.findFirst({
+      select: {
+        id: true
+      },
+      where: {
+        target_gender,
+        level
       }
     })
   }

@@ -143,6 +143,28 @@ class RedisUtils {
     const onlineSockets = await client.sCard(key)
     return onlineSockets > 0
   }
+
+  async getIndexNextStaff(numberOfStaff: number) {
+    const redisKey = `staff_index`
+
+    // mỗi ngày reset index
+    const ttl = await client.ttl(redisKey)
+    if (ttl === -1) {
+      await client.expire(redisKey, Number(process.env.REDIS_GET_NEXT_STAFF_TTL))
+    }
+    // Tăng chỉ số index trong Redis
+    const indexInRedis = await client.incr(redisKey)
+    // Tính vị trí staff
+    const index = (indexInRedis - 1) % numberOfStaff
+
+    return index
+  }
+
+  async setNextStaffIndex(index: number) {
+    const redisKey = `staff_index`
+    // Lưu index mới với TTL từ biến môi trường
+    await client.set(redisKey, index, { EX: Number(process.env.REDIS_GET_NEXT_STAFF_TTL) })
+  }
 }
 
 const redisUtils = new RedisUtils()

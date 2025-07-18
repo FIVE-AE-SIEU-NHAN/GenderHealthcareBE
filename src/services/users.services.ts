@@ -674,6 +674,14 @@ class UsersServices {
 
     return staffInfor
   }
+
+  async getNumberOfStaff() {
+    return await this.staffRepository.getNumberOfStaff()
+  }
+
+  async getStaffByIndex(index: number) {
+    return await this.staffRepository.getStaffByIndex(index)
+  }
 }
 
 const usersServices = new UsersServices()
