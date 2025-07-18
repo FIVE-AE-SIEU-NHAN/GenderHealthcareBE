@@ -172,3 +172,21 @@ export interface UpdateConsultantProfileReqBody {
   certifications?: string
   experienceYears?: number
 }
+
+export interface GetStaffReqQuery extends ParsedQs {
+  _page: string
+  _limit: string
+  _sort?: string
+  _order?: string
+  _gender?: string[]
+  _status?: string[]
+  _date_of_birth?: string[]
+  _created_at?: string[]
+  _name_like?: string
+  _specialization_like?: string
+  _all?: string
+}
+
+export interface UpdateStaffProfileReqBody {
+  specialization: String
+}

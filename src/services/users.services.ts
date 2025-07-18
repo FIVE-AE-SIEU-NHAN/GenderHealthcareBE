@@ -1,11 +1,13 @@
 import {
   CreateUserReqBody,
   GetConsultantReqQuery,
+  GetStaffReqQuery,
   GetUserReqQuery,
   LoginReqBody,
   RegisterReqBody,
   UpdateConsultantProfileReqBody,
-  UpdateProfileReqBody
+  UpdateProfileReqBody,
+  UpdateStaffProfileReqBody
 } from '~/models/requests/users.requests'
 import { hashPassword } from '~/utils/crypto'
 import { signToken } from '~/utils/jwt'
@@ -21,15 +23,19 @@ import refreshTokenServices from './refreshToken.services'
 import redisUtils from '~/utils/redis'
 import ConsultantProfileRepository from '~/repositories/consultant_profile.repository'
 import { Topic } from '@prisma/client'
+import StaffProfileRepository from '~/repositories/staff_profile.repository'
+import { spec } from 'node:test/reporters'
 dotenv.config()
 
 class UsersServices {
   private userRepository: UserRepository
   private consultantRepository: ConsultantProfileRepository
+  private staffRepository: StaffProfileRepository
 
   constructor() {
     this.userRepository = new UserRepository()
     this.consultantRepository = new ConsultantProfileRepository()
+    this.staffRepository = new StaffProfileRepository()
   }
 
   // chữ ký access token và refresh token
@@ -560,6 +566,113 @@ class UsersServices {
 
   async getUserIdOfConsultant(consultant_id: string) {
     return await this.consultantRepository.getUserIdByConsultantId(consultant_id)
+  }
+
+  async getStaffProfile(user_id: string) {
+    return await this.staffRepository.getStaffById(user_id)
+  }
+
+  async editStatusStaff(id: string, status: number) {
+    const staff = await this.staffRepository.getStaffStatus(id)
+    if (!staff) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.NOT_FOUND,
+        message: USERS_MESSAGES.STAFF_NOT_FOUND
+      })
+    }
+    if (staff?.status === status) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.NOT_FOUND,
+        message: USERS_MESSAGES.STAFF_ALREADY_IN_THIS_STATUS
+      })
+    }
+
+    return this.staffRepository.updateStatusStaff(id, status)
+  }
+
+  async getStaffsForAdmin(payload: GetStaffReqQuery) {
+    const {
+      _page,
+      _limit,
+      _sort,
+      _order,
+      _gender,
+      _status,
+      _date_of_birth,
+      _created_at,
+      _name_like,
+      _specialization_like,
+      _all
+    } = payload
+
+    const page = parseInt(_page as string, 10) || 1
+    const limit = parseInt(_limit as string, 10) || 10
+    const _skip = (page - 1) * limit
+
+    const gender = Array.isArray(_gender)
+      ? _gender.map((gender) => gender.toLowerCase())
+      : _gender
+        ? [_gender]
+        : undefined
+
+    const date_of_birth = Array.isArray(_date_of_birth)
+      ? _date_of_birth.map((dob) => new Date(dob)).sort((a, b) => a.getTime() - b.getTime())
+      : _date_of_birth
+        ? [new Date(_date_of_birth)]
+        : undefined
+
+    const created_at = Array.isArray(_created_at)
+      ? _created_at.map((created_at) => new Date(created_at)).sort((a, b) => a.getTime() - b.getTime())
+      : _created_at
+        ? [new Date(_created_at)]
+        : undefined
+
+    const status = Array.isArray(_status) ? _status.map((v) => parseInt(v)) : _status ? [parseInt(_status)] : undefined
+
+    const result = await this.staffRepository.getStaffsForAdmin({
+      limit,
+      _sort,
+      _order,
+      _skip,
+      gender,
+      status,
+      date_of_birth,
+      created_at,
+      _name_like,
+      _specialization_like,
+      _all
+    })
+
+    const staffs = result.map((staff) => ({
+      id: staff.id,
+      specialization: staff.specialization,
+      name: staff.user?.name,
+      date_of_birth: staff.user?.date_of_birth,
+      gender: staff.user?.gender,
+      created_at: staff.user?.created_at,
+      status: staff.status
+    }))
+
+    const total = await this.staffRepository.countStaffsForAdmin({
+      gender,
+      status,
+      date_of_birth,
+      created_at,
+      _name_like,
+      _specialization_like,
+      _all
+    })
+
+    return {
+      staffs,
+      total
+    }
+  }
+
+  async updateStaffProfile(staff_id: string, payload: UpdateStaffProfileReqBody) {
+    const staffInfor = await this.staffRepository.updateStaffProfile(staff_id, payload)
+
+    return staffInfor
   }
 }
 
