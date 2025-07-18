@@ -5,6 +5,7 @@ import socketService from '~/socket/socket'
 import paymentServices from '~/services/payment.services'
 import { PaymentStatus } from '@prisma/client'
 import appointmentServices from '~/services/appointment.services'
+import testServiceServices from '~/services/testService.services'
 
 notificationQueue.process('notification-for-customer', async (job) => {
   const { user_id, notification_id, content } = job.data
@@ -40,7 +41,13 @@ paymentQueue.process('cancel-payment-after-15-minutes', async (job) => {
     paymentServices.updatePaymentStatus(orderCode, PaymentStatus.FAILED)
   ])
   // 3. xóa appointment đã giữ chỗ
-  await appointmentServices.deleteAppointment(payment.appointment_id)
+  // kiểm tra là loại appointment nào
+  const appointment = await appointmentServices.getAppointmentById(payment.appointment_id)
+  if (!appointment) {
+    await testServiceServices.deleteTestServiceAppointment(payment.appointment_id)
+  } else {
+    await appointmentServices.deleteAppointment(payment.appointment_id)
+  }
   // 4. gửi thông báo hết hạn cho người dùng qua socket
   const content = `Your appointment payment has expired. Please reschedule if necessary.`
   socketService.sendStatusPayment(user_id, PaymentStatus.FAILED, content)

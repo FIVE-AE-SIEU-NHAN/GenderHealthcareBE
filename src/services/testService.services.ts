@@ -68,6 +68,10 @@ class TestSericeServices {
     }
     return testServiceAppointment
   }
+
+  async deleteTestServiceAppointment(appointment_id: string) {
+    return this.testServiceAppointmentsRepository.deleteTestServiceAppointment(appointment_id)
+  }
 }
 
 const testServiceServices = new TestSericeServices()

@@ -11,6 +11,7 @@ export const getNotificationsController = async (
   next: NextFunction
 ) => {
   const { user_id } = req.decode_authorization as TokenPayLoad
+
   const result = await notificationServices.getNotifications(user_id)
 
   res.status(HTTP_STATUS.OK).json({

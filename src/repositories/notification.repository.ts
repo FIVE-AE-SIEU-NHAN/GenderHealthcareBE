@@ -54,20 +54,20 @@ export default class NotificationRepository {
         content: true,
         is_read: true
       },
-      where: { user_id, is_sent: true, scheduled_time: { lte: new Date() } },
+      where: { user_id, is_sent: true },
       orderBy: { created_at: 'desc' }
     })
   }
 
   async getUnreadNotificationCount(user_id: string) {
     return this.model.count({
-      where: { user_id, is_sent: true, is_read: false, scheduled_time: { lte: new Date() } }
+      where: { user_id, is_sent: true, is_read: false }
     })
   }
 
   async updateNotifications(user_id: string) {
     return this.model.updateMany({
-      where: { user_id, is_sent: true, is_read: false, scheduled_time: { lte: new Date() } },
+      where: { user_id, is_sent: true, is_read: false },
       data: { is_read: true }
     })
   }

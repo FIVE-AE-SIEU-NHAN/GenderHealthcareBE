@@ -243,7 +243,8 @@ export const BLOG_MESSAGES = {
 export const NOTIFICATIONS_MESSAGES = {
   GET_NOTIFICATIONS_SUCCESS: 'Get notifications successfully',
   UPDATE_NOTIFICATIONS_SUCCESS: 'Update notifications successfully',
-  STAFF_NOT_FOUND: 'Staff not found'
+  STAFF_NOT_FOUND: 'Staff not found',
+  CONSULTANT_NOT_FOUND: 'Consultant not found'
 } as const
 
 export const PAYMENT_MESSAGES = {

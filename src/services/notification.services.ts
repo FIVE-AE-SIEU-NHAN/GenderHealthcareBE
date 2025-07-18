@@ -4,6 +4,7 @@ import usersServices from './users.services'
 import { ErrorWithStatus } from '~/models/Errors'
 import { notificationQueue } from '~/bull/queue'
 import { NOTIFICATIONS_MESSAGES } from '~/constants/messages'
+import HTTP_STATUS from '~/constants/httpStatus'
 
 class NotificationService {
   private notificationRepository: NotificationRepository
@@ -42,8 +43,8 @@ class NotificationService {
 
     if (!consultant) {
       throw new ErrorWithStatus({
-        status: 404,
-        message: 'Consultant not found'
+        status: HTTP_STATUS.NOT_FOUND,
+        message: NOTIFICATIONS_MESSAGES.CONSULTANT_NOT_FOUND
       })
     }
 
@@ -158,7 +159,7 @@ class NotificationService {
 
     if (!staff) {
       throw new ErrorWithStatus({
-        status: 404,
+        status: HTTP_STATUS.NOT_FOUND,
         message: NOTIFICATIONS_MESSAGES.STAFF_NOT_FOUND
       })
     }
@@ -166,7 +167,7 @@ class NotificationService {
     const [{ id: notification_id_of_customer }, { id: notification_id_of_staff }] = await Promise.all([
       this.notificationRepository.createNotification({
         user_id,
-        type: NotificationType.APPOINTMENT_REMINDER_30M,
+        type: NotificationType.SERVICE_REMINDER_1D,
         content: customerContent,
         scheduled_time: booking_date,
         question_id: '',
@@ -175,7 +176,7 @@ class NotificationService {
       }),
       this.notificationRepository.createNotification({
         user_id: staff.user_id,
-        type: NotificationType.APPOINTMENT_REMINDER_30M,
+        type: NotificationType.SERVICE_REMINDER_1D,
         content: staffContent,
         scheduled_time: booking_date,
         question_id: '',

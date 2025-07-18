@@ -44,4 +44,10 @@ export default class TestServiceAppointmentsRepository {
       }
     })
   }
+
+  async deleteTestServiceAppointment(appointment_id: string) {
+    return this.model.delete({
+      where: { id: appointment_id }
+    })
+  }
 }

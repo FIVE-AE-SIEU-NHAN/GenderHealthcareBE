@@ -39,8 +39,14 @@ export const cancelPaymentController = async (
     paymentServices.updatePaymentStatus(orderCode, PaymentStatus.CANCELLED)
   ])
 
+  // kiểm tra là loại appointment nào
   // xóa appointment đã giữ chỗ
-  await appointmentServices.deleteAppointment(payment.appointment_id)
+  const appointment = await appointmentServices.getAppointmentById(payment.appointment_id)
+  if (!appointment) {
+    await testServiceServices.deleteTestServiceAppointment(payment.appointment_id)
+  } else {
+    await appointmentServices.deleteAppointment(payment.appointment_id)
+  }
 
   res.status(HTTP_STATUS.OK).json({
     message: PAYMENT_MESSAGES.CANCEL_PAYMENT_SUCCESS
