@@ -20,3 +20,8 @@ export enum ConsultantStatus {
   Inactive, // 0
   Active // 1
 }
+
+export enum StaffStatus {
+  Inactive, // 0
+  Active // 1
+}

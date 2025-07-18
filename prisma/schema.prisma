@@ -23,6 +23,7 @@ model Users {
   role                  Int?      @default(0) @db.TinyInt
 
   ConsultantProfiles     ConsultantProfiles?
+  StaffProfiles     StaffProfiles?
   Questions             Questions[]
   Appointments  Appointments[]
   Notifications  Notifications[]
@@ -236,4 +237,13 @@ enum PackageLevel {
   basic
   advanced
   full
+}
+
+model StaffProfiles {
+  id               String   @id @map("_id") @db.VarChar(36)
+  user_id          String   @unique @db.VarChar(36)
+  specialization   String
+  status           Int      @default(1) @db.TinyInt
+
+  user             Users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }

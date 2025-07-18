@@ -103,6 +103,12 @@ export const USERS_MESSAGES = {
   CONSULTANT_ALREADY_IN_THIS_STATUS: 'Consultant already in this status',
   UPDATE_CONSULTANT_PROFILE_SUCCESS: 'Update consultant profile successfully',
   GET_CONSULTANT_PROFILE_SUCCESS: 'Get consultant profile successfully',
+  GET_STAFF_PROFILE_SUCCESS: 'Get staff profile successfully',
+  STAFF_STATUS_UPDATED_SUCCESSFULLY: 'Staff status updated successfully',
+  STAFF_NOT_FOUND: 'Staff not found',
+  STAFF_ALREADY_IN_THIS_STATUS: 'Staff already in this status',
+  GET_STAFF_FOR_ADMIN_SUCCESSFULLY: 'Get staff for admin successfully',
+  SPECIALIZATION_MUST_BE_A_STRING: 'Specialization must be a string',
   // mail
   SEND_MAIL_FAIL: 'Send mail fail',
   SEND_MAIL_SUCCESS: 'Send mail success',

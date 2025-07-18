@@ -18,11 +18,12 @@ import paymentRoute from './routers/payment.routers'
 import { createServer } from 'http'
 import socketService from './socket/socket'
 import { paymentQueue } from './bull/queue'
+import testServiceRouter from './routers/testService/testService.user.routers'
+import staffRouter from './routers/staff/staff.routers'
+import managerStaffRouter from './routers/staff/manager.staff.routers'
 
 // ---------------------------      BULL     --------------------------- //
 import './bull/worker'
-import testServiceRouter from './routers/testService/testService.user.routers'
-
 // ---------------------------     SERVER    --------------------------- //
 const port = 3000
 const app = express()
@@ -52,6 +53,7 @@ app.use('/blog', blogRouter, staffBlogRouter, managerBlogRouter)
 app.use('/notification', notificationRouter)
 app.use('/payment', paymentRoute)
 app.use('/test-service', testServiceRouter)
+app.use('/staff', staffRouter, managerStaffRouter)
 
 // --------------------------- 🧪 API TEST ----------------------------- //
 app.get('/test', async (req, res) => {
