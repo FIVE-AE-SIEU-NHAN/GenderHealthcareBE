@@ -234,7 +234,8 @@ class NotificationService {
     booking_date,
     appointment_id,
     question_id,
-    test_service_appointment_id
+    test_service_appointment_id,
+    is_send
   }: {
     user_id: string
     type?: NotificationType
@@ -243,6 +244,7 @@ class NotificationService {
     appointment_id?: string
     question_id?: string
     test_service_appointment_id?: string
+    is_send?: boolean
   }) {
     return this.notificationRepository.createNotification({
       user_id,
@@ -251,7 +253,8 @@ class NotificationService {
       scheduled_time: booking_date,
       question_id,
       appointment_id,
-      test_service_appointment_id
+      test_service_appointment_id,
+      is_send
     })
   }
 }

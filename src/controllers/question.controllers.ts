@@ -106,7 +106,8 @@ export const answerQuestionsController = async (
     type: NotificationType.ANSWERED_QUESTION,
     content: `Your question has been answered successfully`,
     booking_date: new Date(),
-    question_id: id
+    question_id: id,
+    is_send: true
   })
 
   // gửi thông báo thành công cho người dùng qua socket
