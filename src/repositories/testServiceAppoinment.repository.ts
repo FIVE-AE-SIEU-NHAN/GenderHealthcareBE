@@ -1,4 +1,4 @@
-import { TimeSlot } from '@prisma/client'
+import { BookingStatus, TimeSlot } from '@prisma/client'
 import { prisma } from '~/services/client'
 import { v4 as ObjectId } from 'uuid'
 
@@ -40,7 +40,8 @@ export default class TestServiceAppointmentsRepository {
         booking_date: true,
         time_slot: true,
         staff_id: true,
-        user_id: true
+        user_id: true,
+        status: true
       }
     })
   }
@@ -48,6 +49,13 @@ export default class TestServiceAppointmentsRepository {
   async deleteTestServiceAppointment(appointment_id: string) {
     return this.model.delete({
       where: { id: appointment_id }
+    })
+  }
+
+  async updateStatusTestServiceAppointment(id: string, status: BookingStatus) {
+    return this.model.update({
+      where: { id },
+      data: { status }
     })
   }
 }

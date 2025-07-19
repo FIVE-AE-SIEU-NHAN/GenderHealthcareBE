@@ -4,7 +4,11 @@ import { paymentQueue } from '~/bull/queue'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { APPOINTMENT_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
-import { BookTestServiceAppointmentReqBody } from '~/models/requests/appointment.requests'
+import {
+  BookTestServiceAppointmentReqBody,
+  EditReqQuery,
+  EditStatusUserReqBody
+} from '~/models/requests/appointment.requests'
 import { TokenPayLoad } from '~/models/requests/users.requests'
 import appointmentServices from '~/services/appointment.services'
 import paymentServices from '~/services/payment.services'
@@ -117,5 +121,20 @@ export const bookTestServiceAppointmentController = async (
   res.status(HTTP_STATUS.CREATED).json({
     message: APPOINTMENT_MESSAGES.BOOKING_CREATED_SUCCESSFULLY,
     result
+  })
+}
+
+export const editStatusTestServiceAppointmentController = async (
+  req: Request<ParamsDictionary, any, EditStatusUserReqBody, EditReqQuery>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { id } = req.params
+  const { status } = req.body
+
+  await testServiceServices.editStatusTestServiceAppointment(id, status)
+
+  res.status(200).json({
+    message: APPOINTMENT_MESSAGES.APPOINTMENT_STATUS_UPDATED_SUCCESSFULLY
   })
 }

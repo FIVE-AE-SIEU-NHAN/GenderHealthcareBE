@@ -1,4 +1,4 @@
-import { Gender, PackageLevel, TimeSlot } from '@prisma/client'
+import { BookingStatus, Gender, PackageLevel, TimeSlot } from '@prisma/client'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { APPOINTMENT_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
@@ -71,6 +71,23 @@ class TestSericeServices {
 
   async deleteTestServiceAppointment(appointment_id: string) {
     return this.testServiceAppointmentsRepository.deleteTestServiceAppointment(appointment_id)
+  }
+
+  async editStatusTestServiceAppointment(id: string, status: BookingStatus) {
+    const testServiceAppointment = await this.testServiceAppointmentsRepository.getTestServiceAppointmentById(id)
+    if (!testServiceAppointment) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.NOT_FOUND,
+        message: APPOINTMENT_MESSAGES.TEST_SERVICE_APPOINTMENT_NOT_FOUND
+      })
+    }
+    if (testServiceAppointment.status === status) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.NOT_FOUND,
+        message: APPOINTMENT_MESSAGES.TEST_SERVICE_APPOINTMENT_ALREADY_IN_THIS_STATUS
+      })
+    }
+    return this.testServiceAppointmentsRepository.updateStatusTestServiceAppointment(id, status)
   }
 }
 

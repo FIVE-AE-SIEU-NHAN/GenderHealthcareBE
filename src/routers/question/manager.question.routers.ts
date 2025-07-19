@@ -30,7 +30,7 @@ managerQuestionRouter.get(
 
 /**
  * Description: Edit state question for manager
- * Path: question/:id/edit
+ * Path: question/:id/edit-state
  * Method: PATCH
  * Request body: { is_public: boolean }
  */

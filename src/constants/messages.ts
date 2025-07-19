@@ -199,7 +199,8 @@ export const APPOINTMENT_MESSAGES = {
   LEVEL_IS_INVALID: 'Level is invalid',
   TEST_SERVICE_PACKAGE_NOT_FOUND: 'Test service package not found',
   NO_AVAILABLE_STAFF: 'No available staff at this time slot',
-  TEST_SERVICE_APPOINTMENT_NOT_FOUND: 'Test service appointment not found'
+  TEST_SERVICE_APPOINTMENT_NOT_FOUND: 'Test service appointment not found',
+  TEST_SERVICE_APPOINTMENT_ALREADY_IN_THIS_STATUS: 'Test service appointment already in this status'
 } as const
 
 export const BLOG_MESSAGES = {

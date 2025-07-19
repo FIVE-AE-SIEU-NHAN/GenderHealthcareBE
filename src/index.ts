@@ -18,20 +18,18 @@ import paymentRoute from './routers/payment.routers'
 import { createServer } from 'http'
 import socketService from './socket/socket'
 import { paymentQueue } from './bull/queue'
-import testServiceRouter from './routers/testService/testService.user.routers'
+import testServiceRouter from './routers/testService/testService.routers'
 import staffRouter from './routers/staff/staff.routers'
 import managerStaffRouter from './routers/staff/manager.staff.routers'
+import testServiceServices from './services/testService.services'
+import { TimeSlot } from '@prisma/client'
+import usersServices from './services/users.services'
+import redisUtils from './utils/redis'
+import managerTestServiceRouter from './routers/testService/manager.testService.routers'
 
 // ---------------------------      BULL     --------------------------- //
 import './bull/worker'
-import testServiceServices from './services/testService.services'
-import { TimeSlot } from '@prisma/client'
-import paymentServices from './services/payment.services'
-import usersServices from './services/users.services'
-import { ErrorWithStatus } from './models/Errors'
-import HTTP_STATUS from './constants/httpStatus'
-import { APPOINTMENT_MESSAGES } from './constants/messages'
-import redisUtils from './utils/redis'
+
 // ---------------------------     SERVER    --------------------------- //
 const port = 3000
 const app = express()
@@ -60,7 +58,7 @@ app.use('/appointment', appointmentRouter)
 app.use('/blog', blogRouter, staffBlogRouter, managerBlogRouter)
 app.use('/notification', notificationRouter)
 app.use('/payment', paymentRoute)
-app.use('/test-service', testServiceRouter)
+app.use('/test-service', testServiceRouter, managerTestServiceRouter)
 app.use('/staff', staffRouter, managerStaffRouter)
 
 // --------------------------- 🧪 API TEST ----------------------------- //

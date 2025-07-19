@@ -28,6 +28,7 @@ export default class AppointmentRepository {
       data: {
         id,
         ...data,
+        chat_room_id: id.split('-')[0],
         created_at: new Date()
       }
     })
