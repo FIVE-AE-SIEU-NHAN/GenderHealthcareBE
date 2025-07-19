@@ -140,7 +140,7 @@ class QuestionServices {
         message: QUESTIONS_MESSAGES.QUESTION_ALREADY_ANSWERED
       })
     }
-    await this.questionRepository.answerQuestion(id, answer)
+    return await this.questionRepository.answerQuestion(id, answer)
   }
 
   async editAnswerQuestion(id: string, answer: string) {

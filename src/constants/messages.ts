@@ -154,7 +154,8 @@ export const QUESTIONS_MESSAGES = {
   QUESTION_NOT_FOUNDOR_OR_NOT_PUBLIC: 'Question not found or not public',
   STATUS_IS_INVALID: 'Status is invalid',
   CREATED_AT_BE_ISO8601: 'Created at must be ISO8601',
-  REPORT_QUESTION_SUCCESSFULLY: 'Report question successfully'
+  REPORT_QUESTION_SUCCESSFULLY: 'Report question successfully',
+  USER_ID_NOT_FOUND: 'User id not found'
 } as const
 
 export const APPOINTMENT_MESSAGES = {

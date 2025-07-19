@@ -226,6 +226,34 @@ class NotificationService {
       )
     ])
   }
+
+  async createNotification({
+    user_id,
+    type = NotificationType.OTHER,
+    content,
+    booking_date,
+    appointment_id,
+    question_id,
+    test_service_appointment_id
+  }: {
+    user_id: string
+    type?: NotificationType
+    content: string
+    booking_date: Date
+    appointment_id?: string
+    question_id?: string
+    test_service_appointment_id?: string
+  }) {
+    return this.notificationRepository.createNotification({
+      user_id,
+      type,
+      content,
+      scheduled_time: booking_date,
+      question_id,
+      appointment_id,
+      test_service_appointment_id
+    })
+  }
 }
 
 const notificationServices = new NotificationService()
