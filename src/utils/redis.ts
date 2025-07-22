@@ -1,14 +1,15 @@
 import { createClient } from 'redis'
 import { generateOTP } from './nanoid'
 import { OTPReqBody } from '~/models/requests/users.requests'
+import dotenv from 'dotenv'
+dotenv.config()
 
 const client = createClient({
-  username: 'default',
-  password: 'DBQcCiwTFq1jkHkUj7IFxaGYVjczZe3f',
   socket: {
-    host: 'redis-16859.c292.ap-southeast-1-1.ec2.redns.redis-cloud.com',
-    port: 16859
-  }
+    host: '159.65.128.97',
+    port: 6379
+  },
+  password: 'Maihankiet.2004'
 })
 
 client.on('error', (err) => console.log('Redis Client Error', err))
