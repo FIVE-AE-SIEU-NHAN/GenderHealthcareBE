@@ -29,6 +29,7 @@ import managerTestServiceRouter from './routers/testService/manager.testService.
 
 // ---------------------------      BULL     --------------------------- //
 import './bull/worker'
+import chatBotRouter from './routers/chatBot.router'
 
 // ---------------------------     SERVER    --------------------------- //
 const port = 3000
@@ -60,6 +61,7 @@ app.use('/notification', notificationRouter)
 app.use('/payment', paymentRoute)
 app.use('/test-service', testServiceRouter, managerTestServiceRouter)
 app.use('/staff', staffRouter, managerStaffRouter)
+app.use('/chat-bot', chatBotRouter)
 
 // --------------------------- 🧪 API TEST ----------------------------- //
 app.get('/test', async (req, res) => {

@@ -3,7 +3,7 @@ import http from 'http'
 import redisUtils from '~/utils/redis'
 import MessageRepository from '~/repositories/message.repository'
 import { PaymentStatus } from '@prisma/client'
-
+import chatBotServices from '~/services/chatbot.services'
 class SocketService {
   private static instance: SocketService
   private io: Server | null = null
@@ -39,6 +39,7 @@ class SocketService {
       this.joinUserRoom(socket, user_id)
       this.handleChat(socket)
       this.handleVideoCall(socket)
+      this.handleChatBot(socket)
 
       // event disconnect
       socket.on('disconnect', (reason) => {
@@ -61,7 +62,7 @@ class SocketService {
     console.log(`- Socket \x1b[31m${socket.id}\x1b[0m joined room: \x1b[36m${user_id}\x1b[0m`)
   }
 
-  // ✅ Gửi thông báo tới người dùng
+  // Gửi thông báo
   sendNotification(user_id: string, notification_id: string, content: string) {
     this.getIO().to(user_id).emit('notify:send', {
       notification_id,
@@ -69,7 +70,7 @@ class SocketService {
     })
   }
 
-  // ✅ Gửi trạng thái thanh toán
+  // Gửi trạng thái
   sendStatusPayment(user_id: string, status: PaymentStatus, content: string) {
     this.getIO().to(user_id).emit('payment:status', {
       status,
@@ -77,7 +78,7 @@ class SocketService {
     })
   }
 
-  // ✅ Xử lý CHAT
+  // Chat
   private handleChat(socket: Socket) {
     // ====================================================================
     // CORRECT STRUCTURE: All listeners are at the top level.
@@ -125,7 +126,7 @@ class SocketService {
     })
   }
 
-  // ✅ Xử lý VIDEO CALL (signaling với WebRTC)
+  // Video call
   private handleVideoCall(socket: Socket) {
     socket.on('call:joinRoom', async (room_id: string) => {
       // Get all socket IDs in the room *before* the new user joins.
@@ -174,6 +175,23 @@ class SocketService {
         socket.leave(room_id)
         console.log(`- Socket ${socket.id} left video call room: ${room_id}`)
       })
+    })
+  }
+
+  // Chatbot
+  private handleChatBot(socket: Socket) {
+    socket.on('chatbot:joinRoom', (room_id: string) => {
+      socket.join(room_id)
+      console.log(`- Socket ${socket.id} call chatbot in: ${room_id}`)
+    })
+
+    socket.on('chatbot:message', async ({ room_id, user_id, message }) => {
+      try {
+        const reply = await chatBotServices.handleChatBotMessage(user_id, message)
+        socket.to(room_id).emit('chatbot:reply', { reply })
+      } catch (error) {
+        socket.emit('chatbot:message:error', { error: 'Không thể gửi tin nhắn.' })
+      }
     })
   }
 

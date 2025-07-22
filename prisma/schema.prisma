@@ -29,6 +29,7 @@ model Users {
   Notifications  Notifications[]
   Blogs  Blogs[]
   TestServiceAppointments  TestServiceAppointments[]
+  ChatBotHistory ChatBotHistory[]
 
   @@index([google_id], map: "idx_google_id")
   @@index([forgot_password_token], map: "idx_forgot_token")
@@ -271,4 +272,19 @@ model TestServiceAppointments {
   staff     StaffProfiles   @relation(fields: [staff_id], references: [id])
   testPackage TestPackages @relation(fields: [package_id], references: [id])
   notifications  Notifications?
+}
+
+enum ChatBotRole{
+  user
+  model
+}
+
+model ChatBotHistory {
+  id            String   @id @map("_id") @db.VarChar(36)
+  user_id       String   @db.VarChar(36)
+  role          ChatBotRole
+  message       String
+  created_at    DateTime? @default(now()) @db.Timestamp(0)
+
+  user       Users             @relation(fields: [user_id], references: [id])
 }

@@ -43,6 +43,7 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "@google/genai": "^1.10.0",
     "@payos/node": "^1.0.10",
     "axios": "^1.10.0",
     "bull": "^4.16.5",
