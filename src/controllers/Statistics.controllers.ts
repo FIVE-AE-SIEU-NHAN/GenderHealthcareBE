@@ -3,7 +3,7 @@ import { prisma } from "~/services/client";
 
 export const getDashboardStatistic = async (req: Request, res: Response) => {
   try {
-    // Sửa lại số 0, 1 cho đúng với role bạn định nghĩa
+    // Sửa lại số 0, 1 cho đúng với role định nghĩa
     const customerCount = await prisma.users.count({ where: { role: 3 } });
     const staffCount = await prisma.users.count({ where: { role: { in: [0, 1, 2, 4] } } });
     const doctorCount = await prisma.users.count({ where: { role: { in: [ 4] } } });
