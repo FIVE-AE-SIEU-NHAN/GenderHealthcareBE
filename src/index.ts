@@ -18,7 +18,9 @@ import paymentRoute from './routers/payment.routers'
 import { createServer } from 'http'
 import socketService from './socket/socket'
 import { paymentQueue } from './bull/queue'
-
+import cycleRouter from './routers/cycle/cycle.routers'
+import predictionRouter from './routers/cycle/cycleprediction.router'
+import dashboardRouter from './routers/statistic.routers';
 // ---------------------------      BULL     --------------------------- //
 import './bull/worker'
 import testServiceRouter from './routers/testService/testService.user.routers'
@@ -52,7 +54,9 @@ app.use('/blog', blogRouter, staffBlogRouter, managerBlogRouter)
 app.use('/notification', notificationRouter)
 app.use('/payment', paymentRoute)
 app.use('/test-service', testServiceRouter)
-
+app.use('/cycle', cycleRouter)
+app.use('/cycle/prediction', predictionRouter)
+app.use("/dashboard", dashboardRouter);
 // --------------------------- 🧪 API TEST ----------------------------- //
 app.get('/test', async (req, res) => {
   const user_id = '123'

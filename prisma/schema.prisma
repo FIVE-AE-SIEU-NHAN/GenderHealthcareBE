@@ -21,13 +21,13 @@ model Users {
   google_id             String?   @default("") @db.VarChar(100)
   verify                Int?      @default(0) @db.TinyInt
   role                  Int?      @default(0) @db.TinyInt
-
+  
   ConsultantProfiles     ConsultantProfiles?
   Questions             Questions[]
   Appointments  Appointments[]
   Notifications  Notifications[]
   Blogs  Blogs[]
-
+  ReproductiveCycles  ReproductiveCycle[] 
   @@index([google_id], map: "idx_google_id")
   @@index([forgot_password_token], map: "idx_forgot_token")
 }
@@ -236,4 +236,36 @@ enum PackageLevel {
   basic
   advanced
   full
+}
+model ReproductiveCycle {
+  id               String            @id @map("_id") @db.VarChar(36)
+  user_id          String            @db.VarChar(36)
+  last_period_date DateTime          @db.DateTime(0)
+  cycle_length     Int
+  period_length    Int
+  note             String?           @db.Text
+  created_at       DateTime          @default(now()) @db.DateTime(0)
+  predictions      CyclePrediction[]
+  user             Users             @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_cycle_user")
+  mood             Int?    // 1-5
+  libido           Int?    // 1-5
+  stress           Int?    // 1-5
+  sleep_hours      Float?  // số giờ ngủ
+  energy           Int?
+  @@index([user_id], map: "idx_user_id")
+  
+}
+
+model CyclePrediction {
+  id                   String            @id @default(uuid()) @db.VarChar(36)
+  user_id              String            @db.VarChar(36)
+  cycle_id             String            @db.VarChar(36)
+  next_period_date     DateTime          @db.DateTime(0)
+  ovulation_date       DateTime          @db.DateTime(0)
+  fertile_window_start DateTime          @db.DateTime(0)
+  fertile_window_end   DateTime          @db.DateTime(0)
+  created_at           DateTime?         @default(now()) @db.DateTime(0)
+  cycle                ReproductiveCycle @relation(fields: [cycle_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "CyclePrediction_ibfk_1")
+ pregnancy_risk       String
+  @@index([cycle_id], map: "cycle_id")
 }
