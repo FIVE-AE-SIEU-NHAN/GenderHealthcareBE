@@ -8,7 +8,7 @@ export const cyclePredictionServices = {
     ovulation_date,
     fertile_window_start,
     fertile_window_end,
-    pregnancy_risk // <-- THÊM VÀO ĐÂY!
+    pregnancy_risk 
   }: {
     user_id: string
     cycle_id: string
@@ -16,7 +16,7 @@ export const cyclePredictionServices = {
     ovulation_date: Date
     fertile_window_start: Date
     fertile_window_end: Date
-    pregnancy_risk: string   // <-- THÊM VÀO ĐÂY!
+    pregnancy_risk: string   
   }) {
     const prediction = await prisma.cyclePrediction.create({
       data: {
@@ -26,7 +26,7 @@ export const cyclePredictionServices = {
         ovulation_date,
         fertile_window_start,
         fertile_window_end,
-        pregnancy_risk        // <-- PHẢI TRUYỀN VÀO ĐÂY!
+        pregnancy_risk        
       }
     })
     return prediction

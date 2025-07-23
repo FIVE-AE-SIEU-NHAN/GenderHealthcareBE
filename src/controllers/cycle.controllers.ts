@@ -53,7 +53,7 @@ export const createCycleController = async (req: Request, res: Response, next: N
       });
     }
 
-    // 4. Trả về duy nhất 1 response
+    
     res.status(201).json({
       message: 'Cycle tracked successfully',
       result,
