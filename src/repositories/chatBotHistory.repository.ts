@@ -10,15 +10,23 @@ export default class ChatBotHistoryRepository {
     return await this.model.create({
       data: {
         id,
-        ...data
+        ...data,
+        status: 1
       }
     })
   }
 
   async getChatBotHistoryByUserId(user_id: string) {
     return await this.model.findMany({
-      where: { user_id },
+      where: { user_id, status: 1 },
       orderBy: { created_at: 'desc' }
+    })
+  }
+
+  async updateChatBotHistoryStatus(user_id: string) {
+    return await this.model.updateMany({
+      where: { user_id, status: 1 },
+      data: { status: 0 }
     })
   }
 }

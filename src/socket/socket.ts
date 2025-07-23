@@ -42,13 +42,14 @@ class SocketService {
       this.handleChatBot(socket)
 
       // event disconnect
-      socket.on('disconnect', (reason) => {
+      socket.on('disconnect', async (reason) => {
+        // Ẩn câu hỏi đã chat với chatbot trong 1 session
+        await chatBotServices.updateChatBotHistoryStatus(user_id)
         console.log(
           `- Socket \x1b[31m${socket.id}\x1b[0m disconnected. Reason: \x1b[32m${reason.toLocaleUpperCase()}\x1b[0m`
         )
         redisUtils.removeOnlineSocket(user_id, socket.id)
         socket.rooms.forEach((room) => {
-          // Don't emit to the user's personal room, only to shared rooms.
           if (room !== socket.id) {
             socket.to(room).emit('user:left', { peerId: socket.id })
           }
@@ -188,9 +189,9 @@ class SocketService {
     socket.on('chatbot:message', async ({ room_id, user_id, message }) => {
       try {
         const reply = await chatBotServices.handleChatBotMessage(user_id, message)
-        socket.to(room_id).emit('chatbot:reply', { reply })
+        this.getIO().to(room_id).emit('chatbot:reply', { reply })
       } catch (error) {
-        socket.emit('chatbot:message:error', { error: 'Không thể gửi tin nhắn.' })
+        socket.emit('chatbot:message:error', { error: 'Sorry, the chatbot is having trouble. Please try again later.' })
       }
     })
   }
