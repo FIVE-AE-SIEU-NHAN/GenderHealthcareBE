@@ -1,0 +1,1628 @@
+openapi: 3.0.4
+info:
+  title: Gender Healthcare API
+  description: |-
+    API documentation for Gender Healthcare Backend system.
+    This system provides comprehensive sexual health consulting services including:
+    - User management with role-based access control
+    - Appointment booking and management
+    - Q&A system with consultants
+    - Blog management for health information
+    - Test service packages and appointments
+    - Real-time notifications
+    - AI-powered chatbot assistance
+
+    ## User Roles:
+    - **Admin (0)**: System administration and user management
+    - **Consultant (1)**: Medical consultants providing advice
+    - **Manager (2)**: Content and service management
+    - **User (3)**: Regular customers seeking consultation
+    - **Staff (4)**: Medical staff handling test services
+  contact:
+    email: support@genderhealthcare.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+  - url: https://api.genderhealthcare.com
+    description: Production server
+tags:
+  - name: user
+    description: User authentication and profile management
+  - name: appointment
+    description: Medical appointment booking and management
+  - name: question
+    description: Q&A system with consultants
+  - name: blog
+    description: Health information blog management
+  - name: notification
+    description: User notification system
+  - name: test-service
+    description: Medical test service packages
+  - name: payment
+    description: Payment processing
+  - name: chatbot
+    description: AI-powered health chatbot
+  - name: admin
+    description: Admin user management (Admin only)
+  - name: manager
+    description: Manager-specific operations
+  - name: staff
+    description: Staff profile and operations
+  - name: consultant
+    description: Consultant profile and operations
+paths:
+  # User Authentication and Profile Management
+  /user/get-otp:
+    post:
+      tags:
+        - user
+      summary: Send email with OTP token
+      description: Send an OTP token to the user's email for verification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: 'user@example.com'
+      responses:
+        '200':
+          description: OTP sent successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Invalid email format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /user/register:
+    post:
+      tags:
+        - user
+      summary: Register new user
+      description: Register a new user account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - password
+                - confirm_password
+                - date_of_birth
+                - gender
+                - phone_number
+                - email_verify_token
+              properties:
+                name:
+                  type: string
+                  example: 'John Doe'
+                email:
+                  type: string
+                  format: email
+                  example: 'user@example.com'
+                password:
+                  type: string
+                  format: password
+                  example: 'securePassword123'
+                confirm_password:
+                  type: string
+                  format: password
+                  example: 'securePassword123'
+                date_of_birth:
+                  type: string
+                  format: date
+                  example: '1995-01-15'
+                gender:
+                  type: string
+                  example: 'male'
+                phone_number:
+                  type: string
+                  example: '+1234567890'
+                email_verify_token:
+                  type: string
+                  example: 'verification_token_here'
+      responses:
+        '200':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /user/login:
+    post:
+      tags:
+        - user
+      summary: User login
+      description: Authenticate user with email and password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: 'user@example.com'
+                password:
+                  type: string
+                  format: password
+                  example: 'securePassword123'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  refresh_token:
+                    type: string
+                  user:
+                    $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /user/login-google:
+    post:
+      tags:
+        - user
+      summary: Google OAuth login
+      description: Authenticate user with Google ID token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id_token
+              properties:
+                id_token:
+                  type: string
+                  example: 'google_id_token_here'
+      responses:
+        '200':
+          description: Google login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  refresh_token:
+                    type: string
+                  user:
+                    $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid Google token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /user/logout:
+    post:
+      tags:
+        - user
+      summary: User logout
+      description: Logout user and invalidate refresh token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - refresh_token
+              properties:
+                refresh_token:
+                  type: string
+                  example: 'refresh_token_here'
+      responses:
+        '200':
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+
+  /user/forgot-password:
+    post:
+      tags:
+        - user
+      summary: Forgot password
+      description: Send password reset token to user's email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: 'user@example.com'
+      responses:
+        '200':
+          description: Password reset email sent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+
+  /user/reset-password:
+    post:
+      tags:
+        - user
+      summary: Reset password
+      description: Reset user password with token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - token
+                - newPassword
+                - confirmNewPassword
+              properties:
+                token:
+                  type: string
+                  example: 'reset_token_here'
+                newPassword:
+                  type: string
+                  format: password
+                  example: 'newSecurePassword123'
+                confirmNewPassword:
+                  type: string
+                  format: password
+                  example: 'newSecurePassword123'
+      responses:
+        '200':
+          description: Password reset successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+
+  /user/change-password:
+    put:
+      tags:
+        - user
+      summary: Change password
+      description: Change user password (requires authentication)
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - oldPassword
+                - newPassword
+                - confirmNewPassword
+              properties:
+                oldPassword:
+                  type: string
+                  format: password
+                  example: 'oldPassword123'
+                newPassword:
+                  type: string
+                  format: password
+                  example: 'newPassword123'
+                confirmNewPassword:
+                  type: string
+                  format: password
+                  example: 'newPassword123'
+      responses:
+        '200':
+          description: Password changed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+
+  /user/refresh-token:
+    post:
+      tags:
+        - user
+      summary: Refresh access token
+      description: Get new access token using refresh token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - refresh_token
+              properties:
+                refresh_token:
+                  type: string
+                  example: 'refresh_token_here'
+      responses:
+        '200':
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  refresh_token:
+                    type: string
+
+  /user/profile:
+    get:
+      tags:
+        - user
+      summary: Get user profile
+      description: Get current user's profile information
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: User profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    patch:
+      tags:
+        - user
+      summary: Update user profile
+      description: Update current user's profile information
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: 'John Doe Updated'
+                date_of_birth:
+                  type: string
+                  format: date
+                  example: '1995-01-15'
+                gender:
+                  type: string
+                  example: 'male'
+                phone_number:
+                  type: string
+                  example: '+1234567890'
+      responses:
+        '200':
+          description: Profile updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  # Admin Routes
+  /user/get-users:
+    get:
+      tags:
+        - admin
+      summary: Get all users (Admin only)
+      description: Get paginated list of all users in the system
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          description: Page number for pagination
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Users retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+                  total:
+                    type: integer
+                  page:
+                    type: integer
+                  limit:
+                    type: integer
+
+  /user/{id}/edit-status:
+    patch:
+      tags:
+        - admin
+      summary: Edit user status (Admin only)
+      description: Change user's verification status or ban/unban user
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: User ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  type: string
+                  enum: [verified, banned]
+                  example: 'verified'
+      responses:
+        '200':
+          description: User status updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+
+  /user/create:
+    post:
+      tags:
+        - admin
+      summary: Create user (Admin only)
+      description: Create a new user account with specified role
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - name
+                - phone_number
+                - date_of_birth
+                - role
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: 'newuser@example.com'
+                name:
+                  type: string
+                  example: 'New User'
+                phone_number:
+                  type: string
+                  example: '+1234567890'
+                date_of_birth:
+                  type: string
+                  format: date
+                  example: '1990-01-01'
+                role:
+                  type: string
+                  enum: [Admin, Consultant, Manager, User, Staff]
+                  example: 'Consultant'
+      responses:
+        '200':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  # Appointment Management
+  /appointment/book:
+    post:
+      tags:
+        - appointment
+      summary: Book an appointment
+      description: Book a new appointment with a consultant
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - topic
+                - schedule
+              properties:
+                topic:
+                  $ref: '#/components/schemas/Topic'
+                schedule:
+                  type: string
+                  format: date-time
+                  example: '2024-01-15T10:00:00Z'
+      responses:
+        '200':
+          description: Appointment booked successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Appointment'
+
+  /appointment/customer:
+    get:
+      tags:
+        - appointment
+      summary: Get customer appointments
+      description: Get all appointments for the current customer
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Customer appointments retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Appointment'
+
+  /appointment/consultant:
+    get:
+      tags:
+        - appointment
+      summary: Get consultant appointments
+      description: Get all appointments for the current consultant
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Consultant appointments retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Appointment'
+
+  /appointment/manager:
+    get:
+      tags:
+        - appointment
+      summary: Get manager appointments
+      description: Get all appointments for manager view
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Manager appointments retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Appointment'
+
+  /appointment/{id}/edit-status:
+    patch:
+      tags:
+        - appointment
+      summary: Edit appointment status
+      description: Update the status of an appointment (Consultant/Manager only)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Appointment ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  $ref: '#/components/schemas/BookingStatus'
+      responses:
+        '200':
+          description: Appointment status updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Appointment'
+
+  # Question & Answer System
+  /question/ask:
+    post:
+      tags:
+        - question
+      summary: Ask a question
+      description: Submit a new question to consultants
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - description
+              properties:
+                title:
+                  type: string
+                  example: 'Question about reproductive health'
+                description:
+                  type: string
+                  example: 'Detailed description of the question...'
+      responses:
+        '200':
+          description: Question submitted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'
+
+  /question/customer:
+    get:
+      tags:
+        - question
+      summary: Get customer questions
+      description: Get all questions asked by the current customer
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Customer questions retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Question'
+
+  /question/consultant:
+    get:
+      tags:
+        - question
+      summary: Get consultant questions
+      description: Get all questions assigned to the current consultant
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Consultant questions retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Question'
+
+  /question/{id}/answer:
+    patch:
+      tags:
+        - question
+      summary: Answer a question
+      description: Provide an answer to a question (Consultant only)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Question ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - answer
+              properties:
+                answer:
+                  type: string
+                  example: 'Detailed answer to the question...'
+      responses:
+        '200':
+          description: Question answered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'
+
+  /question/{id}/edit-answer:
+    patch:
+      tags:
+        - question
+      summary: Edit question answer
+      description: Edit an existing answer to a question (Consultant only)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Question ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - answer
+              properties:
+                answer:
+                  type: string
+                  example: 'Updated answer to the question...'
+      responses:
+        '200':
+          description: Answer updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'
+
+  /question/{id}/report:
+    post:
+      tags:
+        - question
+      summary: Report a question
+      description: Report inappropriate content in a question (Consultant only)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Question ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Question reported successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+
+  # Blog Management
+  /blog/customer:
+    get:
+      tags:
+        - blog
+      summary: Get blogs for customers
+      description: Get published blogs for customer viewing
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Blogs retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Blog'
+
+  /blog/detail/{id}:
+    get:
+      tags:
+        - blog
+      summary: Get blog details
+      description: Get detailed information about a specific blog
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Blog ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Blog details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Blog'
+    patch:
+      tags:
+        - staff
+      summary: Update blog
+      description: Update an existing blog post (Staff only)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Blog ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                summary:
+                  type: string
+                content:
+                  type: string
+                section_1:
+                  type: string
+                section_2:
+                  type: string
+                cover_image:
+                  type: string
+                main_image:
+                  type: string
+                sub_image:
+                  type: string
+      responses:
+        '200':
+          description: Blog updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Blog'
+
+  /blog/staff:
+    get:
+      tags:
+        - staff
+      summary: Get staff blogs
+      description: Get blogs created by the current staff member
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Staff blogs retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Blog'
+
+  /blog/create:
+    post:
+      tags:
+        - staff
+      summary: Create a new blog
+      description: Create a new blog post (Staff only)
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - content
+              properties:
+                title:
+                  type: string
+                  example: 'Health Information Article'
+                summary:
+                  type: string
+                  example: 'Brief summary of the article'
+                content:
+                  type: string
+                  example: 'Full content of the blog post...'
+                section_1:
+                  type: string
+                  example: 'First section content'
+                section_2:
+                  type: string
+                  example: 'Second section content'
+                cover_image:
+                  type: string
+                  example: 'https://example.com/cover.jpg'
+                main_image:
+                  type: string
+                  example: 'https://example.com/main.jpg'
+                sub_image:
+                  type: string
+                  example: 'https://example.com/sub.jpg'
+      responses:
+        '200':
+          description: Blog created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Blog'
+
+  /blog/manager:
+    get:
+      tags:
+        - manager
+      summary: Get blogs for manager
+      description: Get all blogs for manager review and approval
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Manager blogs retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Blog'
+
+  /blog/manager/{id}/edit-status:
+    patch:
+      tags:
+        - manager
+      summary: Edit blog status
+      description: Change the status of a blog (Manager only)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Blog ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  $ref: '#/components/schemas/BlogStatus'
+      responses:
+        '200':
+          description: Blog status updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Blog'
+
+  # Test Service Management
+  /test-service/packages:
+    get:
+      tags:
+        - test-service
+      summary: Get test service packages
+      description: Get all available test service packages
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Test packages retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TestPackage'
+
+  /test-service/book:
+    post:
+      tags:
+        - test-service
+      summary: Book a test service
+      description: Book a test service appointment
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - package_id
+                - booking_date
+                - time_slot
+              properties:
+                package_id:
+                  type: string
+                  example: 'package-id-here'
+                booking_date:
+                  type: string
+                  format: date
+                  example: '2024-01-15'
+                time_slot:
+                  $ref: '#/components/schemas/TimeSlot'
+                note:
+                  type: string
+                  example: 'Special instructions...'
+      responses:
+        '200':
+          description: Test service booked successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestServiceAppointment'
+
+  # Notification Management
+  /notification/get:
+    get:
+      tags:
+        - notification
+      summary: Get notifications
+      description: Get all notifications for the current user
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Notifications retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Notification'
+
+  /notification/update:
+    patch:
+      tags:
+        - notification
+      summary: Update notification status
+      description: Mark notifications as read
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Notification status updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+
+  # Payment Management
+  /payment/cancel:
+    post:
+      tags:
+        - payment
+      summary: Cancel payment
+      description: Cancel a pending payment
+      responses:
+        '200':
+          description: Payment cancelled successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+
+  /payment/webhook:
+    post:
+      tags:
+        - payment
+      summary: Payment webhook
+      description: Webhook endpoint for PayOS payment status updates
+      responses:
+        '200':
+          description: Webhook processed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+
+  # Chatbot
+  /chatbot/test:
+    post:
+      tags:
+        - chatbot
+      summary: Chat with AI assistant
+      description: Send a message to the AI health chatbot
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - script
+              properties:
+                script:
+                  type: string
+                  example: 'What are the symptoms of...'
+      responses:
+        '200':
+          description: AI response generated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  result:
+                    type: array
+                    items:
+                      type: object
+
+  # Staff Profile
+  /staff/profile:
+    get:
+      tags:
+        - staff
+      summary: Get staff profile
+      description: Get current staff member's profile information
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Staff profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffProfile'
+
+  # Consultant Profile
+  /consultant/profile:
+    get:
+      tags:
+        - consultant
+      summary: Get consultant profile
+      description: Get current consultant's profile information
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Consultant profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsultantProfile'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    # Success and Error Responses
+    SuccessResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: 'Operation completed successfully'
+
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: 'Error message'
+        code:
+          type: string
+          example: 'ERROR_CODE'
+
+    UserResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+        refresh_token:
+          type: string
+        user:
+          $ref: '#/components/schemas/User'
+
+    # User and Profile Schemas
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 'user-id-123'
+        name:
+          type: string
+          example: 'John Doe'
+        email:
+          type: string
+          format: email
+          example: 'user@example.com'
+        date_of_birth:
+          type: string
+          format: date
+          example: '1995-01-15'
+        gender:
+          type: string
+          example: 'male'
+        phone_number:
+          type: string
+          example: '+1234567890'
+        role:
+          type: integer
+          enum: [0, 1, 2, 3, 4]
+          description: '0=Admin, 1=Consultant, 2=Manager, 3=User, 4=Staff'
+        verify:
+          type: integer
+          enum: [0, 1]
+          description: '0=Verified, 1=Banned'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    ConsultantProfile:
+      type: object
+      properties:
+        id:
+          type: string
+        user_id:
+          type: string
+        specialization_1:
+          $ref: '#/components/schemas/Topic'
+        specialization_2:
+          $ref: '#/components/schemas/Topic'
+        certifications:
+          type: string
+          example: 'Medical certifications'
+        experienceYears:
+          type: integer
+          example: 5
+        status:
+          type: integer
+          enum: [0, 1]
+          description: '0=Inactive, 1=Active'
+        user:
+          $ref: '#/components/schemas/User'
+
+    StaffProfile:
+      type: object
+      properties:
+        id:
+          type: string
+        user_id:
+          type: string
+        specialization:
+          type: string
+          example: 'Laboratory Testing'
+        status:
+          type: integer
+          enum: [0, 1]
+          description: '0=Inactive, 1=Active'
+        user:
+          $ref: '#/components/schemas/User'
+
+    # Topic and Enums
+    Topic:
+      type: string
+      enum:
+        - WOMENS_REPRODUCTIVE_HEALTH
+        - CONTRACEPTION_AND_FAMILY_PLANNING
+        - PREGNANCY_AND_MATERNITY_SUPPORT
+        - STIS
+        - SEXUAL_HEALTH_AND_GENDER_PSYCHOLOGY
+        - TESTING_AND_DIAGNOSTIC_SERVICES
+      example: WOMENS_REPRODUCTIVE_HEALTH
+
+    BookingStatus:
+      type: string
+      enum:
+        - PENDING
+        - ONGOING
+        - COMPLETED
+        - CANCELLED
+      example: PENDING
+
+    TimeSlot:
+      type: string
+      enum:
+        - SLOT_07_08
+        - SLOT_08_09
+        - SLOT_09_10
+        - SLOT_10_11
+        - SLOT_13_14
+        - SLOT_14_15
+        - SLOT_15_16
+        - SLOT_16_17
+      example: SLOT_09_10
+
+    BlogStatus:
+      type: string
+      enum:
+        - DRAFT
+        - PUBLISHED
+        - ARCHIVED
+      example: DRAFT
+
+    NotificationType:
+      type: string
+      enum:
+        - ANSWERED_QUESTION
+        - APPOINTMENT_REMINDER_30M
+        - SERVICE_REMINDER_1D
+        - SYSTEM
+        - OTHER
+      example: ANSWERED_QUESTION
+
+    Gender:
+      type: string
+      enum:
+        - male
+        - female
+      example: male
+
+    PackageLevel:
+      type: string
+      enum:
+        - basic
+        - advanced
+        - full
+      example: basic
+
+    # Main Entity Schemas
+    Appointment:
+      type: object
+      properties:
+        id:
+          type: string
+        user_id:
+          type: string
+        consultant_id:
+          type: string
+        topic:
+          $ref: '#/components/schemas/Topic'
+        note:
+          type: string
+        booking_date:
+          type: string
+          format: date-time
+        time_slot:
+          $ref: '#/components/schemas/TimeSlot'
+        status:
+          $ref: '#/components/schemas/BookingStatus'
+        chat_room_id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        user:
+          $ref: '#/components/schemas/User'
+        consultant:
+          $ref: '#/components/schemas/ConsultantProfile'
+
+    Question:
+      type: object
+      properties:
+        id:
+          type: string
+        user_id:
+          type: string
+        consultant_id:
+          type: string
+        topic:
+          $ref: '#/components/schemas/Topic'
+        question:
+          type: string
+        answer:
+          type: string
+        is_public:
+          type: boolean
+        status:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        answered_at:
+          type: string
+          format: date-time
+        user:
+          $ref: '#/components/schemas/User'
+        consultant:
+          $ref: '#/components/schemas/ConsultantProfile'
+
+    Blog:
+      type: object
+      properties:
+        id:
+          type: string
+        user_id:
+          type: string
+        author_name:
+          type: string
+        title:
+          type: string
+        summary:
+          type: string
+        content:
+          type: string
+        section_1:
+          type: string
+        section_2:
+          type: string
+        cover_image:
+          type: string
+        main_image:
+          type: string
+        sub_image:
+          type: string
+        status:
+          $ref: '#/components/schemas/BlogStatus'
+        created_at:
+          type: string
+          format: date-time
+        user:
+          $ref: '#/components/schemas/User'
+
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+        user_id:
+          type: string
+        type:
+          $ref: '#/components/schemas/NotificationType'
+        content:
+          type: string
+        is_read:
+          type: boolean
+        is_sent:
+          type: boolean
+        scheduled_time:
+          type: string
+          format: date-time
+        appointment_id:
+          type: string
+        question_id:
+          type: string
+        test_service_appointment_id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
+    TestPackage:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: integer
+        target_gender:
+          $ref: '#/components/schemas/Gender'
+        level:
+          $ref: '#/components/schemas/PackageLevel'
+        created_at:
+          type: string
+          format: date-time
+        testPackageServices:
+          type: array
+          items:
+            $ref: '#/components/schemas/TestService'
+
+    TestService:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        code:
+          type: string
+        description:
+          type: string
+        price:
+          type: integer
+        is_active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+
+    TestServiceAppointment:
+      type: object
+      properties:
+        id:
+          type: string
+        user_id:
+          type: string
+        staff_id:
+          type: string
+        package_id:
+          type: string
+        note:
+          type: string
+        booking_date:
+          type: string
+          format: date-time
+        time_slot:
+          $ref: '#/components/schemas/TimeSlot'
+        status:
+          $ref: '#/components/schemas/BookingStatus'
+        created_at:
+          type: string
+          format: date-time
+        user:
+          $ref: '#/components/schemas/User'
+        staff:
+          $ref: '#/components/schemas/StaffProfile'
+        testPackage:
+          $ref: '#/components/schemas/TestPackage'

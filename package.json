@@ -27,7 +27,10 @@
     "@types/mysql": "^2.15.27",
     "@types/node": "^22.15.34",
     "@types/nodemailer": "^6.4.17",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.8",
     "@types/uuid": "^10.0.0",
+    "@types/yaml": "^1.9.6",
     "@typescript-eslint/eslint-plugin": "^8.10.0",
     "@typescript-eslint/parser": "^8.10.0",
     "eslint": "^9.13.0",
@@ -40,7 +43,8 @@
     "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.10",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "yaml": "^2.8.0"
   },
   "dependencies": {
     "@google/genai": "^1.10.0",
@@ -63,6 +67,7 @@
     "redis": "^5.0.1",
     "sharp": "^0.33.5",
     "socket.io": "^4.8.1",
+    "swagger-ui-express": "^5.0.1",
     "uuid": "^11.1.0"
   }
 }

@@ -285,6 +285,15 @@ model ChatBotHistory {
   role          ChatBotRole
   message       String
   created_at    DateTime? @default(now()) @db.Timestamp(0)
+  status        Int      @default(1) @db.TinyInt
 
   user       Users             @relation(fields: [user_id], references: [id])
+}
+
+model ChatBotConfig {
+  id                String   @id @map("_id") @default("singleton")
+  systemInstruction String?  @db.Text @map("system_instruction")
+  temperature       Float    @default(0.3) @db.Float 
+  maxOutputTokens   Int      @default(2048) @db.Int @map("max_output_tokens")
+  updatedAt         DateTime @default(now()) @db.Timestamp(0) @map("updated_at")
 }

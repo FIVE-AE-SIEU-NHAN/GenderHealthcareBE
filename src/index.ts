@@ -26,10 +26,18 @@ import { TimeSlot } from '@prisma/client'
 import usersServices from './services/users.services'
 import redisUtils from './utils/redis'
 import managerTestServiceRouter from './routers/testService/manager.testService.routers'
+import chatBotRouter from './routers/chatBot.router'
+import fs from 'fs'
+import path from 'path'
+import swaggerUi from 'swagger-ui-express'
+import * as YAML from 'yaml'
 
 // ---------------------------      BULL     --------------------------- //
 import './bull/worker'
-import chatBotRouter from './routers/chatBot.router'
+
+// ---------------------------   SWAGGER    --------------------------- //
+const file = fs.readFileSync(path.resolve('swagger.yaml'), 'utf8')
+const swaggerDocument = YAML.parse(file)
 
 // ---------------------------     SERVER    --------------------------- //
 const port = 3000
@@ -52,6 +60,7 @@ redisService.connect()
 // cấu hình body parser
 app.use(express.json())
 
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 app.use('/user', usersRouter, adminUserRoute)
 app.use('/question', questionRouter, managerQuestionRouter)
 app.use('/consultant', consultantRouter, managerConsultantRouter)
@@ -120,7 +129,3 @@ console.log('\x1b[35mSocket.IO\x1b[0m is running...')
 serverHttp.listen(port, () => {
   console.log(`\x1b[34mPROJECT GenderHealthcareBE OPEN ON PORT: \x1b[31m${port}\x1b[0m`)
 })
-
-// TODO:
-// - [ ] Chức năng nhắn tin, call video, feedback sau khi tư vấn
-// - [ ] Full book services flow
