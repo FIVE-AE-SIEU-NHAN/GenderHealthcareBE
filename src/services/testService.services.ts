@@ -136,17 +136,8 @@ class TestServiceServices {
     }
   }
 
-  async getPackageDetail(test_service_appointment_id: string, id: string) {
-    const packageDetail = await this.testPackageRepository.getPackageDetail(id)
-    if (!packageDetail) {
-      throw new ErrorWithStatus({
-        status: HTTP_STATUS.NOT_FOUND,
-        message: APPOINTMENT_MESSAGES.TEST_SERVICE_PACKAGE_NOT_FOUND
-      })
-    }
-
-    const testServiceAppointment =
-      await this.testServiceAppointmentsRepository.getTestServiceAppointmentById(test_service_appointment_id)
+  async getPackageDetail(id: string) {
+    const testServiceAppointment = await this.testServiceAppointmentsRepository.getTestServiceAppointmentById(id)
     if (!testServiceAppointment) {
       throw new ErrorWithStatus({
         status: HTTP_STATUS.NOT_FOUND,
@@ -154,10 +145,20 @@ class TestServiceServices {
       })
     }
 
+    const { package_id } = testServiceAppointment
+
+    const packageDetail = await this.testPackageRepository.getPackageDetail(package_id)
+    if (!packageDetail) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.NOT_FOUND,
+        message: APPOINTMENT_MESSAGES.TEST_SERVICE_PACKAGE_NOT_FOUND
+      })
+    }
+
     const formatted = {
       id: packageDetail.id,
       name: packageDetail.name,
-      test_service_appointment_id,
+      test_service_appointment_id: id,
       services: packageDetail.testPackageServices.map((ps) => {
         return {
           service_id: ps.test_service_id,

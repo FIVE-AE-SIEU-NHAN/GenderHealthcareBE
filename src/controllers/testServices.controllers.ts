@@ -190,9 +190,8 @@ export const getPackageDetailController = async (
   next: NextFunction
 ) => {
   const { id } = req.params
-  const { test_service_appointment_id } = req.body
 
-  const result = await testServiceServices.getPackageDetail(test_service_appointment_id, id)
+  const result = await testServiceServices.getPackageDetail(id)
 
   res.status(200).json({
     message: APPOINTMENT_MESSAGES.GET_PACKAGE_DETAIL_SUCCESSFULLY,

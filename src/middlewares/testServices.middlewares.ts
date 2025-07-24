@@ -190,15 +190,6 @@ export const getPackageDetailValidator = validate(
       isUUID: {
         errorMessage: APPOINTMENT_MESSAGES.PACKAGE_ID_MUST_BE_A_UUID
       }
-    },
-    test_service_appointment_id: {
-      in: ['body'],
-      notEmpty: {
-        errorMessage: APPOINTMENT_MESSAGES.TEST_SERVICE_APPOINTMENT_ID_IS_REQUIRED
-      },
-      isUUID: {
-        errorMessage: APPOINTMENT_MESSAGES.TEST_SERVICE_APPOINTMENT_ID_MUST_BE_A_UUID
-      }
     }
   })
 )

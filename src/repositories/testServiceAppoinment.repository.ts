@@ -41,7 +41,8 @@ export default class TestServiceAppointmentsRepository {
         time_slot: true,
         staff_id: true,
         user_id: true,
-        status: true
+        status: true,
+        package_id: true
       }
     })
   }
