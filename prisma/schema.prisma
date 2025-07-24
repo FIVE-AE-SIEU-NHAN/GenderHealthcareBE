@@ -290,10 +290,16 @@ model ChatBotHistory {
   user       Users             @relation(fields: [user_id], references: [id])
 }
 
+enum AiType {
+  AI_ASSISTANT
+  MENSTRUAL_PREDICTOR
+}
+
 model ChatBotConfig {
-  id                String   @id @map("_id") @default("singleton")
-  systemInstruction String?  @db.Text @map("system_instruction")
+  id                AiType   @unique @map("_id")
+  gemini_key         String   @db.VarChar(255)
+  system_instruction String   @db.Text
   temperature       Float    @default(0.3) @db.Float 
-  maxOutputTokens   Int      @default(2048) @db.Int @map("max_output_tokens")
-  updatedAt         DateTime @default(now()) @db.Timestamp(0) @map("updated_at")
+  max_output_tokens   Int      @default(2048) @db.Int
+  updated_at         DateTime @default(now()) @db.Timestamp(0)
 }

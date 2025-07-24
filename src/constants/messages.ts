@@ -255,3 +255,16 @@ export const PAYMENT_MESSAGES = {
   WEBHOOK_RECEIVED: 'Webhook received',
   PAYMENT_ALREADY_CANCELLED: 'Payment already cancelled'
 } as const
+
+export const CHATBOT_MESSAGES = {
+  GET_CHATBOT_CONFIG_SUCCESS: 'Get chatbot config successfully',
+  UPDATE_CHATBOT_CONFIG_SUCCESS: 'Update chatbot config successfully',
+  CHATBOT_CONFIG_NOT_FOUND: 'Chatbot config not found',
+  CHATBOT_TYPE_IS_REQUIRED: 'Chatbot type is required',
+  CHATBOT_TYPE_IS_INVALID: 'Chatbot type is invalid',
+  GEMINI_KEY_MUST_BE_STRING: 'Gemini key must be a string',
+  SYSTEM_INSTRUCTIONS_MUST_BE_STRING: 'System instructions must be a string',
+  TEMPERATURE_MUST_BE_FLOAT: 'Temperature must be a float',
+  TEMPERATURE_IS_OUT_OF_RANGE: 'Temperature is out of range',
+  MAX_OUTPUT_TOKENS_MUST_BE_INTEGER: 'Max output tokens must be an integer'
+} as const

@@ -70,7 +70,7 @@ app.use('/notification', notificationRouter)
 app.use('/payment', paymentRoute)
 app.use('/test-service', testServiceRouter, managerTestServiceRouter)
 app.use('/staff', staffRouter, managerStaffRouter)
-app.use('/chat-bot', chatBotRouter)
+app.use('/chatbot', chatBotRouter)
 
 // --------------------------- 🧪 API TEST ----------------------------- //
 app.get('/test', async (req, res) => {

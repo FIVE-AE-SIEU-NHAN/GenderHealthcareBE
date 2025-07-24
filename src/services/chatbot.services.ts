@@ -1,15 +1,20 @@
 import { Chat } from '@google/genai'
-import { ChatBotRole } from '@prisma/client'
+import { AiType, ChatBotRole } from '@prisma/client'
 import ChatBotHistoryRepository from '~/repositories/chatBotHistory.repository'
 import { GoogleGenAI } from '@google/genai'
+import ChatBotConfigRepository from '~/repositories/chatBotConfig.repository'
+import { ErrorWithStatus } from '~/models/Errors'
+import HTTP_STATUS from '~/constants/httpStatus'
+import { CHATBOT_MESSAGES } from '~/constants/messages'
+import { UpdateChatBotConfigReqBody } from '~/models/requests/chatbot.request'
 
 class ChatBotServices {
   private chatBotHistoryRepository: ChatBotHistoryRepository
-  private ai: GoogleGenAI
+  private chatBotConfigRepository: ChatBotConfigRepository
 
   constructor() {
     this.chatBotHistoryRepository = new ChatBotHistoryRepository()
-    this.ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! })
+    this.chatBotConfigRepository = new ChatBotConfigRepository()
   }
 
   async createChatBotHistory(data: { user_id: string; role: ChatBotRole; message: string }) {
@@ -60,16 +65,22 @@ class ChatBotServices {
         - If a user asks about unrelated topics, respond based on their language:
           - English: "I'm a sexual health chatbot. Please ask related questions."
           - Vietnamese: "Tôi là chatbot tư vấn sức khỏe giới tính. Vui lòng đặt câu hỏi liên quan."`
+    const temperature = 0.3
+    const maxOutputTokens = 2048
+    const geminiKey = 'AIzaSyD0WWusynLcMtSLfV0EP_zC24siVq4GO6A'
+    const chatBotConfig = await this.chatBotConfigRepository.getChatBotConfig(AiType.AI_ASSISTANT)
+
+    const ai = new GoogleGenAI({ apiKey: chatBotConfig?.gemini_key || geminiKey })
 
     // 2. Tạo chat
-    const chat = this.ai.chats.create({
+    const chat = ai.chats.create({
       model: 'gemini-2.0-flash-001',
       config: {
-        systemInstruction,
-        temperature: 0.3,
+        systemInstruction: chatBotConfig?.system_instruction || systemInstruction,
+        temperature: chatBotConfig?.temperature || temperature,
         topP: 0.7,
         topK: 20,
-        maxOutputTokens: 2048,
+        maxOutputTokens: chatBotConfig?.max_output_tokens || maxOutputTokens,
         stopSequences: ['User:', 'System:'],
         responseMimeType: 'text/plain',
         seed: 42
@@ -100,6 +111,28 @@ class ChatBotServices {
 
   async updateChatBotHistoryStatus(user_id: string) {
     return this.chatBotHistoryRepository.updateChatBotHistoryStatus(user_id)
+  }
+
+  async getChatBotConfig(id: AiType) {
+    const result = await this.chatBotConfigRepository.getChatBotConfig(id)
+    if (!result) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.NOT_FOUND,
+        message: CHATBOT_MESSAGES.CHATBOT_CONFIG_NOT_FOUND
+      })
+    }
+    return result
+  }
+
+  async updateChatBotConfig(payload: UpdateChatBotConfigReqBody) {
+    const { chatbot_type, gemini_key, system_instruction, temperature, max_output_tokens } = payload
+    return this.chatBotConfigRepository.updateChatBotConfig({
+      id: chatbot_type,
+      gemini_key,
+      system_instruction,
+      temperature,
+      max_output_tokens
+    })
   }
 }
 
