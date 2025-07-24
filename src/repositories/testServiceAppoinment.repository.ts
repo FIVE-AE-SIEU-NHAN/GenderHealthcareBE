@@ -1,4 +1,4 @@
-import { BookingStatus, TimeSlot } from '@prisma/client'
+import { BookingStatus, TestServiceBookingStatus, TimeSlot } from '@prisma/client'
 import { prisma } from '~/services/client'
 import { v4 as ObjectId } from 'uuid'
 
@@ -53,7 +53,7 @@ export default class TestServiceAppointmentsRepository {
     })
   }
 
-  async updateStatusTestServiceAppointment(id: string, status: BookingStatus) {
+  async updateStatusTestServiceAppointment(id: string, status: TestServiceBookingStatus) {
     return this.model.update({
       where: { id },
       data: { status }

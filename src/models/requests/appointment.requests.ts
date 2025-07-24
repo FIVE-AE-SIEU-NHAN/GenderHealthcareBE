@@ -1,4 +1,4 @@
-import { BookingStatus, Gender, PackageLevel, TimeSlot, Topic } from '@prisma/client'
+import { BookingStatus, Gender, PackageLevel, TestServiceBookingStatus, TimeSlot, Topic } from '@prisma/client'
 import { ParsedQs } from 'qs'
 
 export interface BookAppointmentReqBody {
@@ -16,7 +16,7 @@ export interface GetAppointmentReqQuery extends ParsedQs {
 }
 
 export interface EditStatusUserReqBody {
-  status: BookingStatus
+  status: TestServiceBookingStatus
 }
 
 export interface EditReqQuery extends ParsedQs {

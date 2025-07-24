@@ -1,4 +1,4 @@
-import { BookingStatus, Gender, PackageLevel, TimeSlot } from '@prisma/client'
+import { Gender, PackageLevel, TestServiceBookingStatus, TimeSlot } from '@prisma/client'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { APPOINTMENT_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
@@ -80,7 +80,7 @@ class TestServiceServices {
     return this.testServiceAppointmentsRepository.deleteTestServiceAppointment(appointment_id)
   }
 
-  async editStatusTestServiceAppointment(id: string, status: BookingStatus) {
+  async editStatusTestServiceAppointment(id: string, status: TestServiceBookingStatus) {
     const testServiceAppointment = await this.testServiceAppointmentsRepository.getTestServiceAppointmentById(id)
     if (!testServiceAppointment) {
       throw new ErrorWithStatus({

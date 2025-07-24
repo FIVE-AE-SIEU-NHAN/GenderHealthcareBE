@@ -146,7 +146,8 @@ export const editStatusTestServiceAppointmentController = async (
       user_id,
       content,
       type: NotificationType.SYSTEM,
-      booking_date: new Date()
+      booking_date: new Date(),
+      is_send: true
     })
     socketService.sendNotification(notification_id, user_id, content)
   }

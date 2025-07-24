@@ -1,4 +1,4 @@
-import { BookingStatus, TimeSlot, Topic } from '@prisma/client'
+import { BookingStatus, TestServiceBookingStatus, TimeSlot, Topic } from '@prisma/client'
 import { checkSchema } from 'express-validator'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { APPOINTMENT_MESSAGES } from '~/constants/messages'
@@ -178,12 +178,7 @@ export const editStatusAppointmentValidator = validate(
       },
       custom: {
         options: async (values) => {
-          const statusList = [
-            BookingStatus.PENDING,
-            BookingStatus.ONGOING,
-            BookingStatus.COMPLETED,
-            BookingStatus.CANCELLED
-          ]
+          const statusList = Object.values(TestServiceBookingStatus)
           if (!statusList.includes(values)) {
             throw new ErrorWithStatus({
               status: HTTP_STATUS.BAD_REQUEST,

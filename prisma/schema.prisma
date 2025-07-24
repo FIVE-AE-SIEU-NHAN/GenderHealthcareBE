@@ -255,6 +255,15 @@ enum PackageLevel {
   full
 }
 
+enum TestServiceBookingStatus{
+  PENDING
+  CHECKIN
+  ONGOING
+  INPUT_RESULTS
+  COMPLETED
+  CANCELLED
+}
+
 model TestServiceAppointments {
   id            String   @id @map("_id") @db.VarChar(36)
   user_id       String   @db.VarChar(36)
@@ -267,7 +276,7 @@ model TestServiceAppointments {
   time_slot     TimeSlot
 
   created_at    DateTime @default(now())
-  status        BookingStatus @default(PENDING)
+  status        TestServiceBookingStatus @default(PENDING)
 
   user       Users             @relation(fields: [user_id], references: [id])
   staff     StaffProfiles   @relation(fields: [staff_id], references: [id])
