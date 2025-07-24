@@ -1,3 +1,4 @@
+import { BookingStatus, NotificationType } from '@prisma/client'
 import { NextFunction, Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { paymentQueue } from '~/bull/queue'
@@ -13,9 +14,11 @@ import {
 } from '~/models/requests/appointment.requests'
 import { TokenPayLoad } from '~/models/requests/users.requests'
 import appointmentServices from '~/services/appointment.services'
+import notificationServices from '~/services/notification.services'
 import paymentServices from '~/services/payment.services'
 import testServiceServices from '~/services/testService.services'
 import usersServices from '~/services/users.services'
+import socketService from '~/socket/socket'
 import redisUtils from '~/utils/redis'
 
 export const getTestServicePackagesController = async (
@@ -133,8 +136,20 @@ export const editStatusTestServiceAppointmentController = async (
 ) => {
   const { id } = req.params
   const { status } = req.body
+  const { user_id } = req.decode_authorization as TokenPayLoad
 
   await testServiceServices.editStatusTestServiceAppointment(id, status)
+
+  if (status === BookingStatus.COMPLETED) {
+    const content = 'Your test service appointment has been completed. The result is now available in your dasboard.'
+    const { id: notification_id } = await notificationServices.createNotification({
+      user_id,
+      content,
+      type: NotificationType.SYSTEM,
+      booking_date: new Date()
+    })
+    socketService.sendNotification(notification_id, user_id, content)
+  }
 
   res.status(200).json({
     message: APPOINTMENT_MESSAGES.APPOINTMENT_STATUS_UPDATED_SUCCESSFULLY
