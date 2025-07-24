@@ -154,3 +154,16 @@ export const staffTestServiceAppointmentController = async (
     result
   })
 }
+
+export const managerTestServiceAppointmentController = async (
+  req: Request<ParamsDictionary, any, any, GetTestServiceAppointmentReqQuery>,
+  res: Response,
+  next: NextFunction
+) => {
+  const result = await testServiceServices.managerStaffTestServiceAppointments(req.query)
+
+  res.status(200).json({
+    message: APPOINTMENT_MESSAGES.GET_CONSULTANT_APPOINTMENTS_SUCCESSFULLY,
+    result
+  })
+}

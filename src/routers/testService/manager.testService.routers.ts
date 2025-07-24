@@ -1,8 +1,12 @@
 import express from 'express'
 import { USER_ROLE } from '~/constants/enums'
-import { editStatusTestServiceAppointmentController } from '~/controllers/testServices.controllers'
+import {
+  editStatusTestServiceAppointmentController,
+  managerTestServiceAppointmentController
+} from '~/controllers/testServices.controllers'
 import { editStatusAppointmentValidator } from '~/middlewares/appointment.middlewares'
 import { requireRole } from '~/middlewares/decentralization .middlewares'
+import { getTestServiceAppointmentValidator } from '~/middlewares/testServices.middlewares'
 import { accessTokenValidator } from '~/middlewares/user.middlewares'
 import { wrapAsync } from '~/utils/handler'
 
@@ -23,4 +27,16 @@ managerTestServiceRouter.patch(
   wrapAsync(editStatusTestServiceAppointmentController)
 )
 
+/**
+ * Description: Get appointments for manager
+ * Path: test-service/manager
+ * Method: GET
+ */
+managerTestServiceRouter.get(
+  '/manager',
+  // accessTokenValidator,
+  // requireRole(USER_ROLE.Manager),
+  getTestServiceAppointmentValidator,
+  wrapAsync(managerTestServiceAppointmentController)
+)
 export default managerTestServiceRouter

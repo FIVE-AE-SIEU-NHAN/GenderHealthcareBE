@@ -98,8 +98,27 @@ class TestServiceServices {
     const end_day = new Date(_end_date!)
     const status = Array.isArray(_status) ? _status : _status ? [_status] : undefined
 
-    const testServiceAppointments = await this.testServiceAppointmentsRepository.getStaffAppointments({
+    const testServiceAppointments = await this.testServiceAppointmentsRepository.getStaffTestServiceAppointments({
       staff_id,
+      start_day,
+      end_day,
+      status
+    })
+
+    return {
+      testServiceAppointments,
+      total: testServiceAppointments.length
+    }
+  }
+
+  async managerStaffTestServiceAppointments(payload: GetTestServiceAppointmentReqQuery) {
+    const { _start_date, _end_date, _status } = payload
+
+    const start_day = new Date(_start_date!)
+    const end_day = new Date(_end_date!)
+    const status = Array.isArray(_status) ? _status : _status ? [_status] : undefined
+
+    const testServiceAppointments = await this.testServiceAppointmentsRepository.getManagerTestServiceAppointments({
       start_day,
       end_day,
       status
