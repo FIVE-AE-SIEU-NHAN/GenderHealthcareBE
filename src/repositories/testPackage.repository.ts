@@ -39,4 +39,17 @@ export default class TestPackageRepository {
       }
     })
   }
+
+  async getPackageDetail(id: string) {
+    return this.model.findUnique({
+      where: { id },
+      include: {
+        testPackageServices: {
+          include: {
+            testService: true
+          }
+        }
+      }
+    })
+  }
 }

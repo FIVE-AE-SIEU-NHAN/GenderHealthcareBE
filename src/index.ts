@@ -109,11 +109,10 @@ app.get('/test', async (req, res) => {
 })
 
 app.get('/test2', async (req, res) => {
-  const job = await paymentQueue.getJob('order123')
-  job && (await job.remove())
-
+  const result = await testServiceServices.getPackageDetail('83cf0d76-637e-11f0-bfde-0242ac110002')
   res.status(200).json({
-    message: 'Test API2 is working'
+    message: 'Test API2 is working',
+    result
   })
 })
 
@@ -130,3 +129,6 @@ console.log('\x1b[35mSocket.IO\x1b[0m is running...')
 serverHttp.listen(port, () => {
   console.log(`\x1b[34mPROJECT GenderHealthcareBE OPEN ON PORT: \x1b[31m${port}\x1b[0m`)
 })
+
+// lấy services trong package
+// lưu kết quả

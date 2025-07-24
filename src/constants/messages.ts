@@ -201,7 +201,12 @@ export const APPOINTMENT_MESSAGES = {
   TEST_SERVICE_PACKAGE_NOT_FOUND: 'Test service package not found',
   NO_AVAILABLE_STAFF: 'No available staff at this time slot',
   TEST_SERVICE_APPOINTMENT_NOT_FOUND: 'Test service appointment not found',
-  TEST_SERVICE_APPOINTMENT_ALREADY_IN_THIS_STATUS: 'Test service appointment already in this status'
+  TEST_SERVICE_APPOINTMENT_ALREADY_IN_THIS_STATUS: 'Test service appointment already in this status',
+  PACKAGE_ID_IS_REQUIRED: 'Package id is required',
+  PACKAGE_ID_MUST_BE_A_UUID: 'Package id must be a UUID',
+  GET_STAFF_TEST_SERVICE_APPOINTMENTS_SUCCESSFULLY: 'Get staff test service appointments successfully',
+  GET_MANAGER_TEST_SERVICE_APPOINTMENTS_SUCCESSFULLY: 'Get manager test service appointments successfully',
+  GET_PACKAGE_DETAIL_SUCCESSFULLY: 'Get package detail successfully'
 } as const
 
 export const BLOG_MESSAGES = {

@@ -179,3 +179,17 @@ export const getTestServiceAppointmentValidator = validate(
     ['query']
   )
 )
+
+export const getPackageDetailValidator = validate(
+  checkSchema({
+    id: {
+      in: ['params'],
+      notEmpty: {
+        errorMessage: APPOINTMENT_MESSAGES.PACKAGE_ID_IS_REQUIRED
+      },
+      isUUID: {
+        errorMessage: APPOINTMENT_MESSAGES.PACKAGE_ID_MUST_BE_A_UUID
+      }
+    }
+  })
+)

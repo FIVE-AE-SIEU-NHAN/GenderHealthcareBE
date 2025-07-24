@@ -17,7 +17,7 @@ import testServiceServices from '~/services/testService.services'
 import usersServices from '~/services/users.services'
 import redisUtils from '~/utils/redis'
 
-export const getTestServicePacketController = async (
+export const getTestServicePackagesController = async (
   req: Request<ParamsDictionary, any, any>,
   res: Response,
   next: NextFunction
@@ -150,7 +150,7 @@ export const staffTestServiceAppointmentController = async (
   const result = await testServiceServices.getStaffTestServiceAppointments(staff_id, req.query)
 
   res.status(200).json({
-    message: APPOINTMENT_MESSAGES.GET_CONSULTANT_APPOINTMENTS_SUCCESSFULLY,
+    message: APPOINTMENT_MESSAGES.GET_STAFF_TEST_SERVICE_APPOINTMENTS_SUCCESSFULLY,
     result
   })
 }
@@ -163,7 +163,22 @@ export const managerTestServiceAppointmentController = async (
   const result = await testServiceServices.managerStaffTestServiceAppointments(req.query)
 
   res.status(200).json({
-    message: APPOINTMENT_MESSAGES.GET_CONSULTANT_APPOINTMENTS_SUCCESSFULLY,
+    message: APPOINTMENT_MESSAGES.GET_MANAGER_TEST_SERVICE_APPOINTMENTS_SUCCESSFULLY,
+    result
+  })
+}
+
+export const getPackageDetailController = async (
+  req: Request<ParamsDictionary, any, any, EditReqQuery>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { id } = req.params
+
+  const result = await testServiceServices.getPackageDetail(id)
+
+  res.status(200).json({
+    message: APPOINTMENT_MESSAGES.GET_PACKAGE_DETAIL_SUCCESSFULLY,
     result
   })
 }

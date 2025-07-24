@@ -129,6 +129,27 @@ class TestServiceServices {
       total: testServiceAppointments.length
     }
   }
+
+  async getPackageDetail(id: string) {
+    const packageDetail = await this.testPackageRepository.getPackageDetail(id)
+    if (!packageDetail) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.NOT_FOUND,
+        message: APPOINTMENT_MESSAGES.TEST_SERVICE_PACKAGE_NOT_FOUND
+      })
+    }
+    const formatted = {
+      id: packageDetail.id,
+      name: packageDetail.name,
+      services: packageDetail.testPackageServices.map((ps) => {
+        return {
+          service_id: ps.test_service_id,
+          name: ps.testService.name
+        }
+      })
+    }
+    return formatted
+  }
 }
 
 const testServiceServices = new TestServiceServices()
