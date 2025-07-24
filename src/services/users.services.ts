@@ -23,7 +23,7 @@ import refreshTokenServices from './refreshToken.services'
 import redisUtils from '~/utils/redis'
 import ConsultantProfileRepository from '~/repositories/consultant_profile.repository'
 import { Topic } from '@prisma/client'
-import StaffProfileRepository from '~/repositories/staff_profile.repository'
+import StaffProfileRepository from '~/repositories/staffProfile.repository'
 import { spec } from 'node:test/reporters'
 dotenv.config()
 

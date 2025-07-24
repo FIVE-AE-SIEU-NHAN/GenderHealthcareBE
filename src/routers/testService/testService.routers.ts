@@ -19,18 +19,6 @@ const testServiceRouter = express.Router()
 testServiceRouter.get('/packages', accessTokenValidator, wrapAsync(getTestServicePackagesController))
 
 /**
- * Description: Get package details of test service appointments
- * Path: test-service/package/:id
- * Method: GET
- */
-testServiceRouter.get(
-  '/package/:id',
-  accessTokenValidator,
-  getPackageDetailValidator,
-  wrapAsync(getPackageDetailController)
-)
-
-/**
  * Description: Book a test service package
  * Path: /test-service/book
  * Method: POST

@@ -36,3 +36,11 @@ export interface GetTestServiceAppointmentReqQuery extends ParsedQs {
   _end_date: string
   _status?: BookingStatus[]
 }
+
+export interface UpdateTestServiceResultReqBody {
+  test_service_appointment_id: string
+  result: string
+  unit?: string
+  test_date: Date
+  note?: string
+}

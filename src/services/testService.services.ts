@@ -2,20 +2,26 @@ import { BookingStatus, Gender, PackageLevel, TimeSlot } from '@prisma/client'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { APPOINTMENT_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
-import { GetTestServiceAppointmentReqQuery } from '~/models/requests/appointment.requests'
+import {
+  GetTestServiceAppointmentReqQuery,
+  UpdateTestServiceResultReqBody
+} from '~/models/requests/appointment.requests'
 import TestPackageRepository from '~/repositories/testPackage.repository'
-import TestPackageServiceRepository from '~/repositories/testPackageService.repository'
+import TestResultRepository from '~/repositories/testResult.repository'
+import TestServicesRepository from '~/repositories/testService.repositoty'
 import TestServiceAppointmentsRepository from '~/repositories/testServiceAppoinment.repository'
 
 class TestServiceServices {
   private testPackageRepository: TestPackageRepository
-  private testPackageServiceRepository: TestPackageServiceRepository
+  private testServicesRepository: TestServicesRepository
   private testServiceAppointmentsRepository: TestServiceAppointmentsRepository
+  private testResultRepository: TestResultRepository
 
   constructor() {
-    this.testPackageServiceRepository = new TestPackageServiceRepository()
+    this.testServicesRepository = new TestServicesRepository()
     this.testPackageRepository = new TestPackageRepository()
     this.testServiceAppointmentsRepository = new TestServiceAppointmentsRepository()
+    this.testResultRepository = new TestResultRepository()
   }
 
   async getAllTestPackageServices() {
@@ -130,7 +136,7 @@ class TestServiceServices {
     }
   }
 
-  async getPackageDetail(id: string) {
+  async getPackageDetail(test_service_appointment_id: string, id: string) {
     const packageDetail = await this.testPackageRepository.getPackageDetail(id)
     if (!packageDetail) {
       throw new ErrorWithStatus({
@@ -138,9 +144,20 @@ class TestServiceServices {
         message: APPOINTMENT_MESSAGES.TEST_SERVICE_PACKAGE_NOT_FOUND
       })
     }
+
+    const testServiceAppointment =
+      await this.testServiceAppointmentsRepository.getTestServiceAppointmentById(test_service_appointment_id)
+    if (!testServiceAppointment) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.NOT_FOUND,
+        message: APPOINTMENT_MESSAGES.TEST_SERVICE_APPOINTMENT_NOT_FOUND
+      })
+    }
+
     const formatted = {
       id: packageDetail.id,
       name: packageDetail.name,
+      test_service_appointment_id,
       services: packageDetail.testPackageServices.map((ps) => {
         return {
           service_id: ps.test_service_id,
@@ -149,6 +166,39 @@ class TestServiceServices {
       })
     }
     return formatted
+  }
+
+  async updateTestServiceResult(id: string, data: UpdateTestServiceResultReqBody) {
+    const testService = await this.testServicesRepository.getTestServiceById(id)
+    if (!testService) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.NOT_FOUND,
+        message: APPOINTMENT_MESSAGES.TEST_SERVICE_NOT_FOUND
+      })
+    }
+
+    const testServiceAppointment = await this.testServiceAppointmentsRepository.getTestServiceAppointmentById(
+      data.test_service_appointment_id
+    )
+
+    if (!testServiceAppointment) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.NOT_FOUND,
+        message: APPOINTMENT_MESSAGES.TEST_SERVICE_APPOINTMENT_NOT_FOUND
+      })
+    }
+
+    const { test_service_appointment_id, result, unit, test_date, note } = data
+    const resultCreate = await this.testResultRepository.createTestResult({
+      test_service_appointment_id,
+      test_service_id: id,
+      result,
+      unit,
+      test_date,
+      note
+    })
+
+    return resultCreate
   }
 }
 

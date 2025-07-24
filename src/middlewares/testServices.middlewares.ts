@@ -190,6 +190,89 @@ export const getPackageDetailValidator = validate(
       isUUID: {
         errorMessage: APPOINTMENT_MESSAGES.PACKAGE_ID_MUST_BE_A_UUID
       }
+    },
+    test_service_appointment_id: {
+      in: ['body'],
+      notEmpty: {
+        errorMessage: APPOINTMENT_MESSAGES.TEST_SERVICE_APPOINTMENT_ID_IS_REQUIRED
+      },
+      isUUID: {
+        errorMessage: APPOINTMENT_MESSAGES.TEST_SERVICE_APPOINTMENT_ID_MUST_BE_A_UUID
+      }
+    }
+  })
+)
+
+export const updateTestServiceResultValidator = validate(
+  checkSchema({
+    id: {
+      in: ['params'],
+      notEmpty: {
+        errorMessage: APPOINTMENT_MESSAGES.PACKAGE_ID_IS_REQUIRED
+      },
+      isUUID: {
+        errorMessage: APPOINTMENT_MESSAGES.PACKAGE_ID_MUST_BE_A_UUID
+      }
+    },
+    test_service_appointment_id: {
+      in: ['body'],
+      notEmpty: {
+        errorMessage: APPOINTMENT_MESSAGES.TEST_SERVICE_APPOINTMENT_ID_IS_REQUIRED
+      },
+      isUUID: {
+        errorMessage: APPOINTMENT_MESSAGES.TEST_SERVICE_APPOINTMENT_ID_MUST_BE_A_UUID
+      }
+    },
+    result: {
+      in: ['body'],
+      notEmpty: {
+        errorMessage: APPOINTMENT_MESSAGES.RESULT_IS_REQUIRED
+      },
+      isString: {
+        errorMessage: APPOINTMENT_MESSAGES.RESULT_MUST_BE_A_STRING
+      },
+      isLength: {
+        options: {
+          max: 100
+        },
+        errorMessage: APPOINTMENT_MESSAGES.RESULT_LENGTH_MUST_BE_LESS_THAN_100
+      }
+    },
+    unit: {
+      in: ['body'],
+      optional: true,
+      isString: {
+        errorMessage: APPOINTMENT_MESSAGES.UNIT_MUST_BE_A_STRING
+      },
+      isLength: {
+        options: {
+          max: 10
+        },
+        errorMessage: APPOINTMENT_MESSAGES.UNIT_LENGTH_MUST_BE_LESS_THAN_10
+      }
+    },
+    test_date: {
+      in: ['body'],
+      isISO8601: {
+        options: {
+          strict: true,
+          strictSeparator: true
+        },
+        errorMessage: APPOINTMENT_MESSAGES.TEST_DAY_MUST_BE_ISO8601
+      }
+    },
+    note: {
+      in: ['body'],
+      optional: true,
+      isString: {
+        errorMessage: APPOINTMENT_MESSAGES.NOTE_MUST_BE_STRING
+      },
+      isLength: {
+        options: {
+          max: 500
+        },
+        errorMessage: APPOINTMENT_MESSAGES.NOTE_MUST_BE_LENGTH
+      }
     }
   })
 )

@@ -34,8 +34,8 @@ managerTestServiceRouter.patch(
  */
 managerTestServiceRouter.get(
   '/manager',
-  // accessTokenValidator,
-  // requireRole(USER_ROLE.Manager),
+  accessTokenValidator,
+  requireRole(USER_ROLE.Manager),
   getTestServiceAppointmentValidator,
   wrapAsync(managerTestServiceAppointmentController)
 )

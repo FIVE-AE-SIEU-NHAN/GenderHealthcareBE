@@ -198,6 +198,16 @@ model Payments {
   updated_at      DateTime @updatedAt
 }
 
+model StaffProfiles {
+  id               String   @id @map("_id") @db.VarChar(36)
+  user_id          String   @unique @db.VarChar(36)
+  specialization   String
+  status           Int      @default(1) @db.TinyInt
+
+  user             Users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  TestServiceAppointments  TestServiceAppointments[]
+}
+
 model TestServices {
   id          String           @id @map("_id") @default(uuid())
   name        String
@@ -208,6 +218,7 @@ model TestServices {
   created_at   DateTime         @default(now()) @map("created_at")
 
   testPackageServices TestPackageServices[]
+  testResults TestResults[]
 }
 
 model TestPackages {
@@ -244,16 +255,6 @@ enum PackageLevel {
   full
 }
 
-model StaffProfiles {
-  id               String   @id @map("_id") @db.VarChar(36)
-  user_id          String   @unique @db.VarChar(36)
-  specialization   String
-  status           Int      @default(1) @db.TinyInt
-
-  user             Users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  TestServiceAppointments  TestServiceAppointments[]
-}
-
 model TestServiceAppointments {
   id            String   @id @map("_id") @db.VarChar(36)
   user_id       String   @db.VarChar(36)
@@ -272,7 +273,24 @@ model TestServiceAppointments {
   staff     StaffProfiles   @relation(fields: [staff_id], references: [id])
   testPackage TestPackages @relation(fields: [package_id], references: [id])
   notifications  Notifications?
+  testResults   TestResults[]
 }
+
+model TestResults {
+  id                          String   @id @map("_id") @default(uuid()) @db.VarChar(36)
+  test_service_appointment_id String   @db.VarChar(36)
+  test_service_id             String   @db.VarChar(36)
+  result                      String   @db.Text
+  unit                        String?  @db.VarChar(50)
+  test_date                   DateTime
+  note                        String?  @db.Text
+
+  testServiceAppointment      TestServiceAppointments @relation(fields: [test_service_appointment_id], references: [id])
+  testService                 TestServices            @relation(fields: [test_service_id], references: [id])
+
+  @@map("TestResults")
+}
+
 
 enum ChatBotRole{
   user
@@ -303,3 +321,4 @@ model ChatBotConfig {
   max_output_tokens   Int      @default(2048) @db.Int
   updated_at         DateTime @default(now()) @db.Timestamp(0)
 }
+

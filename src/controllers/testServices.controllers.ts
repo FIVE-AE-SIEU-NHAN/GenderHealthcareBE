@@ -8,7 +8,8 @@ import {
   BookTestServiceAppointmentReqBody,
   EditReqQuery,
   EditStatusUserReqBody,
-  GetTestServiceAppointmentReqQuery
+  GetTestServiceAppointmentReqQuery,
+  UpdateTestServiceResultReqBody
 } from '~/models/requests/appointment.requests'
 import { TokenPayLoad } from '~/models/requests/users.requests'
 import appointmentServices from '~/services/appointment.services'
@@ -174,11 +175,27 @@ export const getPackageDetailController = async (
   next: NextFunction
 ) => {
   const { id } = req.params
+  const { test_service_appointment_id } = req.body
 
-  const result = await testServiceServices.getPackageDetail(id)
+  const result = await testServiceServices.getPackageDetail(test_service_appointment_id, id)
 
   res.status(200).json({
     message: APPOINTMENT_MESSAGES.GET_PACKAGE_DETAIL_SUCCESSFULLY,
+    result
+  })
+}
+
+export const updateTestServiceResultController = async (
+  req: Request<ParamsDictionary, any, UpdateTestServiceResultReqBody, EditReqQuery>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { id } = req.params
+
+  const result = await testServiceServices.updateTestServiceResult(id, req.body)
+
+  res.status(200).json({
+    message: APPOINTMENT_MESSAGES.UPDATE_TEST_SERVICE_RESULT_SUCCESSFULLY,
     result
   })
 }

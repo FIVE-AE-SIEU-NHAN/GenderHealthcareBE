@@ -206,7 +206,19 @@ export const APPOINTMENT_MESSAGES = {
   PACKAGE_ID_MUST_BE_A_UUID: 'Package id must be a UUID',
   GET_STAFF_TEST_SERVICE_APPOINTMENTS_SUCCESSFULLY: 'Get staff test service appointments successfully',
   GET_MANAGER_TEST_SERVICE_APPOINTMENTS_SUCCESSFULLY: 'Get manager test service appointments successfully',
-  GET_PACKAGE_DETAIL_SUCCESSFULLY: 'Get package detail successfully'
+  GET_PACKAGE_DETAIL_SUCCESSFULLY: 'Get package detail successfully',
+  TEST_SERVICE_APPOINTMENT_ID_IS_REQUIRED: 'Test service appointment id is required',
+  TEST_SERVICE_APPOINTMENT_ID_MUST_BE_A_UUID: 'Test service appointment id must be a UUID',
+  TEST_SERVICE_ID_IS_REQUIRED: 'Test service id is required',
+  TEST_SERVICE_ID_MUST_BE_A_UUID: 'Test service id must be a UUID',
+  RESULT_IS_REQUIRED: 'Result is required',
+  RESULT_MUST_BE_A_STRING: 'Result must be a string',
+  RESULT_LENGTH_MUST_BE_LESS_THAN_100: 'Result length must be less than 100 characters',
+  UNIT_MUST_BE_A_STRING: 'Unit must be a string',
+  UNIT_LENGTH_MUST_BE_LESS_THAN_10: 'Unit length must be less than 10 characters',
+  UPDATE_TEST_SERVICE_RESULT_SUCCESSFULLY: 'Update test service result successfully',
+  TEST_SERVICE_NOT_FOUND: 'Test service not found',
+  TEST_DAY_MUST_BE_ISO8601: 'Test day must be ISO8601'
 } as const
 
 export const BLOG_MESSAGES = {

@@ -109,10 +109,10 @@ app.get('/test', async (req, res) => {
 })
 
 app.get('/test2', async (req, res) => {
-  const result = await testServiceServices.getPackageDetail('83cf0d76-637e-11f0-bfde-0242ac110002')
+  // const result = await testServiceServices.getPackageDetail('83cf0d76-637e-11f0-bfde-0242ac110002')
   res.status(200).json({
-    message: 'Test API2 is working',
-    result
+    message: 'Test API2 is working'
+    // result
   })
 })
 

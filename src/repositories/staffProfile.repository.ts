@@ -1,4 +1,3 @@
-import { spec } from 'node:test/reporters'
 import { UpdateStaffProfileReqBody } from '~/models/requests/users.requests'
 import { prisma } from '~/services/client'
 
