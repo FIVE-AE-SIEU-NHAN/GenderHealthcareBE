@@ -299,4 +299,10 @@ export default class StaffProfileRepository {
       }
     })
   }
+
+  async getStaffByUserId(user_id: string) {
+    return this.model.findUnique({
+      where: { user_id }
+    })
+  }
 }

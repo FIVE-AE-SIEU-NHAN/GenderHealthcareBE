@@ -2,11 +2,12 @@ import { BookingStatus, Gender, PackageLevel, TimeSlot } from '@prisma/client'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { APPOINTMENT_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
+import { GetTestServiceAppointmentReqQuery } from '~/models/requests/appointment.requests'
 import TestPackageRepository from '~/repositories/testPackage.repository'
 import TestPackageServiceRepository from '~/repositories/testPackageService.repository'
 import TestServiceAppointmentsRepository from '~/repositories/testServiceAppoinment.repository'
 
-class TestSericeServices {
+class TestServiceServices {
   private testPackageRepository: TestPackageRepository
   private testPackageServiceRepository: TestPackageServiceRepository
   private testServiceAppointmentsRepository: TestServiceAppointmentsRepository
@@ -89,7 +90,27 @@ class TestSericeServices {
     }
     return this.testServiceAppointmentsRepository.updateStatusTestServiceAppointment(id, status)
   }
+
+  async getStaffTestServiceAppointments(staff_id: string, payload: GetTestServiceAppointmentReqQuery) {
+    const { _start_date, _end_date, _status } = payload
+
+    const start_day = new Date(_start_date!)
+    const end_day = new Date(_end_date!)
+    const status = Array.isArray(_status) ? _status : _status ? [_status] : undefined
+
+    const testServiceAppointments = await this.testServiceAppointmentsRepository.getStaffAppointments({
+      staff_id,
+      start_day,
+      end_day,
+      status
+    })
+
+    return {
+      testServiceAppointments,
+      total: testServiceAppointments.length
+    }
+  }
 }
 
-const testServiceServices = new TestSericeServices()
+const testServiceServices = new TestServiceServices()
 export default testServiceServices

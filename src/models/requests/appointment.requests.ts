@@ -8,7 +8,7 @@ export interface BookAppointmentReqBody {
   note?: string
 }
 
-export interface GetAppointmentReqQuery {
+export interface GetAppointmentReqQuery extends ParsedQs {
   _start_date?: string
   _end_date?: string
   _topic?: Topic[]
@@ -29,4 +29,10 @@ export interface BookTestServiceAppointmentReqBody {
   booking_date: Date
   time_slot: TimeSlot
   note?: string
+}
+
+export interface GetTestServiceAppointmentReqQuery extends ParsedQs {
+  _start_date: string
+  _end_date: string
+  _status?: BookingStatus[]
 }

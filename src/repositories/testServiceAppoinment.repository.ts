@@ -58,4 +58,30 @@ export default class TestServiceAppointmentsRepository {
       data: { status }
     })
   }
+
+  async getStaffAppointments({
+    staff_id,
+    start_day,
+    end_day,
+    status
+  }: {
+    staff_id: string
+    start_day?: Date
+    end_day?: Date
+    status?: BookingStatus[]
+  }) {
+    return this.model.findMany({
+      where: {
+        staff_id,
+        ...(status && { status: { in: status } }),
+        ...(start_day &&
+          end_day && {
+            booking_date: {
+              gte: `${start_day.toISOString().split('T')[0]}T00:00:00.000Z`,
+              lte: `${end_day.toISOString().split('T')[0]}T23:59:59.999Z`
+            }
+          })
+      }
+    })
+  }
 }

@@ -7,7 +7,8 @@ import { ErrorWithStatus } from '~/models/Errors'
 import {
   BookTestServiceAppointmentReqBody,
   EditReqQuery,
-  EditStatusUserReqBody
+  EditStatusUserReqBody,
+  GetTestServiceAppointmentReqQuery
 } from '~/models/requests/appointment.requests'
 import { TokenPayLoad } from '~/models/requests/users.requests'
 import appointmentServices from '~/services/appointment.services'
@@ -136,5 +137,20 @@ export const editStatusTestServiceAppointmentController = async (
 
   res.status(200).json({
     message: APPOINTMENT_MESSAGES.APPOINTMENT_STATUS_UPDATED_SUCCESSFULLY
+  })
+}
+
+export const staffTestServiceAppointmentController = async (
+  req: Request<ParamsDictionary, any, any, GetTestServiceAppointmentReqQuery>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { user_id } = req.decode_authorization as TokenPayLoad
+  const staff_id = await usersServices.getStaffIdByUserId(user_id)
+  const result = await testServiceServices.getStaffTestServiceAppointments(staff_id, req.query)
+
+  res.status(200).json({
+    message: APPOINTMENT_MESSAGES.GET_CONSULTANT_APPOINTMENTS_SUCCESSFULLY,
+    result
   })
 }

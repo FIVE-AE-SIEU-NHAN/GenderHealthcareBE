@@ -686,6 +686,17 @@ class UsersServices {
   async getUserIdOfStaff(staff_id: string) {
     return await this.staffRepository.getUserIdByStaffId(staff_id)
   }
+
+  async getStaffIdByUserId(user_id: string) {
+    const staff = await this.staffRepository.getStaffByUserId(user_id)
+    if (!staff) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.NOT_FOUND,
+        message: USERS_MESSAGES.STAFF_NOT_FOUND
+      })
+    }
+    return staff.id
+  }
 }
 
 const usersServices = new UsersServices()

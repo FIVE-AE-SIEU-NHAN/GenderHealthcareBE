@@ -15,18 +15,19 @@ import staffBlogRouter from './routers/blog/staff.blog.routers'
 import managerBlogRouter from './routers/blog/manager.blog.routers'
 import notificationRouter from './routers/notification/notification.routers'
 import paymentRoute from './routers/payment.routers'
+import staffRouter from './routers/staff/staff.routers'
+import managerStaffRouter from './routers/staff/manager.staff.routers'
+import testServiceRouter from './routers/testService/testService.routers'
+import staffTestServiceRouter from './routers/testService/staff.tesService.routers'
+import managerTestServiceRouter from './routers/testService/manager.testService.routers'
+import chatBotRouter from './routers/chatBot.router'
 import { createServer } from 'http'
 import socketService from './socket/socket'
 import { paymentQueue } from './bull/queue'
-import testServiceRouter from './routers/testService/testService.routers'
-import staffRouter from './routers/staff/staff.routers'
-import managerStaffRouter from './routers/staff/manager.staff.routers'
-import testServiceServices from './services/testService.services'
 import { TimeSlot } from '@prisma/client'
 import usersServices from './services/users.services'
 import redisUtils from './utils/redis'
-import managerTestServiceRouter from './routers/testService/manager.testService.routers'
-import chatBotRouter from './routers/chatBot.router'
+import testServiceServices from './services/testService.services'
 import fs from 'fs'
 import path from 'path'
 import swaggerUi from 'swagger-ui-express'
@@ -68,7 +69,7 @@ app.use('/appointment', appointmentRouter)
 app.use('/blog', blogRouter, staffBlogRouter, managerBlogRouter)
 app.use('/notification', notificationRouter)
 app.use('/payment', paymentRoute)
-app.use('/test-service', testServiceRouter, managerTestServiceRouter)
+app.use('/test-service', testServiceRouter, staffTestServiceRouter, managerTestServiceRouter)
 app.use('/staff', staffRouter, managerStaffRouter)
 app.use('/chatbot', chatBotRouter)
 

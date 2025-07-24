@@ -13,10 +13,10 @@ const chatBotRouter = express.Router()
  * PATH: /chatbot/config
  * Method: GET
  */
-chatBotRouter.get(
+chatBotRouter.post(
   '/config',
-  // accessTokenValidator,
-  // requireRole(USER_ROLE.Admin),
+  accessTokenValidator,
+  requireRole(USER_ROLE.Admin),
   getChatBotConfigValidator,
   wrapAsync(getChatBotConfigController)
 )
@@ -28,8 +28,8 @@ chatBotRouter.get(
  */
 chatBotRouter.put(
   '/config',
-  // accessTokenValidator,
-  // requireRole(USER_ROLE.Admin),
+  accessTokenValidator,
+  requireRole(USER_ROLE.Admin),
   updateChatBotConfigValidator,
   wrapAsync(updateChatBotConfigController)
 )
