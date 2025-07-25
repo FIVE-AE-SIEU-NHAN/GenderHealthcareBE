@@ -2,6 +2,7 @@ import express from 'express'
 import { USER_ROLE } from '~/constants/enums'
 import {
   bookTestServiceAppointmentController,
+  customerTestServiceAppointmentsController,
   getPackageDetailController,
   getTestServicePackagesController
 } from '~/controllers/testServices.controllers'
@@ -29,6 +30,18 @@ testServiceRouter.post(
   requireRole(USER_ROLE.User),
   bookTestServiceAppointmentValidator,
   wrapAsync(bookTestServiceAppointmentController)
+)
+
+/**
+ * Description: Get test-service for customer
+ * Path: test-service/customer
+ * Method: GET
+ */
+testServiceRouter.get(
+  '/customer',
+  accessTokenValidator,
+  requireRole(USER_ROLE.User),
+  wrapAsync(customerTestServiceAppointmentsController)
 )
 
 export default testServiceRouter

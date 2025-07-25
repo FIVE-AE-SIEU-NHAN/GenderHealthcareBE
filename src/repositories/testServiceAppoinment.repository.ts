@@ -108,4 +108,19 @@ export default class TestServiceAppointmentsRepository {
       }
     })
   }
+
+  async getCustomerTestServiceAppointments(user_id: string) {
+    return this.model.findMany({
+      select: {
+        booking_date: true,
+        time_slot: true,
+        status: true,
+        package_id: true,
+        note: true
+      },
+      where: {
+        user_id
+      }
+    })
+  }
 }

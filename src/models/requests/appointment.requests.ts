@@ -16,7 +16,7 @@ export interface GetAppointmentReqQuery extends ParsedQs {
 }
 
 export interface EditStatusUserReqBody {
-  status: TestServiceBookingStatus
+  status: BookingStatus
 }
 
 export interface EditReqQuery extends ParsedQs {
@@ -43,4 +43,8 @@ export interface UpdateTestServiceResultReqBody {
   unit?: string
   test_date: Date
   note?: string
+}
+
+export interface EditStatusTestServiceAppointmentReqBody {
+  status: BookingStatus
 }

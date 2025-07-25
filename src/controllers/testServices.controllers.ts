@@ -8,6 +8,7 @@ import { ErrorWithStatus } from '~/models/Errors'
 import {
   BookTestServiceAppointmentReqBody,
   EditReqQuery,
+  EditStatusTestServiceAppointmentReqBody,
   EditStatusUserReqBody,
   GetTestServiceAppointmentReqQuery,
   UpdateTestServiceResultReqBody
@@ -130,7 +131,7 @@ export const bookTestServiceAppointmentController = async (
 }
 
 export const editStatusTestServiceAppointmentController = async (
-  req: Request<ParamsDictionary, any, EditStatusUserReqBody, EditReqQuery>,
+  req: Request<ParamsDictionary, any, EditStatusTestServiceAppointmentReqBody, EditReqQuery>,
   res: Response,
   next: NextFunction
 ) => {
@@ -211,6 +212,21 @@ export const updateTestServiceResultController = async (
 
   res.status(200).json({
     message: APPOINTMENT_MESSAGES.UPDATE_TEST_SERVICE_RESULT_SUCCESSFULLY,
+    result
+  })
+}
+
+export const customerTestServiceAppointmentsController = async (
+  req: Request<ParamsDictionary, any, any>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { user_id } = req.decode_authorization as TokenPayLoad
+
+  const result = await testServiceServices.getCustomerTestServiceAppointments(user_id)
+
+  res.status(200).json({
+    message: APPOINTMENT_MESSAGES.GET_CUSTOMER_TEST_SERVICE_APPOINTMENTS_SUCCESSFULLY,
     result
   })
 }

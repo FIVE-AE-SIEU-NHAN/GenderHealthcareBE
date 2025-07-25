@@ -218,7 +218,8 @@ export const APPOINTMENT_MESSAGES = {
   UNIT_LENGTH_MUST_BE_LESS_THAN_10: 'Unit length must be less than 10 characters',
   UPDATE_TEST_SERVICE_RESULT_SUCCESSFULLY: 'Update test service result successfully',
   TEST_SERVICE_NOT_FOUND: 'Test service not found',
-  TEST_DAY_MUST_BE_ISO8601: 'Test day must be ISO8601'
+  TEST_DAY_MUST_BE_ISO8601: 'Test day must be ISO8601',
+  GET_CUSTOMER_TEST_SERVICE_APPOINTMENTS_SUCCESSFULLY: 'Get customer test service appointments successfully'
 } as const
 
 export const BLOG_MESSAGES = {
