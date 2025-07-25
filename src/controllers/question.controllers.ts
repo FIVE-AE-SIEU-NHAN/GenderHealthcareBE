@@ -154,15 +154,23 @@ export const editStatusQuestionController = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { user_id } = req.decode_authorization as TokenPayLoad
   const { id } = req.params
   const { status } = req.body
 
-  await questionServices.editStatusQuestion(id, status)
+  const questionUpdated = await questionServices.editStatusQuestion(id, status)
+
+  const consultant = await usersServices.getUserIdOfConsultant(questionUpdated.consultant_id)
+
+  if (!consultant) {
+    throw new ErrorWithStatus({
+      status: HTTP_STATUS.NOT_FOUND,
+      message: QUESTIONS_MESSAGES.CONSULTANT_NOT_FOUND
+    })
+  }
 
   const content = 'Your report has been rejected!'
   const { id: notification_id } = await notificationServices.createNotification({
-    user_id,
+    user_id: consultant.user_id,
     type: NotificationType.OTHER,
     content,
     booking_date: new Date(),
@@ -171,7 +179,7 @@ export const editStatusQuestionController = async (
   })
 
   // gửi thông báo thành công cho người dùng qua socket
-  socketService.sendNotification(user_id, notification_id, content)
+  socketService.sendNotification(consultant.user_id, notification_id, content)
 
   res.status(200).json({
     message: QUESTIONS_MESSAGES.QUESTION_STATUS_UPDATED_SUCCESSFULLY

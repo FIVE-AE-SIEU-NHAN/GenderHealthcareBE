@@ -5,10 +5,12 @@ import {
   editStateQuestionController,
   managerQuestionsController
 } from '~/controllers/manager/manager.questions.controllers'
+import { editStatusQuestionController } from '~/controllers/question.controllers'
 import { requireRole } from '~/middlewares/decentralization .middlewares'
 import {
   deleteQuestionValidator,
   editStateQuestionValidator,
+  editStatusQuestionValidator,
   getQuestionValidator
 } from '~/middlewares/question.middlewares'
 import { accessTokenValidator } from '~/middlewares/user.middlewares'
@@ -40,6 +42,21 @@ managerQuestionRouter.patch(
   requireRole(USER_ROLE.Manager),
   editStateQuestionValidator,
   wrapAsync(editStateQuestionController)
+)
+
+/**
+ * Description: Edit appointment status
+ * Path: question/:id/edit-status
+ * Method: PATCH
+ * Parameters: { id: string }
+ * Body: { status: BookingStatus }
+ */
+managerQuestionRouter.patch(
+  '/:id/edit-status',
+  accessTokenValidator,
+  requireRole(USER_ROLE.Manager),
+  editStatusQuestionValidator,
+  wrapAsync(editStatusQuestionController)
 )
 
 /**

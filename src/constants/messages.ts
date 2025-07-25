@@ -160,7 +160,8 @@ export const QUESTIONS_MESSAGES = {
   USER_ID_MUST_BE_A_UUID: 'User id must be a UUID',
   STATUS_IS_REQUIRED: 'Status is required',
   QUESTION_STATUS_UPDATED_SUCCESSFULLY: 'Question status updated successfully',
-  QUESTION_ALREADY_IN_THIS_STATUS: 'Question already in this status'
+  QUESTION_ALREADY_IN_THIS_STATUS: 'Question already in this status',
+  CONSULTANT_NOT_FOUND: 'Consultant not found'
 } as const
 
 export const APPOINTMENT_MESSAGES = {
