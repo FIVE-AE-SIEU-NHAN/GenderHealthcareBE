@@ -34,7 +34,7 @@ staffTestServiceRouter.get(
  * Path: test-service/package/:id
  * Method: GET
  */
-staffTestServiceRouter.post(
+staffTestServiceRouter.get(
   '/package/:id',
   accessTokenValidator,
   requireRole(USER_ROLE.Staff),

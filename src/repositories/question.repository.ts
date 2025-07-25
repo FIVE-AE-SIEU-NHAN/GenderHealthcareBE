@@ -4,6 +4,7 @@ import { Topic } from '@prisma/client'
 import { ErrorWithStatus } from '~/models/Errors'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { QUESTIONS_MESSAGES } from '~/constants/messages'
+import { QuestionStatus } from '~/constants/enums'
 
 export default class QuestionRepository {
   private model = prisma.questions
@@ -538,6 +539,24 @@ export default class QuestionRepository {
     return this.model.update({
       where: { id },
       data: { status: 2 }
+    })
+  }
+
+  async getQuestionStatus(id: string) {
+    return this.model.findUnique({
+      where: {
+        id
+      },
+      select: {
+        status: true
+      }
+    })
+  }
+
+  async updateStatusQuestion(id: string, status: QuestionStatus) {
+    return this.model.update({
+      where: { id },
+      data: { status }
     })
   }
 }

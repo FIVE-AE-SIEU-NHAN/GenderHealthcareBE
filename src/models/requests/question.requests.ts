@@ -1,5 +1,6 @@
 import { Topic } from '@prisma/client'
 import { ParsedQs } from 'qs'
+import { QuestionStatus } from '~/constants/enums'
 
 export interface AskQuestionReqBody {
   topic: Topic
@@ -27,4 +28,8 @@ export interface AnswerQuestionReqBody {
 
 export interface EditStateQuestionReqBody {
   is_public: boolean
+}
+
+export interface EditStatusQuestionReqBody {
+  status: QuestionStatus
 }

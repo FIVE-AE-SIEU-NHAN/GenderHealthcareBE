@@ -155,7 +155,12 @@ export const QUESTIONS_MESSAGES = {
   STATUS_IS_INVALID: 'Status is invalid',
   CREATED_AT_BE_ISO8601: 'Created at must be ISO8601',
   REPORT_QUESTION_SUCCESSFULLY: 'Report question successfully',
-  USER_ID_NOT_FOUND: 'User id not found'
+  USER_ID_NOT_FOUND: 'User id not found',
+  USER_ID_IS_REQUIRED: 'User id is required',
+  USER_ID_MUST_BE_A_UUID: 'User id must be a UUID',
+  STATUS_IS_REQUIRED: 'Status is required',
+  QUESTION_STATUS_UPDATED_SUCCESSFULLY: 'Question status updated successfully',
+  QUESTION_ALREADY_IN_THIS_STATUS: 'Question already in this status'
 } as const
 
 export const APPOINTMENT_MESSAGES = {

@@ -1,5 +1,6 @@
 import { Topic } from '@prisma/client'
 import { checkSchema } from 'express-validator'
+import { QuestionStatus } from '~/constants/enums'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { QUESTIONS_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
@@ -232,6 +233,37 @@ export const reportQuestionValidator = validate(
       },
       isUUID: {
         errorMessage: QUESTIONS_MESSAGES.ID_MUST_BE_UUID
+      }
+    }
+  })
+)
+
+export const editStatusQuestionValidator = validate(
+  checkSchema({
+    id: {
+      in: ['params'],
+      notEmpty: {
+        errorMessage: QUESTIONS_MESSAGES.USER_ID_IS_REQUIRED
+      },
+      isUUID: {
+        errorMessage: QUESTIONS_MESSAGES.USER_ID_MUST_BE_A_UUID
+      }
+    },
+    status: {
+      in: ['body'],
+      notEmpty: {
+        errorMessage: QUESTIONS_MESSAGES.STATUS_IS_REQUIRED
+      },
+      custom: {
+        options: async (values) => {
+          const statusList = Object.values(QuestionStatus)
+          if (!statusList.includes(values)) {
+            throw new ErrorWithStatus({
+              status: HTTP_STATUS.BAD_REQUEST,
+              message: QUESTIONS_MESSAGES.STATUS_IS_INVALID
+            })
+          }
+        }
       }
     }
   })

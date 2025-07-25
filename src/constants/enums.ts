@@ -9,6 +9,7 @@ export enum USER_ROLE {
   User, //3
   Staff //4
 }
+
 export enum TokenType {
   AccessToken, // 0
   RefreshToken, // 1
@@ -24,4 +25,10 @@ export enum ConsultantStatus {
 export enum StaffStatus {
   Inactive, // 0
   Active // 1
+}
+
+export enum QuestionStatus {
+  Pending, // 0
+  Answered, // 1
+  Reported // 2
 }

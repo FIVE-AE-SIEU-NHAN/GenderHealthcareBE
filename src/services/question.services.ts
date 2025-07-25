@@ -1,4 +1,5 @@
 import { Topic } from '@prisma/client'
+import { QuestionStatus } from '~/constants/enums'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { QUESTIONS_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
@@ -228,6 +229,25 @@ class QuestionServices {
       })
     }
     return this.questionRepository.reportQuestion(id)
+  }
+
+  async editStatusQuestion(id: string, status: QuestionStatus) {
+    const question = await this.questionRepository.getQuestionStatus(id)
+    if (!question) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.NOT_FOUND,
+        message: QUESTIONS_MESSAGES.QUESTION_NOT_FOUND
+      })
+    }
+
+    if (question.status === status) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.NOT_FOUND,
+        message: QUESTIONS_MESSAGES.QUESTION_ALREADY_IN_THIS_STATUS
+      })
+    }
+
+    return this.questionRepository.updateStatusQuestion(id, status)
   }
 }
 const questionServices = new QuestionServices()

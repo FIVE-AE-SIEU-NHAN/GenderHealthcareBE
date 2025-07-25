@@ -8,6 +8,7 @@ import {
   AnswerQuestionReqBody,
   AskQuestionReqBody,
   EditReqQuery,
+  EditStatusQuestionReqBody,
   GetQuestionReqQuery
 } from '~/models/requests/question.requests'
 import { TokenPayLoad } from '~/models/requests/users.requests'
@@ -145,5 +146,34 @@ export const reportQuestionController = async (
 
   res.status(200).json({
     message: QUESTIONS_MESSAGES.REPORT_QUESTION_SUCCESSFULLY
+  })
+}
+
+export const editStatusQuestionController = async (
+  req: Request<ParamsDictionary, any, EditStatusQuestionReqBody, EditReqQuery>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { user_id } = req.decode_authorization as TokenPayLoad
+  const { id } = req.params
+  const { status } = req.body
+
+  await questionServices.editStatusQuestion(id, status)
+
+  const content = 'Your report has been rejected!'
+  const { id: notification_id } = await notificationServices.createNotification({
+    user_id,
+    type: NotificationType.OTHER,
+    content,
+    booking_date: new Date(),
+    question_id: id,
+    is_send: true
+  })
+
+  // gửi thông báo thành công cho người dùng qua socket
+  socketService.sendNotification(user_id, notification_id, content)
+
+  res.status(200).json({
+    message: QUESTIONS_MESSAGES.QUESTION_STATUS_UPDATED_SUCCESSFULLY
   })
 }

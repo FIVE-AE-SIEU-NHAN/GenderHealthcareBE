@@ -7,12 +7,14 @@ import {
   consultantQuestionsController,
   customerQuestionsController,
   editAnswerQuestionsController,
+  editStatusQuestionController,
   reportQuestionController
 } from '~/controllers/question.controllers'
 import { requireRole } from '~/middlewares/decentralization .middlewares'
 import {
   answerQuestionValidator,
   askQuestionValidator,
+  editStatusQuestionValidator,
   getQuestionValidator,
   reportQuestionValidator
 } from '~/middlewares/question.middlewares'
@@ -100,6 +102,21 @@ questionRouter.post(
   requireRole(USER_ROLE.Consultant),
   reportQuestionValidator,
   wrapAsync(reportQuestionController)
+)
+
+/**
+ * Description: Edit appointment status
+ * Path: question/:id/edit-status
+ * Method: PATCH
+ * Parameters: { id: string }
+ * Body: { status: BookingStatus }
+ */
+questionRouter.patch(
+  '/:id/edit-status',
+  accessTokenValidator,
+  requireRole(USER_ROLE.Consultant, USER_ROLE.Manager),
+  editStatusQuestionValidator,
+  wrapAsync(editStatusQuestionController)
 )
 
 export default questionRouter
