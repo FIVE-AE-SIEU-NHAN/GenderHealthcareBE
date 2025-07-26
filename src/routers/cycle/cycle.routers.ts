@@ -9,10 +9,12 @@ import {
   updateCycleController,
   deleteCycleController,
   getAllCyclesForAdmin,
-  getCyclePredictionByUserId
+  getCyclePredictionByUserId, 
+
 } from '~/controllers/cycle.controllers';
 import { createCycleLogController, getCycleLogsController } from '~/controllers/cycleLogs.controllers';
 import { cycleValidator } from '~/middlewares/cycle.middlewares';
+import { upsertCycleLogController, getLogsByCycleIdController, getLogByCycleIdAndDateController } from '~/controllers/cycleLogs.controllers';
 
 const cycleRouter = express.Router();
 
@@ -20,13 +22,18 @@ cycleRouter.post('/', accessTokenValidator, cycleValidator, wrapAsync(createCycl
 cycleRouter.get('/admin/all', accessTokenValidator, wrapAsync(getAllCyclesForAdmin));
 cycleRouter.get('/', accessTokenValidator, wrapAsync(getAllCyclesController));
 cycleRouter.get('/predict', accessTokenValidator, wrapAsync(getCyclePredictions));
+
 cycleRouter.get('/predict/:user_id', accessTokenValidator, wrapAsync(getCyclePredictionByUserId));
+
 cycleRouter.get('/:id', accessTokenValidator, wrapAsync(getCycleByIdController));
 cycleRouter.put('/:id', accessTokenValidator, cycleValidator, wrapAsync(updateCycleController));
 cycleRouter.delete('/:id', accessTokenValidator, wrapAsync(deleteCycleController));
 
-// Log routes (new)
-cycleRouter.post('/:cycle_id/logs', accessTokenValidator, wrapAsync(createCycleLogController));
-cycleRouter.get('/:cycle_id/logs', accessTokenValidator, wrapAsync(getCycleLogsController));
+
+
+
+cycleRouter.post('/:cycle_id/logs', accessTokenValidator, wrapAsync(upsertCycleLogController))
+cycleRouter.get('/:cycle_id/logs', accessTokenValidator, wrapAsync(getLogsByCycleIdController))
+cycleRouter.get('/:cycle_id/logs/:log_date', accessTokenValidator, wrapAsync(getLogByCycleIdAndDateController))
 
 export default cycleRouter;

@@ -55,7 +55,7 @@ app.use('/notification', notificationRouter)
 app.use('/payment', paymentRoute)
 app.use('/test-service', testServiceRouter)
 app.use('/cycle', cycleRouter)
-app.use('/cycle/prediction', predictionRouter)
+app.use('/prediction', predictionRouter)
 app.use("/dashboard", dashboardRouter);
 // --------------------------- 🧪 API TEST ----------------------------- //
 app.get('/test', async (req, res) => {

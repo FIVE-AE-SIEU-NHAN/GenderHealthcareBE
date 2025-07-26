@@ -25,7 +25,9 @@ class CycleStatusLogsService {
     data: {
       id: uuidv4(),
       cycle_id: payload.cycle_id,
-      log_date: new Date(payload.log_date),
+      log_date: typeof payload.log_date === 'string'
+        ? payload.log_date
+        : payload.log_date.toISOString().slice(0, 10),
       mood: payload.mood,
       libido: payload.libido,
       stress: payload.stress,
@@ -46,14 +48,16 @@ class CycleStatusLogsService {
 
   // Lấy log symptom theo ngày cụ thể (nếu muốn)
   async getLogByCycleIdAndDate(cycle_id: string, log_date: Date | string) {
-    const dateObj = typeof log_date === 'string' ? new Date(log_date) : log_date
-    return await prisma.cycleStatusLogs.findFirst({
-      where: {
-        cycle_id,
-        log_date: dateObj
-      }
-    })
-  }
+  const dateStr = typeof log_date === 'string'
+    ? log_date
+    : log_date.toISOString().slice(0, 10)
+  return await prisma.cycleStatusLogs.findFirst({
+    where: {
+      cycle_id,
+      log_date: dateStr
+    }
+  })
+}
 
   // Xóa 1 log symptom nếu cần
   async deleteLogById(log_id: string) {
@@ -68,7 +72,11 @@ class CycleStatusLogsService {
       where: { id: log_id },
       data: {
         ...data,
-        log_date: data.log_date ? new Date(data.log_date) : undefined
+          log_date: typeof data.log_date === 'string'
+        ? data.log_date
+        : data.log_date
+          ? data.log_date.toISOString().slice(0, 10)
+          : undefined,
       }
     })
   }
