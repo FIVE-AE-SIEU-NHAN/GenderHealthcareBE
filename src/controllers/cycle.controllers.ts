@@ -19,8 +19,7 @@ export const checkActiveCycleController = async (
   res: Response,
   next: NextFunction
 ) => {
-  //   const { user_id } = req.decode_authorization as TokenPayLoad
-  const user_id = '1fe57d3b-4808-11f0-bfde-0242ac110002'
+  const { user_id } = req.decode_authorization as TokenPayLoad
 
   const result = await cycleServices.checkActiveCycle(user_id)
 
@@ -35,8 +34,7 @@ export const createCycleController = async (
   res: Response,
   next: NextFunction
 ) => {
-  //   const { user_id } = req.decode_authorization as TokenPayLoad
-  const user_id = '1fe57d3b-4808-11f0-bfde-0242ac110002'
+  const { user_id } = req.decode_authorization as TokenPayLoad
   const { start_period_date, cycle_length, period_length, note } = req.body
   const start_period_date_parsed = new Date(start_period_date)
 
@@ -75,8 +73,7 @@ export const getCyclePredictionsController = async (
   res: Response,
   next: NextFunction
 ) => {
-  //   const { user_id } = req.decode_authorization as TokenPayLoad
-  const user_id = '1fe57d3b-4808-11f0-bfde-0242ac110002'
+  const { user_id } = req.decode_authorization as TokenPayLoad
 
   const result = await cycleServices.getCyclePredictions(user_id, req.query)
 

@@ -5,6 +5,7 @@ export interface CreateCycleReqBody {
   cycle_length: number
   period_length: number
   note?: string
+  is_contraceptive_pill_reminder: boolean
 }
 
 export interface getCyclePredictionsReqQuery extends ParsedQs {

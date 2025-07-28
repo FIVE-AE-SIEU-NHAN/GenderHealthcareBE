@@ -136,7 +136,7 @@ class ChatBotServices {
     })
   }
 
-  async handleMenstrualPredictorAi(message: string): Promise<{ status: string; notes: string }> {
+  async handleMenstrualPredictorAi(message: string) {
     // 1. Lấy thông tin
 
     const systemInstruction = `
@@ -144,27 +144,38 @@ class ChatBotServices {
 
     You receive:
     - Start of last period: [yyyy-mm-dd]
-    - Expected next period: [yyyy-mm-dd]
-    - Expected period end: [yyyy-mm-dd]
-    - Expected ovulation day: [yyyy-mm-dd]
-    - Fertile window: [yyyy-mm-dd] to [yyyy-mm-dd]
     - Today is: [yyyy-mm-dd]
-    - Cycle day: [x]
+    - Cycle length (default 28): [number]
     - The user's self-reported values:
       - mood (1 - 5), libido (1 - 5), stress (1 - 5), sleep_hours (float), energy (1 - 5)
 
     Your task is to:
-    1. Evaluate if the user's physical/emotional state aligns with the expected hormonal phase.
-    2. If anything is unusual, add short, clear health notes to explain possible causes or suggest self-care (never medical advice).
-    3. Return a status as:
-      - "NORMAL" if everything is aligned
-      - "NEED ATTENTION" if there's one concern
-      - "NOT POSITIVE" if there are two or more concerns
+
+    1. Calculate the current cycle day as:
+      - CycleDay = number of days since the start of the period, modulo the cycle length, then +1
+      - Example: If today is 2025-07-28 and period started on 2025-07-01, CycleDay = ((28 - 1) % 28) + 1 = 28
+
+    2. Determine the current hormonal phase:
+      - Days 1-5: "menstruation"
+      - Days 6-12: "follicular"
+      - Days 13-15: "ovulation"
+      - Days 16-28: "luteal (PMS)"
+
+    3. Evaluate whether the user's state matches what is expected in that phase:
+      - If **stress ≥ 4** and **sleep_hours < 6** → add note: "High stress and poor sleep may negatively impact your cycle."
+      - If **phase = ovulation** and **libido ≤ 2** → add note: "Low libido during ovulation may indicate hormonal imbalance."
+      - If **phase = luteal (PMS)** and **mood ≤ 2** → add note: "Low mood during PMS may indicate premenstrual syndrome."
+      - If **phase = follicular** and **energy ≤ 2** → add note: "Low energy in the follicular phase may require attention to recovery or health."
+
+    4. Set the final status:
+      - "NORMAL" if no notes
+      - "NEED ATTENTION" if there is one note
+      - "NOT POSITIVE" if there are two or more notes
 
     Always respond **strictly in JSON format**:
     {
       "status": "NORMAL" | "NEED ATTENTION" | "NOT POSITIVE",
-      "notes": "Your notes here"
+      "notes": "..."
     }
     `
     const temperature = 0.3
@@ -184,18 +195,18 @@ class ChatBotServices {
         topK: 20,
         maxOutputTokens: chatBotConfig?.max_output_tokens || maxOutputTokens,
         stopSequences: ['User:', 'System:'],
-        responseMimeType: 'text/plain',
+        responseMimeType: 'application/json',
         seed: 42
       }
     })
 
     // 3. Gửi message
     const result = await chat.sendMessage({ message })
-    const reply = result.text || ''
+    const reply = JSON.parse(result.text || '{}')
 
     return {
-      status: 'NORMAL',
-      notes: reply
+      status: reply.status,
+      notes: reply.notes
     }
   }
 }

@@ -21,23 +21,14 @@ const cycleRouter = express.Router()
  * PATH: /cycle/check
  * Method: GET
  */
-cycleRouter.get(
-  '/check',
-  // accessTokenValidator,
-  wrapAsync(checkActiveCycleController)
-)
+cycleRouter.get('/check', accessTokenValidator, wrapAsync(checkActiveCycleController))
 
 /**
  * Description: Create a new cycle
  * PATH: /cycle/create
  * Method: POST
  */
-cycleRouter.post(
-  '/create',
-  // accessTokenValidator,
-  createCycleValidator,
-  wrapAsync(createCycleController)
-)
+cycleRouter.post('/create', accessTokenValidator, createCycleValidator, wrapAsync(createCycleController))
 
 /**
  * Description: Get cycle predictions
@@ -46,7 +37,7 @@ cycleRouter.post(
  */
 cycleRouter.get(
   '/predictions',
-  // accessTokenValidator,
+  accessTokenValidator,
   getCyclePredictionsValidator,
   wrapAsync(getCyclePredictionsController)
 )
@@ -58,7 +49,7 @@ cycleRouter.get(
  */
 cycleRouter.post(
   '/:id/status-logs',
-  // accessTokenValidator,
+  accessTokenValidator,
   updateCycleStatusLogsValidator,
   wrapAsync(updateCycleStatusLogsController)
 )
