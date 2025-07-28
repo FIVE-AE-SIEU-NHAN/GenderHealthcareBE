@@ -146,4 +146,15 @@ export default class CyclePredictionRepository {
       }
     })
   }
+
+  async updateCycleStatus(cycle_id: string, status: CyclePredictionStatus) {
+    return this.model.update({
+      where: {
+        id: cycle_id
+      },
+      data: {
+        status
+      }
+    })
+  }
 }

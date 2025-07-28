@@ -160,3 +160,17 @@ export const updateCycleStatusLogsValidator = validate(
     }
   })
 )
+
+export const cancelCycleValidator = validate(
+  checkSchema({
+    id: {
+      in: ['params'],
+      notEmpty: {
+        errorMessage: CYCLE_MESSAGES.CYCLE_ID_IS_REQUIRED
+      },
+      isUUID: {
+        errorMessage: CYCLE_MESSAGES.CYCLE_MUST_BE_UUID
+      }
+    }
+  })
+)

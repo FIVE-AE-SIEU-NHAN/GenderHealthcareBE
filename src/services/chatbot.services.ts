@@ -1,5 +1,5 @@
 import { Chat } from '@google/genai'
-import { AiType, ChatBotRole } from '@prisma/client'
+import { AiType, ChatBotRole, CycleLogStatus } from '@prisma/client'
 import ChatBotHistoryRepository from '~/repositories/chatBotHistory.repository'
 import { GoogleGenAI } from '@google/genai'
 import ChatBotConfigRepository from '~/repositories/chatBotConfig.repository'
@@ -136,7 +136,10 @@ class ChatBotServices {
     })
   }
 
-  async handleMenstrualPredictorAi(message: string) {
+  async handleMenstrualPredictorAi(message: string): Promise<{
+    status: CycleLogStatus
+    note: string
+  }> {
     // 1. Lấy thông tin
 
     const systemInstruction = `
@@ -166,11 +169,6 @@ class ChatBotServices {
       - If **phase = ovulation** and **libido ≤ 2** → add note: "Low libido during ovulation may indicate hormonal imbalance."
       - If **phase = luteal (PMS)** and **mood ≤ 2** → add note: "Low mood during PMS may indicate premenstrual syndrome."
       - If **phase = follicular** and **energy ≤ 2** → add note: "Low energy in the follicular phase may require attention to recovery or health."
-
-    4. Set the final status:
-      - "NORMAL" if no notes
-      - "NEED ATTENTION" if there is one note
-      - "NOT POSITIVE" if there are two or more notes
 
     Always respond **strictly in JSON format**:
     {
@@ -205,8 +203,8 @@ class ChatBotServices {
     const reply = JSON.parse(result.text || '{}')
 
     return {
-      status: reply.status,
-      notes: reply.notes
+      status: reply.status as CycleLogStatus,
+      note: reply.notes
     }
   }
 }

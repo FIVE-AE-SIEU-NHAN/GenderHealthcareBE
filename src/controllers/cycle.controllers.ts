@@ -117,15 +117,26 @@ export const updateCycleStatusLogsController = async (
   const aiAnalysis = await chatBotServices.handleMenstrualPredictorAi(message)
 
   // Tạo nhật ký trạng thái chu kỳ
-  const result = await cycleServices.updateCycleStatusLogs(
-    cycle_id,
-    aiAnalysis.status as CycleLogStatus,
-    aiAnalysis.notes,
-    req.body
-  )
+  const result = await cycleServices.updateCycleStatusLogs(cycle_id, aiAnalysis.status, aiAnalysis.note, req.body)
 
   res.status(HTTP_STATUS.OK).json({
     message: CYCLE_MESSAGES.CYCLE_PREDICTIONS_FETCHED_SUCCESSFULLY,
+    result
+  })
+}
+
+export const cancelCycleController = async (
+  req: Request<ParamsDictionary, any, any, EditReqQuery>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { user_id } = req.decode_authorization as TokenPayLoad
+  const { id: cycle_id } = req.params
+
+  const result = await cycleServices.cancelCycle(user_id, cycle_id)
+
+  res.status(HTTP_STATUS.OK).json({
+    message: CYCLE_MESSAGES.CYCLE_CANCELED_SUCCESSFULLY,
     result
   })
 }

@@ -324,5 +324,7 @@ export const CYCLE_MESSAGES = {
   SLEEP_HOURS_FROM_1_TO_18: 'Sleep hours must be from 1 to 18',
   CYCLE_ID_IS_REQUIRED: 'Cycle id is required',
   CYCLE_MUST_BE_UUID: 'Cycle must be a UUID',
-  CYCLE_NOT_FOUND: 'Cycle not found'
+  CYCLE_NOT_FOUND: 'Cycle not found',
+  CYCLE_CANCELED_SUCCESSFULLY: 'Cycle canceled successfully',
+  CYCLE_ALREADY_CANCELED: 'Cycle already canceled'
 } as const

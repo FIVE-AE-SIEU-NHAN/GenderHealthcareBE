@@ -1,12 +1,14 @@
 import express from 'express'
 import { update, wrap } from 'lodash'
 import {
+  cancelCycleController,
   checkActiveCycleController,
   createCycleController,
   getCyclePredictionsController,
   updateCycleStatusLogsController
 } from '~/controllers/cycle.controllers'
 import {
+  cancelCycleValidator,
   createCycleValidator,
   getCyclePredictionsValidator,
   updateCycleStatusLogsValidator
@@ -53,5 +55,12 @@ cycleRouter.post(
   updateCycleStatusLogsValidator,
   wrapAsync(updateCycleStatusLogsController)
 )
+
+/**
+ * Description: Cancel cycle
+ * PATH: /cycle/:id/cancel
+ * Method: PATCH
+ */
+cycleRouter.patch('/:id/cancel', accessTokenValidator, cancelCycleValidator, wrapAsync(cancelCycleController))
 
 export default cycleRouter

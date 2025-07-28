@@ -1,4 +1,4 @@
-import { CycleLogStatus } from '@prisma/client'
+import { CycleLogStatus, CyclePredictionStatus } from '@prisma/client'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { CYCLE_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
@@ -102,6 +102,28 @@ class CycleServices {
       note,
       status
     })
+  }
+
+  async cancelCycle(user_id: string, cycle_id: string) {
+    const cycle = await this.cyclePredictionRepository.getCurrentCyclePredictions(user_id)
+
+    if (!cycle) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.NOT_FOUND,
+        message: CYCLE_MESSAGES.CYCLE_NOT_FOUND
+      })
+    }
+
+    if (cycle.status === CyclePredictionStatus.SKIPPED) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.BAD_REQUEST,
+        message: CYCLE_MESSAGES.CYCLE_ALREADY_CANCELED
+      })
+    }
+
+    const result = await this.cyclePredictionRepository.updateCycleStatus(cycle.id, CyclePredictionStatus.SKIPPED)
+
+    return result
   }
 }
 
