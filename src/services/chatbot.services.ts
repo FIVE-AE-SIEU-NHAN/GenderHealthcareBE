@@ -7,6 +7,7 @@ import { ErrorWithStatus } from '~/models/Errors'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { CHATBOT_MESSAGES } from '~/constants/messages'
 import { UpdateChatBotConfigReqBody } from '~/models/requests/chatbot.request'
+import cycleServices from './cycle.services'
 
 class ChatBotServices {
   private chatBotHistoryRepository: ChatBotHistoryRepository
@@ -133,6 +134,66 @@ class ChatBotServices {
       temperature,
       max_output_tokens
     })
+  }
+
+  async handleMenstrualPredictorAi(cycle_id: string, message: string) {
+    // 1. Lấy thông tin
+
+    const systemInstruction = `
+    You are a women's reproductive health assistant. Your role is to analyze daily self-reported data from a user about their menstrual cycle, mood, libido, sleep, stress, and energy.
+
+    You receive:
+    - Start of last period: [yyyy-mm-dd]
+    - Expected next period: [yyyy-mm-dd]
+    - Expected period end: [yyyy-mm-dd]
+    - Expected ovulation day: [yyyy-mm-dd]
+    - Fertile window: [yyyy-mm-dd] to [yyyy-mm-dd]
+    - Today is: [yyyy-mm-dd]
+    - Cycle day: [x]
+    - The user's self-reported values:
+      - mood (1 - 5), libido (1 - 5), stress (1 - 5), sleep_hours (float), energy (1 - 5)
+
+    Your task is to:
+    1. Evaluate if the user's physical/emotional state aligns with the expected hormonal phase.
+    2. If anything is unusual, add short, clear health notes to explain possible causes or suggest self-care (never medical advice).
+    3. Return a status as:
+      - "NORMAL" if everything is aligned
+      - "NEED ATTENTION" if there's one concern
+      - "NOT POSITIVE" if there are two or more concerns
+
+    Always respond **strictly in JSON format**:
+    {
+      "status": "NORMAL" | "NEED ATTENTION" | "NOT POSITIVE",
+      "notes": ["Note 1", "Note 2"]
+    }
+    `
+    const temperature = 0.3
+    const maxOutputTokens = 2048
+    const geminiKey = 'AIzaSyD0WWusynLcMtSLfV0EP_zC24siVq4GO6A'
+    const chatBotConfig = await this.chatBotConfigRepository.getChatBotConfig(AiType.MENSTRUAL_PREDICTOR)
+
+    const ai = new GoogleGenAI({ apiKey: chatBotConfig?.gemini_key || geminiKey })
+
+    // 2. Tạo chat
+    const chat = ai.chats.create({
+      model: 'gemini-2.0-flash-001',
+      config: {
+        systemInstruction: chatBotConfig?.system_instruction || systemInstruction,
+        temperature: chatBotConfig?.temperature || temperature,
+        topP: 0.7,
+        topK: 20,
+        maxOutputTokens: chatBotConfig?.max_output_tokens || maxOutputTokens,
+        stopSequences: ['User:', 'System:'],
+        responseMimeType: 'text/plain',
+        seed: 42
+      }
+    })
+
+    // 3. Gửi message
+    const result = await chat.sendMessage({ message })
+    const reply = result.text || ''
+
+    return reply
   }
 }
 

@@ -21,13 +21,9 @@ import testServiceRouter from './routers/testService/testService.routers'
 import staffTestServiceRouter from './routers/testService/staff.tesService.routers'
 import managerTestServiceRouter from './routers/testService/manager.testService.routers'
 import chatBotRouter from './routers/chatBot.router'
+import cycleRouter from './routers/cycle/cycle.routers'
 import { createServer } from 'http'
 import socketService from './socket/socket'
-import { paymentQueue } from './bull/queue'
-import { TimeSlot } from '@prisma/client'
-import usersServices from './services/users.services'
-import redisUtils from './utils/redis'
-import testServiceServices from './services/testService.services'
 import fs from 'fs'
 import path from 'path'
 import swaggerUi from 'swagger-ui-express'
@@ -72,49 +68,11 @@ app.use('/payment', paymentRoute)
 app.use('/test-service', testServiceRouter, staffTestServiceRouter, managerTestServiceRouter)
 app.use('/staff', staffRouter, managerStaffRouter)
 app.use('/chatbot', chatBotRouter)
+app.use('/cycle', cycleRouter)
 
 // --------------------------- 🧪 API TEST ----------------------------- //
-app.get('/test', async (req, res) => {
-  const numberOfStaff = await usersServices.getNumberOfStaff()
-  console.log(numberOfStaff)
-  if (!numberOfStaff) {
-    console.log('Lỗi')
-  }
-
-  // kiểm tra xem có staff nào rảnh không
-  const startIndex = await redisUtils.getIndexNextStaff(numberOfStaff)
-  let selectedStaffId = ''
-
-  for (let i = 0; i < numberOfStaff; i++) {
-    const currentIndex = (startIndex + i) % numberOfStaff
-
-    // lấy staff theo index
-    const staff_id = await usersServices.getStaffByIndex(currentIndex)
-
-    // kiểm tra xem staff có lịch hẹn nào trùng với booking_date và time_slot không
-    const time_slot = TimeSlot.SLOT_07_08
-    const isBusy = await testServiceServices.checkTestServiceAppointmentExists(staff_id, new Date(), time_slot)
-
-    if (!isBusy) {
-      await redisUtils.setNextStaffIndex(currentIndex + 1)
-      selectedStaffId = staff_id
-      break
-    }
-  }
-
-  res.status(200).json({
-    message: 'Test API is working',
-    selectedStaffId
-  })
-})
-
-app.get('/test2', async (req, res) => {
-  // const result = await testServiceServices.getPackageDetail('83cf0d76-637e-11f0-bfde-0242ac110002')
-  res.status(200).json({
-    message: 'Test API2 is working'
-    // result
-  })
-})
+app.get('/test', async (req, res) => {})
+app.get('/test2', async (req, res) => {})
 
 // --------------------------- ERROR HANDLER --------------------------- //
 app.use(defaultErorHandler)
@@ -129,6 +87,3 @@ console.log('\x1b[35mSocket.IO\x1b[0m is running...')
 serverHttp.listen(port, () => {
   console.log(`\x1b[34mPROJECT GenderHealthcareBE OPEN ON PORT: \x1b[31m${port}\x1b[0m`)
 })
-
-// lấy services trong package
-// lưu kết quả

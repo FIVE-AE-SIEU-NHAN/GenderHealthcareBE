@@ -30,6 +30,7 @@ model Users {
   Blogs  Blogs[]
   TestServiceAppointments  TestServiceAppointments[]
   ChatBotHistory ChatBotHistory[]
+  ReproductiveCycle ReproductiveCycle[]
 
   @@index([google_id], map: "idx_google_id")
   @@index([forgot_password_token], map: "idx_forgot_token")
@@ -331,3 +332,59 @@ model ChatBotConfig {
   updated_at         DateTime @default(now()) @db.Timestamp(0)
 }
 
+model ReproductiveCycle {
+  id                String              @id @map("_id") @db.VarChar(36)
+  user_id           String              @db.VarChar(36)
+  start_period_date DateTime            @db.DateTime(0)
+  cycle_length      Int                 @db.Int
+  period_length     Int                 @db.Int
+  note              String?             @db.Text
+  created_at        DateTime            @default(now()) @db.DateTime(0)
+
+  user       Users             @relation(fields: [user_id], references: [id])
+  cyclePrediction CyclePrediction?
+  cycleStatusLogs CycleStatusLogs[]
+}
+
+enum CyclePredictionStatus{
+  ACTIVE
+  COMPLETED
+  SKIPPED
+}
+
+model CyclePrediction {
+  id                   String             @id @map("_id") @db.VarChar(36)
+  cycle_id             String            @unique @db.VarChar(36)
+  next_period_date     DateTime          @db.DateTime(0)
+  period_end_date      DateTime          @db.DateTime(0)
+  ovulation_date       DateTime          @db.DateTime(0)
+  fertile_window_start DateTime          @db.DateTime(0)
+  fertile_window_end   DateTime          @db.DateTime(0)
+  status               CyclePredictionStatus @default(ACTIVE)
+  created_at           DateTime          @default(now()) @db.DateTime(0)
+
+  cycle                ReproductiveCycle @relation(fields: [cycle_id], references: [id], onDelete: Cascade)
+}
+
+enum CycleLogStatus {
+  NORMAL
+  NEED_ATTENTION
+  NOT_POSITIVE
+}
+
+model CycleStatusLogs {
+  id          String            @id @map("_id") @db.VarChar(36)
+  cycle_id    String            @db.VarChar(36)
+  log_date    DateTime          @db.Date
+  mood        Int?
+  libido      Int?
+  stress      Int?
+  sleep_hours Float?
+  energy      Int?
+  status      CycleLogStatus
+
+  note        String?  @db.Text
+  created_at  DateTime          @default(now()) @db.DateTime(0)
+
+  cycle       ReproductiveCycle @relation(fields: [cycle_id], references: [id], onDelete: Cascade)
+}

@@ -292,3 +292,37 @@ export const CHATBOT_MESSAGES = {
   TEMPERATURE_IS_OUT_OF_RANGE: 'Temperature is out of range',
   MAX_OUTPUT_TOKENS_MUST_BE_INTEGER: 'Max output tokens must be an integer'
 } as const
+
+export const CYCLE_MESSAGES = {
+  START_PERIOD_DATE_IS_REQUIRED: 'Start period date is required',
+  START_PERIOD_DATE_MUST_BE_ISO8601: 'Start period date must be ISO8601',
+  CYCLE_LENGTH_IS_REQUIRED: 'Cycle length is required',
+  CYCLE_LENGTH_FROM_20_TO_31: 'Cycle length must be from 20 to 31',
+  PERIOD_LENGTH_IS_REQUIRED: 'Period length is required',
+  PERIOD_LENGTH_FROM_1_TO_10: 'Period length must be from 1 to 10',
+  NOTE_MUST_BE_STRING: 'Note must be a string',
+  NOTE_MUST_BE_LENGTH: 'Note length must be less than 500 characters',
+  CYCLE_CREATED_SUCCESSFULLY: 'Cycle created successfully',
+  CYCLE_PREDICTIONS_FETCHED_SUCCESSFULLY: 'Cycle predictions fetched successfully',
+  START_DATE_IS_REQUIRED: 'Start date is required',
+  START_DATE_MUST_BE_ISO8601: 'Start date must be ISO8601 ',
+  END_DATE_IS_REQUIRED: 'End date is required',
+  END_DATE_MUST_BE_ISO8601: 'End date must be ISO8601',
+  CYCLE_STATUS_CHECKED_SUCCESSFULLY: 'Cycle status checked successfully',
+  YOU_HAVE_ACTIVE_CYCLE: 'You have an active cycle',
+  LOG_DATE_IS_REQUIRED: 'Log date is required',
+  LOG_DATE_MUST_BE_ISO8601: 'Log date must be ISO8601',
+  MOOD_IS_REQUIRED: 'Mood is required',
+  MOOD_FROM_1_TO_5: 'Mood must be from 1 to 5',
+  LIBIDO_IS_REQUIRED: 'Libido is required',
+  LIBIDO_FROM_1_TO_5: 'Libido must be from 1 to 5',
+  STRESS_IS_REQUIRED: 'Stress is required',
+  STRESS_FROM_1_TO_5: 'Stress must be from 1 to 5',
+  ENERGY_IS_REQUIRED: 'Energy is required',
+  ENERGY_FROM_1_TO_5: 'Energy must be from 1 to 5',
+  SLEEP_HOURS_IS_REQUIRED: 'Sleep hours is required',
+  SLEEP_HOURS_FROM_1_TO_18: 'Sleep hours must be from 1 to 18',
+  CYCLE_ID_IS_REQUIRED: 'Cycle id is required',
+  CYCLE_MUST_BE_UUID: 'Cycle must be a UUID',
+  CYCLE_NOT_FOUND: 'Cycle not found'
+} as const
