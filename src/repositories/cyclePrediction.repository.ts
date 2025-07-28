@@ -1,6 +1,6 @@
 import { prisma } from '~/services/client'
 import { v4 as ObjectId } from 'uuid'
-import { CyclePredictionStatus } from '@prisma/client'
+import { CycleLogStatus, CyclePredictionStatus } from '@prisma/client'
 
 export default class CyclePredictionRepository {
   private model = prisma.cyclePrediction

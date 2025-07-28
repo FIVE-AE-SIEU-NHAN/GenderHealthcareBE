@@ -1,3 +1,4 @@
+import { CycleLogStatus } from '@prisma/client'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { CYCLE_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
@@ -82,19 +83,25 @@ class CycleServices {
     return cycle
   }
 
-  async updateCycleStatusLogs(cycle_id: string, payload: UpdateCycleStatusLogsReqBody) {
-    const { log_date, mood, libido, stress, energy, sleep_hours, note } = payload
+  async updateCycleStatusLogs(
+    cycle_id: string,
+    status: CycleLogStatus,
+    note: string,
+    payload: UpdateCycleStatusLogsReqBody
+  ) {
+    const { log_date, mood, libido, stress, energy, sleep_hours } = payload
 
-    // return await this.cyclePredictionRepository.updateCycleStatusLogs({
-    //   cycle_id,
-    //   log_date: new Date(log_date),
-    //   mood,
-    //   libido,
-    //   stress,
-    //   energy,
-    //   sleep_hours,
-    //   note
-    // })
+    return await this.cycleStatusLogsRepository.createCycleStatusLogs({
+      cycle_id,
+      log_date: new Date(log_date),
+      mood,
+      libido,
+      stress,
+      energy,
+      sleep_hours,
+      note,
+      status
+    })
   }
 }
 

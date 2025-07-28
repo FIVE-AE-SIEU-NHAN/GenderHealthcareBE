@@ -136,7 +136,7 @@ class ChatBotServices {
     })
   }
 
-  async handleMenstrualPredictorAi(cycle_id: string, message: string) {
+  async handleMenstrualPredictorAi(message: string): Promise<{ status: string; notes: string }> {
     // 1. Lấy thông tin
 
     const systemInstruction = `
@@ -164,7 +164,7 @@ class ChatBotServices {
     Always respond **strictly in JSON format**:
     {
       "status": "NORMAL" | "NEED ATTENTION" | "NOT POSITIVE",
-      "notes": ["Note 1", "Note 2"]
+      "notes": "Your notes here"
     }
     `
     const temperature = 0.3
@@ -193,7 +193,10 @@ class ChatBotServices {
     const result = await chat.sendMessage({ message })
     const reply = result.text || ''
 
-    return reply
+    return {
+      status: 'NORMAL',
+      notes: reply
+    }
   }
 }
 

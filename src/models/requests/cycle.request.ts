@@ -19,5 +19,4 @@ export interface UpdateCycleStatusLogsReqBody {
   stress: number
   energy: number
   sleep_hours: number
-  note?: string
 }

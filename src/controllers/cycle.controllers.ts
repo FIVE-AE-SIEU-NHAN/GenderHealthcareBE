@@ -1,3 +1,4 @@
+import { CycleLogStatus } from '@prisma/client'
 import { addDays, subDays } from 'date-fns'
 import { NextFunction, Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
@@ -10,6 +11,7 @@ import {
   UpdateCycleStatusLogsReqBody
 } from '~/models/requests/cycle.request'
 import { EditReqQuery, TokenPayLoad } from '~/models/requests/users.requests'
+import chatBotServices from '~/services/chatbot.services'
 import cycleServices from '~/services/cycle.services'
 
 export const checkActiveCycleController = async (
@@ -104,7 +106,7 @@ export const updateCycleStatusLogsController = async (
     Expected ovulation day: ${ovulation_date}
     Fertile window: ${fertile_window_start} to ${fertile_window_end}
     Today is: ${log_date}
-    Cycle day: ${cycle.cycle_length}
+    Cycle length (days): ${cycle.cycle_length}
 
     The user's self-reported values:
     - mood: ${mood}
@@ -113,10 +115,20 @@ export const updateCycleStatusLogsController = async (
     - sleep_hours: ${sleep_hours}
     - energy: ${energy}
   `.trim()
-  const result = await cycleServices.updateCycleStatusLogs(cycle_id, req.body)
+
+  // Gọi AI service để phân tích chu kỳ
+  const aiAnalysis = await chatBotServices.handleMenstrualPredictorAi(message)
+
+  // Tạo nhật ký trạng thái chu kỳ
+  const result = await cycleServices.updateCycleStatusLogs(
+    cycle_id,
+    aiAnalysis.status as CycleLogStatus,
+    aiAnalysis.notes,
+    req.body
+  )
 
   res.status(HTTP_STATUS.OK).json({
-    message: CYCLE_MESSAGES.CYCLE_PREDICTIONS_FETCHED_SUCCESSFULLY
-    // result
+    message: CYCLE_MESSAGES.CYCLE_PREDICTIONS_FETCHED_SUCCESSFULLY,
+    result
   })
 }
