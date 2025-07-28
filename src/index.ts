@@ -28,7 +28,7 @@ import fs from 'fs'
 import path from 'path'
 import swaggerUi from 'swagger-ui-express'
 import * as YAML from 'yaml'
-
+import dashboardRouter from './routers/statistic.routers';
 // ---------------------------      BULL     --------------------------- //
 import './bull/worker'
 import chatBotServices from './services/chatbot.services'
@@ -70,7 +70,7 @@ app.use('/test-service', testServiceRouter, staffTestServiceRouter, managerTestS
 app.use('/staff', staffRouter, managerStaffRouter)
 app.use('/chatbot', chatBotRouter)
 app.use('/cycle', cycleRouter)
-
+app.use("/dashboard", dashboardRouter);
 // --------------------------- 🧪 API TEST ----------------------------- //
 app.get('/test', async (req, res) => {
   const messageNeedAttention = `
