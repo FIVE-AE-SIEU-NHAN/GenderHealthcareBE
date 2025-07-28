@@ -326,5 +326,7 @@ export const CYCLE_MESSAGES = {
   CYCLE_MUST_BE_UUID: 'Cycle must be a UUID',
   CYCLE_NOT_FOUND: 'Cycle not found',
   CYCLE_CANCELED_SUCCESSFULLY: 'Cycle canceled successfully',
-  CYCLE_ALREADY_CANCELED: 'Cycle already canceled'
+  CYCLE_ALREADY_CANCELED: 'Cycle already canceled',
+  GET_CYCLE_LOGS_DETAIL_SUCCESSFULLY: 'Get cycle logs detail successfully',
+  CYCLE_LOG_NOT_FOUND: 'Cycle log not found'
 } as const

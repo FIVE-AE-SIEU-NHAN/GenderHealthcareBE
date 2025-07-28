@@ -4,12 +4,14 @@ import {
   cancelCycleController,
   checkActiveCycleController,
   createCycleController,
+  getCycleLogsDetailController,
   getCyclePredictionsController,
   updateCycleStatusLogsController
 } from '~/controllers/cycle.controllers'
 import {
   cancelCycleValidator,
   createCycleValidator,
+  getCycleLogsDetailValidator,
   getCyclePredictionsValidator,
   updateCycleStatusLogsValidator
 } from '~/middlewares/cycle.middleware'
@@ -62,5 +64,17 @@ cycleRouter.post(
  * Method: PATCH
  */
 cycleRouter.patch('/:id/cancel', accessTokenValidator, cancelCycleValidator, wrapAsync(cancelCycleController))
+
+/**
+ * Description: Get log details of a cycle
+ * PATH: /cycle/:id/logs-detail
+ * Method: POST
+ */
+cycleRouter.post(
+  '/:id/logs-detail',
+  // accessTokenValidator,
+  getCycleLogsDetailValidator,
+  wrapAsync(getCycleLogsDetailController)
+)
 
 export default cycleRouter

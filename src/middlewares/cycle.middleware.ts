@@ -174,3 +174,30 @@ export const cancelCycleValidator = validate(
     }
   })
 )
+
+export const getCycleLogsDetailValidator = validate(
+  checkSchema({
+    id: {
+      in: ['params'],
+      notEmpty: {
+        errorMessage: CYCLE_MESSAGES.CYCLE_ID_IS_REQUIRED
+      },
+      isUUID: {
+        errorMessage: CYCLE_MESSAGES.CYCLE_MUST_BE_UUID
+      }
+    },
+    log_date: {
+      in: ['body'],
+      notEmpty: {
+        errorMessage: CYCLE_MESSAGES.LOG_DATE_IS_REQUIRED
+      },
+      isISO8601: {
+        options: {
+          strict: true,
+          strictSeparator: true
+        },
+        errorMessage: CYCLE_MESSAGES.LOG_DATE_MUST_BE_ISO8601
+      }
+    }
+  })
+)

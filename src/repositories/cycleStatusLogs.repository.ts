@@ -41,4 +41,16 @@ export default class CycleStatusLogsRepository {
       }
     })
   }
+
+  async getCycleLogsDetail(cycle_id: string, log_date: Date) {
+    return this.model.findFirst({
+      where: {
+        cycle_id,
+        log_date: {
+          gte: new Date(log_date.setHours(0, 0, 0, 0)),
+          lt: new Date(log_date.setHours(23, 59, 59, 999))
+        }
+      }
+    })
+  }
 }

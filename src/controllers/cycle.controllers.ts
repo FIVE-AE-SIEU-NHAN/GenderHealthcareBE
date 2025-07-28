@@ -7,6 +7,7 @@ import { CYCLE_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
 import {
   CreateCycleReqBody,
+  GetCycleLogsDetailReqBody,
   getCyclePredictionsReqQuery,
   UpdateCycleStatusLogsReqBody
 } from '~/models/requests/cycle.request'
@@ -137,6 +138,20 @@ export const cancelCycleController = async (
 
   res.status(HTTP_STATUS.OK).json({
     message: CYCLE_MESSAGES.CYCLE_CANCELED_SUCCESSFULLY,
+    result
+  })
+}
+
+export const getCycleLogsDetailController = async (
+  req: Request<ParamsDictionary, any, GetCycleLogsDetailReqBody, EditReqQuery>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { id: cycle_id } = req.params
+  const result = await cycleServices.getCycleLogsDetail(cycle_id, req.body)
+
+  res.status(HTTP_STATUS.OK).json({
+    message: CYCLE_MESSAGES.GET_CYCLE_LOGS_DETAIL_SUCCESSFULLY,
     result
   })
 }

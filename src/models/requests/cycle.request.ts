@@ -21,3 +21,7 @@ export interface UpdateCycleStatusLogsReqBody {
   energy: number
   sleep_hours: number
 }
+
+export interface GetCycleLogsDetailReqBody {
+  log_date: string
+}

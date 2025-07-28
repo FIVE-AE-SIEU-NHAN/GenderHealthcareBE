@@ -4,6 +4,7 @@ import { CYCLE_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
 import {
   CreateCycleReqBody,
+  GetCycleLogsDetailReqBody,
   getCyclePredictionsReqQuery,
   UpdateCycleStatusLogsReqBody
 } from '~/models/requests/cycle.request'
@@ -124,6 +125,20 @@ class CycleServices {
     const result = await this.cyclePredictionRepository.updateCycleStatus(cycle.id, CyclePredictionStatus.SKIPPED)
 
     return result
+  }
+
+  async getCycleLogsDetail(cycle_id: string, payload: GetCycleLogsDetailReqBody) {
+    const { log_date } = payload
+    const cycleLog = await this.cycleStatusLogsRepository.getCycleLogsDetail(cycle_id, new Date(log_date))
+
+    if (!cycleLog) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.NOT_FOUND,
+        message: CYCLE_MESSAGES.CYCLE_LOG_NOT_FOUND
+      })
+    }
+
+    return cycleLog
   }
 }
 
