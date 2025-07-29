@@ -140,9 +140,11 @@ class CycleServices {
       })
     )
 
+    const total = await this.cyclePredictionRepository.countAllPredictionsByUserId(user_id)
+
     return {
       predictions: predictionsWithStatuses,
-      total: predictions.length
+      total
     }
   }
 

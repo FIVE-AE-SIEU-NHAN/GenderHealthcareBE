@@ -157,4 +157,14 @@ export default class CyclePredictionRepository {
       }
     })
   }
+
+  async countAllPredictionsByUserId(user_id: string) {
+    return this.model.count({
+      where: {
+        cycle: {
+          user_id
+        }
+      }
+    })
+  }
 }

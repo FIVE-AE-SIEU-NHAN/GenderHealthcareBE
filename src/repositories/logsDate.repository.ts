@@ -39,6 +39,9 @@ export default class LogsDateRepository {
       select: {
         log_date: true,
         status: true
+      },
+      orderBy: {
+        log_date: 'asc'
       }
     })
   }
