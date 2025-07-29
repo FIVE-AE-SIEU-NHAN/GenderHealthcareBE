@@ -1,7 +1,8 @@
-import { CycleLogStatus, LogsDateStatus } from '@prisma/client'
+import { CycleLogStatus, CyclePredictionStatus, LogsDateStatus } from '@prisma/client'
 import { addDays, subDays } from 'date-fns'
 import { NextFunction, Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
+import { cycleQueue } from '~/bull/queue'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { CYCLE_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
@@ -69,6 +70,24 @@ export const createCycleController = async (
     fertile_start: fertile_window_start,
     fertile_end: fertile_window_end
   })
+
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const endOfCycle = addDays(fertile_window_end, 1)
+  endOfCycle.setHours(0, 0, 0, 0)
+  const delay = endOfCycle.getTime() - today.getTime()
+
+  cycleQueue.add(
+    'set-completed-for-cycle',
+    {
+      user_id
+    },
+    {
+      delay,
+      jobId: result.id,
+      removeOnComplete: true
+    }
+  )
 
   res.status(HTTP_STATUS.OK).json({
     message: CYCLE_MESSAGES.CYCLE_CREATED_SUCCESSFULLY,
@@ -146,7 +165,10 @@ export const cancelCycleController = async (
   const { user_id } = req.decode_authorization as TokenPayLoad
   const { id: cycle_id } = req.params
 
-  const result = await cycleServices.cancelCycle(user_id, cycle_id)
+  const job = await cycleQueue.getJob(cycle_id)
+  job && (await job.remove())
+
+  const result = await cycleServices.updateCycleStatus(user_id, CyclePredictionStatus.SKIPPED)
 
   res.status(HTTP_STATUS.OK).json({
     message: CYCLE_MESSAGES.CYCLE_CANCELED_SUCCESSFULLY,

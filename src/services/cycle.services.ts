@@ -180,7 +180,7 @@ class CycleServices {
     })
   }
 
-  async cancelCycle(user_id: string, cycle_id: string) {
+  async updateCycleStatus(user_id: string, status: CyclePredictionStatus) {
     const cycle = await this.cyclePredictionRepository.getCurrentCyclePredictions(user_id)
 
     if (!cycle) {
@@ -197,7 +197,7 @@ class CycleServices {
       })
     }
 
-    const result = await this.cyclePredictionRepository.updateCycleStatus(cycle.id, CyclePredictionStatus.SKIPPED)
+    const result = await this.cyclePredictionRepository.updateCycleStatus(cycle.id, status)
 
     return result
   }

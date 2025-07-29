@@ -34,6 +34,7 @@ import './bull/worker'
 import chatBotServices from './services/chatbot.services'
 import cycleServices from './services/cycle.services'
 import { LogsDateStatus } from '@prisma/client'
+import { addDays, subDays } from 'date-fns'
 
 // ---------------------------   SWAGGER    --------------------------- //
 const file = fs.readFileSync(path.resolve('swagger.yaml'), 'utf8')
@@ -75,13 +76,18 @@ app.use('/cycle', cycleRouter)
 
 // --------------------------- 🧪 API TEST ----------------------------- //
 app.get('/test', async (req, res) => {
-  await cycleServices.updateLogDateStatus({
-    cycle_id: 'd8edbd3b-ef81-4b80-95f4-726703b1253e',
-    log_date: new Date('2025-07-15'),
-    status: LogsDateStatus.MISSED
-  })
+  const { fertile_window_end } = req.body
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const endOfCycle = addDays(fertile_window_end, 1)
+  endOfCycle.setHours(0, 0, 0, 0)
+  const delay = endOfCycle.getTime() - today.getTime()
+
+  console.log(today.getTime(), endOfCycle.getTime(), delay)
+
   res.status(200).json({
-    message: 'API is working!'
+    message: 'API is working!',
+    delay
   })
 })
 app.get('/test2', async (req, res) => {})

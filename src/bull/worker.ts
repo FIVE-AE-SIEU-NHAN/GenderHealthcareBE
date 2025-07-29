@@ -1,11 +1,12 @@
 import redisUtils from '~/utils/redis'
-import { notificationQueue, paymentQueue } from './queue'
+import { cycleQueue, notificationQueue, paymentQueue } from './queue'
 import notificationServices from '~/services/notification.services'
 import socketService from '~/socket/socket'
 import paymentServices from '~/services/payment.services'
-import { PaymentStatus } from '@prisma/client'
+import { CyclePredictionStatus, PaymentStatus } from '@prisma/client'
 import appointmentServices from '~/services/appointment.services'
 import testServiceServices from '~/services/testService.services'
+import cycleServices from '~/services/cycle.services'
 
 notificationQueue.process('notification-for-customer', async (job) => {
   const { user_id, notification_id, content } = job.data
@@ -51,6 +52,13 @@ paymentQueue.process('cancel-payment-after-15-minutes', async (job) => {
   // 4. gửi thông báo hết hạn cho người dùng qua socket
   const content = `Your appointment payment has expired. Please reschedule if necessary.`
   socketService.sendStatusPayment(user_id, PaymentStatus.FAILED, content)
+})
+
+cycleQueue.process('set-completed-for-cycle', async (job) => {
+  // 1. Lấy thông tin chu kỳ từ job
+  const { user_id } = job.data
+  // 2.  Cập nhật trạng thái chu kỳ thành COMPLETED
+  await cycleServices.updateCycleStatus(user_id, CyclePredictionStatus.COMPLETED)
 })
 
 console.log('\x1b[33mWorker\x1b[0m is running and listening for jobs...')
