@@ -344,6 +344,7 @@ model ReproductiveCycle {
   user       Users             @relation(fields: [user_id], references: [id])
   cyclePrediction CyclePrediction?
   cycleStatusLogs CycleStatusLogs[]
+  logsDate LogsDate[]
 }
 
 enum CyclePredictionStatus{
@@ -387,4 +388,21 @@ model CycleStatusLogs {
   created_at  DateTime          @default(now()) @db.DateTime(0)
 
   cycle       ReproductiveCycle @relation(fields: [cycle_id], references: [id], onDelete: Cascade)
+}
+
+enum LogsDateStatus {
+  PENDING
+  MISSED
+  RATED
+}
+
+model LogsDate {
+  id        String            @id @map("_id") @db.VarChar(36)
+  cycle_id  String            @db.VarChar(36)
+  log_date  DateTime          @db.Date
+  status    LogsDateStatus
+  created_at DateTime          @default(now()) @db.DateTime(0)
+  updated_at DateTime          @default(now()) @db.DateTime(0)
+
+  cycle  ReproductiveCycle @relation(fields: [cycle_id], references: [id], onDelete: Cascade)
 }

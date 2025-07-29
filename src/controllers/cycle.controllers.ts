@@ -1,4 +1,4 @@
-import { CycleLogStatus } from '@prisma/client'
+import { CycleLogStatus, LogsDateStatus } from '@prisma/client'
 import { addDays, subDays } from 'date-fns'
 import { NextFunction, Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
@@ -63,6 +63,13 @@ export const createCycleController = async (
     fertile_window_end
   })
 
+  await cycleServices.generateInitialCycleLogs(cycle_id, {
+    period_start: start_period_date_parsed,
+    period_end: period_end_date,
+    fertile_start: fertile_window_start,
+    fertile_end: fertile_window_end
+  })
+
   res.status(HTTP_STATUS.OK).json({
     message: CYCLE_MESSAGES.CYCLE_CREATED_SUCCESSFULLY,
     result
@@ -119,6 +126,11 @@ export const updateCycleStatusLogsController = async (
 
   // Tạo nhật ký trạng thái chu kỳ
   const result = await cycleServices.updateCycleStatusLogs(cycle_id, aiAnalysis.status, aiAnalysis.note, req.body)
+  await cycleServices.updateLogDateStatus({
+    cycle_id,
+    log_date: new Date(log_date),
+    status: LogsDateStatus.RATED
+  })
 
   res.status(HTTP_STATUS.OK).json({
     message: CYCLE_MESSAGES.CYCLE_PREDICTIONS_FETCHED_SUCCESSFULLY,

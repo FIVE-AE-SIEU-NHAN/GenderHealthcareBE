@@ -32,6 +32,8 @@ import * as YAML from 'yaml'
 // ---------------------------      BULL     --------------------------- //
 import './bull/worker'
 import chatBotServices from './services/chatbot.services'
+import cycleServices from './services/cycle.services'
+import { LogsDateStatus } from '@prisma/client'
 
 // ---------------------------   SWAGGER    --------------------------- //
 const file = fs.readFileSync(path.resolve('swagger.yaml'), 'utf8')
@@ -73,29 +75,13 @@ app.use('/cycle', cycleRouter)
 
 // --------------------------- 🧪 API TEST ----------------------------- //
 app.get('/test', async (req, res) => {
-  const messageNeedAttention = `
-Start of last period: 2025-07-01
-Expected next period: 2025-07-29
-Expected period end: 2025-07-05
-Expected ovulation day: 2025-07-15
-Fertile window: 2025-07-10 to 2025-07-16
-Today is: 2025-07-14
-Cycle length (days): 28
-
-The user's self-reported values:
-- mood: happy
-- libido: low
-- stress: low
-- sleep_hours: 8
-- energy: high
-`
-
-  // Gọi AI service để phân tích chu kỳ
-  const aiAnalysis = await chatBotServices.handleMenstrualPredictorAi(messageNeedAttention)
-
+  await cycleServices.updateLogDateStatus({
+    cycle_id: 'd8edbd3b-ef81-4b80-95f4-726703b1253e',
+    log_date: new Date('2025-07-15'),
+    status: LogsDateStatus.MISSED
+  })
   res.status(200).json({
-    message: 'API is working!',
-    aiAnalysis
+    message: 'API is working!'
   })
 })
 app.get('/test2', async (req, res) => {})

@@ -1,4 +1,4 @@
-import { CycleLogStatus, CyclePredictionStatus } from '@prisma/client'
+import { CycleLogStatus, CyclePredictionStatus, LogsDateStatus } from '@prisma/client'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { CYCLE_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
@@ -10,17 +10,20 @@ import {
 } from '~/models/requests/cycle.request'
 import CyclePredictionRepository from '~/repositories/cyclePrediction.repository'
 import CycleStatusLogsRepository from '~/repositories/cycleStatusLogs.repository'
+import LogsDateRepository from '~/repositories/logsDate.repository'
 import ReproductiveCycleRepository from '~/repositories/reproductiveCycle.repository'
-
+import { v4 as ObjectId } from 'uuid'
 class CycleServices {
   private reproductiveCycleRepository: ReproductiveCycleRepository
   private cyclePredictionRepository: CyclePredictionRepository
   private cycleStatusLogsRepository: CycleStatusLogsRepository
+  private logDateRepository: LogsDateRepository
 
   constructor() {
     this.reproductiveCycleRepository = new ReproductiveCycleRepository()
     this.cyclePredictionRepository = new CyclePredictionRepository()
     this.cycleStatusLogsRepository = new CycleStatusLogsRepository()
+    this.logDateRepository = new LogsDateRepository()
   }
 
   async checkActiveCycle(user_id: string) {
@@ -38,6 +41,65 @@ class CycleServices {
       period_length,
       note
     })
+  }
+
+  async generateInitialCycleLogs(
+    cycle_id: string,
+    dates: {
+      period_start: Date
+      period_end: Date
+      fertile_start: Date
+      fertile_end: Date
+    }
+  ) {
+    // Dùng Set để đảm bảo các ngày không bị trùng lặp
+    const trackableDates = new Set<string>()
+
+    const addDatesToSet = (start: Date, end: Date) => {
+      let currentDate = new Date(start)
+      const finalDate = new Date(end)
+      while (currentDate <= finalDate) {
+        // Chuẩn hóa ngày về dạng 'YYYY-MM-DD' để tránh vấn đề timezone
+        trackableDates.add(currentDate.toISOString().split('T')[0])
+        currentDate.setDate(currentDate.getDate() + 1)
+      }
+    }
+
+    // Thêm các ngày trong kỳ kinh
+    addDatesToSet(dates.period_start, dates.period_end)
+    // Thêm các ngày trong cửa sổ thụ thai
+    addDatesToSet(dates.fertile_start, dates.fertile_end)
+
+    console.log(trackableDates)
+
+    // Chuyển Set thành mảng data để insert
+    const logsToCreate = Array.from(trackableDates).map((dateString) => ({
+      id: ObjectId(),
+      cycle_id,
+      log_date: new Date(dateString),
+      status: LogsDateStatus.PENDING
+    }))
+
+    console.log(logsToCreate)
+
+    // Gọi repository để insert hàng loạt
+    await this.logDateRepository.createManyLogDates(logsToCreate)
+  }
+
+  async updateLogDateStatus({
+    cycle_id,
+    log_date,
+    status
+  }: {
+    cycle_id: string
+    log_date: Date
+    status: LogsDateStatus
+  }) {
+    return this.logDateRepository.updateLogDateStatus({ cycle_id, log_date, status })
+  }
+
+  async getAllLogDateStatus(cycle_id: string) {
+    return this.logDateRepository.getAllLogDateStatus(cycle_id)
   }
 
   async createCyclePrediction(data: {
@@ -67,8 +129,19 @@ class CycleServices {
       start_date: new Date(_start_date),
       end_date: new Date(_end_date)
     })
+
+    const predictionsWithStatuses = await Promise.all(
+      predictions.map(async (prediction) => {
+        const daily_statuses = await this.logDateRepository.getAllLogDateStatus(prediction.cycle_id)
+        return {
+          ...prediction,
+          daily_statuses
+        }
+      })
+    )
+
     return {
-      predictions,
+      predictions: predictionsWithStatuses,
       total: predictions.length
     }
   }
