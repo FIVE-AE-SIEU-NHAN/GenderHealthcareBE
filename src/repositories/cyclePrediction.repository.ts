@@ -74,9 +74,18 @@ export default class CyclePredictionRepository {
       },
       where: {
         cycle: {
-          user_id
+          user_id,
+          OR: [{ start_period_date: { gte: start_date, lte: end_date } }]
         },
         OR: [
+          {
+            cycle: {
+              start_period_date: {
+                gte: start_date,
+                lte: end_date
+              }
+            }
+          },
           {
             next_period_date: {
               gte: start_date,
