@@ -3,7 +3,7 @@ import HTTP_STATUS from '~/constants/httpStatus'
 import { Request, Response, NextFunction } from 'express'
 import { ErrorWithStatus } from '~/models/Errors'
 
-export const defaultErorHandler = (error: any, req: Request, res: Response, next: NextFunction) => {
+export const defaultErrorHandler = (error: any, req: Request, res: Response, next: NextFunction) => {
   // lỗi của toàn bộ hệ thống đổ về đây
   if (error instanceof ErrorWithStatus) {
     res.status(error.status).json(omit(error, ['status']))

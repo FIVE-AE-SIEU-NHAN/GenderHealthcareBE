@@ -1,5 +1,5 @@
 import express from 'express'
-import { defaultErorHandler } from './middlewares/error.middlewares'
+import { defaultErrorHandler } from './middlewares/error.middlewares'
 import redisService from './utils/redis'
 import cors from 'cors'
 import prismaService from './services/prisma.services'
@@ -31,11 +31,6 @@ import * as YAML from 'yaml'
 
 // ---------------------------      BULL     --------------------------- //
 import './bull/worker'
-import chatBotServices from './services/chatbot.services'
-import cycleServices from './services/cycle.services'
-import { LogsDateStatus } from '@prisma/client'
-import { addDays, subDays } from 'date-fns'
-
 // ---------------------------   SWAGGER    --------------------------- //
 const file = fs.readFileSync(path.resolve('swagger.yaml'), 'utf8')
 const swaggerDocument = YAML.parse(file)
@@ -76,24 +71,10 @@ app.use('/cycle', cycleRouter)
 
 // --------------------------- 🧪 API TEST ----------------------------- //
 app.get('/test', async (req, res) => {
-  const { fertile_window_end } = req.body
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  const endOfCycle = addDays(fertile_window_end, 1)
-  endOfCycle.setHours(0, 0, 0, 0)
-  const delay = endOfCycle.getTime() - today.getTime()
-
-  console.log(today.getTime(), endOfCycle.getTime(), delay)
-
-  res.status(200).json({
-    message: 'API is working!',
-    delay
-  })
+  res.status(200).json({ message: 'Test API is working!' })
 })
-app.get('/test2', async (req, res) => {})
-
 // --------------------------- ERROR HANDLER --------------------------- //
-app.use(defaultErorHandler)
+app.use(defaultErrorHandler)
 
 // ---------------------------   SOCKET IO   --------------------------- //
 // Khởi tạo Socket.IO server
