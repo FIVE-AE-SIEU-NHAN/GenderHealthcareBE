@@ -36,7 +36,7 @@ const file = fs.readFileSync(path.resolve('swagger.yaml'), 'utf8')
 const swaggerDocument = YAML.parse(file)
 
 // ---------------------------     SERVER    --------------------------- //
-const port = 3000
+const port = process.env.PORT || 3000
 const app = express()
 
 // ---------------------------      CORS     --------------------------- //

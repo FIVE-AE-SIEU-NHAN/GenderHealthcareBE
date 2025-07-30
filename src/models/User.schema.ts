@@ -43,7 +43,7 @@ export default class User {
     this.updated_at = user.updated_at || date
     this.forgot_password_token = user.forgot_password_token || ''
     this.google_id = user.google_id || ''
-    this.verify = user.verify || UserVerifyStatus.Unverified
+    this.verify = user.verify || UserVerifyStatus.Verified
 
     this.role = user.role || USER_ROLE.User
   }
