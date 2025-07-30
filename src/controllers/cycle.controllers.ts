@@ -1,5 +1,5 @@
 import { CycleLogStatus, CyclePredictionStatus, LogsDateStatus } from '@prisma/client'
-import { addDays, subDays } from 'date-fns'
+import { addDays, addHours, subDays } from 'date-fns'
 import { NextFunction, Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { cycleQueue } from '~/bull/queue'
@@ -37,7 +37,7 @@ export const createCycleController = async (
   next: NextFunction
 ) => {
   const { user_id } = req.decode_authorization as TokenPayLoad
-  const { start_period_date, cycle_length, period_length, note } = req.body
+  const { start_period_date, cycle_length, period_length, is_contraceptive_pill_reminder } = req.body
   const start_period_date_parsed = new Date(start_period_date)
 
   const cycle = await cycleServices.checkActiveCycle(user_id)
@@ -88,6 +88,46 @@ export const createCycleController = async (
       removeOnComplete: true
     }
   )
+
+  // Nếu có uống thuoốc tránh thai thì tạo nhắc nhở
+  if (is_contraceptive_pill_reminder) {
+    // 1. Tạo pillLog cho ngày mai
+    await cycleServices.createContraceptivePillReminder(user_id, start_period_date)
+    // 2. Tạo 3 job nhắc nhở mỗi ngày
+    cycleQueue.add(
+      'notification_contraceptive_pill_reminder_8h',
+      { user_id },
+      {
+        repeat: {
+          cron: '00 08 * * *',
+          tz: 'Asia/Ho_Chi_Minh'
+        },
+        jobId: `pill-reminder-8h-${user_id}`
+      }
+    )
+    cycleQueue.add(
+      'notification_contraceptive_pill_reminder_20h',
+      { user_id },
+      {
+        repeat: {
+          cron: '00 20 * * *',
+          tz: 'Asia/Ho_Chi_Minh'
+        },
+        jobId: `pill-reminder-20h-${user_id}`
+      }
+    )
+    cycleQueue.add(
+      'notification_contraceptive_pill_reminder_canceled',
+      { user_id },
+      {
+        repeat: {
+          cron: '59 23 * * *',
+          tz: 'Asia/Ho_Chi_Minh'
+        },
+        jobId: `pill-reminder-canceled-${user_id}`
+      }
+    )
+  }
 
   res.status(HTTP_STATUS.OK).json({
     message: CYCLE_MESSAGES.CYCLE_CREATED_SUCCESSFULLY,
@@ -186,6 +226,22 @@ export const getCycleLogsDetailController = async (
 
   res.status(HTTP_STATUS.OK).json({
     message: CYCLE_MESSAGES.GET_CYCLE_LOGS_DETAIL_SUCCESSFULLY,
+    result
+  })
+}
+
+export const takenPillTodayController = async (
+  req: Request<ParamsDictionary, any, GetCycleLogsDetailReqBody, EditReqQuery>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { user_id } = req.decode_authorization as TokenPayLoad
+  const log_date = addHours(new Date(), 7)
+
+  const result = await cycleServices.takenPillToday(user_id, log_date.toISOString())
+
+  res.status(HTTP_STATUS.OK).json({
+    message: CYCLE_MESSAGES.PILL_TAKEN_SUCCESSFULLY,
     result
   })
 }

@@ -2,9 +2,9 @@ import Bull from 'bull'
 
 const redisOptions = {
   redis: {
-    host: 'redis-16859.c292.ap-southeast-1-1.ec2.redns.redis-cloud.com',
-    port: 16859,
-    password: 'DBQcCiwTFq1jkHkUj7IFxaGYVjczZe3f'
+    host: '159.65.128.97',
+    port: 6379,
+    password: 'Maihankiet.2004'
   }
 }
 

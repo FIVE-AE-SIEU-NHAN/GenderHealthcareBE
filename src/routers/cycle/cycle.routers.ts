@@ -6,6 +6,7 @@ import {
   createCycleController,
   getCycleLogsDetailController,
   getCyclePredictionsController,
+  takenPillTodayController,
   updateCycleStatusLogsController
 } from '~/controllers/cycle.controllers'
 import {
@@ -76,5 +77,12 @@ cycleRouter.post(
   getCycleLogsDetailValidator,
   wrapAsync(getCycleLogsDetailController)
 )
+
+/**
+ * Description: Taken pill today
+ * PATH: /cycle/pill/taken
+ * Method: POST
+ */
+cycleRouter.patch('/pill/taken', accessTokenValidator, wrapAsync(takenPillTodayController))
 
 export default cycleRouter

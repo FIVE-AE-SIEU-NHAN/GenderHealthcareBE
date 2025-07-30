@@ -13,17 +13,21 @@ import CycleStatusLogsRepository from '~/repositories/cycleStatusLogs.repository
 import LogsDateRepository from '~/repositories/logsDate.repository'
 import ReproductiveCycleRepository from '~/repositories/reproductiveCycle.repository'
 import { v4 as ObjectId } from 'uuid'
+import PillLogsRepository from '~/repositories/pilllogs.reposotory'
+import { ReminderPillLogType } from '~/constants/enums'
 class CycleServices {
   private reproductiveCycleRepository: ReproductiveCycleRepository
   private cyclePredictionRepository: CyclePredictionRepository
   private cycleStatusLogsRepository: CycleStatusLogsRepository
   private logDateRepository: LogsDateRepository
+  private pillLogsRepository: PillLogsRepository
 
   constructor() {
     this.reproductiveCycleRepository = new ReproductiveCycleRepository()
     this.cyclePredictionRepository = new CyclePredictionRepository()
     this.cycleStatusLogsRepository = new CycleStatusLogsRepository()
     this.logDateRepository = new LogsDateRepository()
+    this.pillLogsRepository = new PillLogsRepository()
   }
 
   async checkActiveCycle(user_id: string) {
@@ -214,6 +218,26 @@ class CycleServices {
     }
 
     return cycleLog
+  }
+
+  async createContraceptivePillReminder(user_id: string, log_date: string) {
+    await this.pillLogsRepository.createPillLog(user_id, new Date(log_date))
+  }
+
+  async updatePillLogReminder(user_id: string, log_date: string, type: ReminderPillLogType) {
+    if (type === ReminderPillLogType.EightAM) {
+      return this.pillLogsRepository.updateReminderAt8h(user_id, new Date(log_date))
+    } else if (type === ReminderPillLogType.EightPM) {
+      return this.pillLogsRepository.updateReminderAt20h(user_id, new Date(log_date))
+    }
+  }
+
+  async getPillLogByUserIdAndDate(user_id: string, log_date: Date) {
+    return this.pillLogsRepository.getPillLogByUserIdAndDate(user_id, log_date)
+  }
+
+  async takenPillToday(user_id: string, log_date: string) {
+    return this.pillLogsRepository.takenPillToday(user_id, new Date(log_date))
   }
 }
 

@@ -73,6 +73,9 @@ export default class CyclePredictionRepository {
         status: true
       },
       where: {
+        status: {
+          in: [CyclePredictionStatus.ACTIVE, CyclePredictionStatus.COMPLETED]
+        },
         cycle: {
           user_id,
           OR: [{ start_period_date: { gte: start_date, lte: end_date } }]

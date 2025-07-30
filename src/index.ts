@@ -31,6 +31,11 @@ import * as YAML from 'yaml'
 
 // ---------------------------      BULL     --------------------------- //
 import './bull/worker'
+import cycleServices from './services/cycle.services'
+import { cycleQueue } from './bull/queue'
+import { ReminderPillLogType } from './constants/enums'
+import { addDays, addHours } from 'date-fns'
+import { add } from 'lodash'
 // ---------------------------   SWAGGER    --------------------------- //
 const file = fs.readFileSync(path.resolve('swagger.yaml'), 'utf8')
 const swaggerDocument = YAML.parse(file)
@@ -71,7 +76,10 @@ app.use('/cycle', cycleRouter)
 
 // --------------------------- 🧪 API TEST ----------------------------- //
 app.get('/test', async (req, res) => {
-  res.status(200).json({ message: 'Test API is working!' })
+  const user_id = 'e1fcedec-49c8-11f0-bfde-0242ac110002'
+  const log_date = addHours(new Date(), 7)
+  const result = await cycleServices.updatePillLogReminder(user_id, log_date.toISOString(), ReminderPillLogType.EightAM)
+  res.status(200).json({ message: 'Test API is working!', data: result, log_date })
 })
 // --------------------------- ERROR HANDLER --------------------------- //
 app.use(defaultErrorHandler)

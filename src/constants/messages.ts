@@ -328,5 +328,7 @@ export const CYCLE_MESSAGES = {
   CYCLE_CANCELED_SUCCESSFULLY: 'Cycle canceled successfully',
   CYCLE_ALREADY_CANCELED: 'Cycle already canceled',
   GET_CYCLE_LOGS_DETAIL_SUCCESSFULLY: 'Get cycle logs detail successfully',
-  CYCLE_LOG_NOT_FOUND: 'Cycle log not found'
+  CYCLE_LOG_NOT_FOUND: 'Cycle log not found',
+  IS_CONTRACEPTIVE_PILL_REMINDER_MUST_BE_BOOLEAN: 'Is contraceptive pill reminder must be a boolean',
+  PILL_TAKEN_SUCCESSFULLY: 'Pill taken successfully'
 } as const

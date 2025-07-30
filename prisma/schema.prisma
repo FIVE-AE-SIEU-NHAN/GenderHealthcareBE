@@ -31,6 +31,7 @@ model Users {
   TestServiceAppointments  TestServiceAppointments[]
   ChatBotHistory ChatBotHistory[]
   ReproductiveCycle ReproductiveCycle[]
+  PillLogs PillLogs[]
 
   @@index([google_id], map: "idx_google_id")
   @@index([forgot_password_token], map: "idx_forgot_token")
@@ -405,4 +406,16 @@ model LogsDate {
   updated_at DateTime          @default(now()) @db.DateTime(0)
 
   cycle  ReproductiveCycle @relation(fields: [cycle_id], references: [id], onDelete: Cascade)
+}
+
+model PillLogs {
+  id               String   @id @map("_id") @db.VarChar(36)
+  user_id          String   @db.VarChar(36)
+  log_date         DateTime @db.Date
+  taken            Boolean  @default(false)
+  reminded_at_8h   Boolean  @default(false)
+  reminded_at_20h  Boolean  @default(false)
+  created_at       DateTime @default(now())
+
+  user             Users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }

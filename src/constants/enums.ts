@@ -32,3 +32,8 @@ export enum QuestionStatus {
   Answered, // 1
   Reported // 2
 }
+
+export enum ReminderPillLogType {
+  EightAM, // 0
+  EightPM // 1
+}

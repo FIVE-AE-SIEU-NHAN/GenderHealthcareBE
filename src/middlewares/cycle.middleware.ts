@@ -46,6 +46,12 @@ export const createCycleValidator = validate(
           },
           errorMessage: CYCLE_MESSAGES.NOTE_MUST_BE_LENGTH
         }
+      },
+      is_contraceptive_pill_reminder: {
+        optional: true,
+        isBoolean: {
+          errorMessage: CYCLE_MESSAGES.IS_CONTRACEPTIVE_PILL_REMINDER_MUST_BE_BOOLEAN
+        }
       }
     },
     ['body']
