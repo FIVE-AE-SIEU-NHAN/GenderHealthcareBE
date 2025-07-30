@@ -112,6 +112,7 @@ export default class TestServiceAppointmentsRepository {
   async getCustomerTestServiceAppointments(user_id: string) {
     return this.model.findMany({
       select: {
+        id: true,
         booking_date: true,
         time_slot: true,
         status: true,

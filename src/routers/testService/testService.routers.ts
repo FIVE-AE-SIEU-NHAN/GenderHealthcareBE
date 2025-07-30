@@ -4,7 +4,8 @@ import {
   bookTestServiceAppointmentController,
   customerTestServiceAppointmentsController,
   getPackageDetailController,
-  getTestServicePackagesController
+  getTestServicePackagesController,
+  getTestServiceResultController
 } from '~/controllers/testServices.controllers'
 import { requireRole } from '~/middlewares/decentralization .middlewares'
 import { bookTestServiceAppointmentValidator, getPackageDetailValidator } from '~/middlewares/testServices.middlewares'
@@ -42,6 +43,19 @@ testServiceRouter.get(
   accessTokenValidator,
   requireRole(USER_ROLE.User),
   wrapAsync(customerTestServiceAppointmentsController)
+)
+
+/**
+ * Description: Get test service result
+ * Path: /test-service/result/:id
+ * Method: GET
+ */
+testServiceRouter.get(
+  '/result/:id',
+  accessTokenValidator,
+  requireRole(USER_ROLE.User),
+  getPackageDetailValidator,
+  wrapAsync(getTestServiceResultController)
 )
 
 export default testServiceRouter

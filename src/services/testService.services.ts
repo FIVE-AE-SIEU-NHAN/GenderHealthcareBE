@@ -205,6 +205,10 @@ class TestServiceServices {
   async getCustomerTestServiceAppointments(user_id: string) {
     return await this.testServiceAppointmentsRepository.getCustomerTestServiceAppointments(user_id)
   }
+
+  async getTestServiceResult(id: string) {
+    return this.testResultRepository.getTestServiceResultById(id)
+  }
 }
 
 const testServiceServices = new TestServiceServices()

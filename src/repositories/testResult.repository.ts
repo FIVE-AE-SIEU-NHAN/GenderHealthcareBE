@@ -32,4 +32,10 @@ export default class TestResultRepository {
       }
     })
   }
+
+  async getTestServiceResultById(id: string) {
+    return this.model.findMany({
+      where: { test_service_id: id }
+    })
+  }
 }

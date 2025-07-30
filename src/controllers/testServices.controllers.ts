@@ -230,3 +230,18 @@ export const customerTestServiceAppointmentsController = async (
     result
   })
 }
+
+export const getTestServiceResultController = async (
+  req: Request<ParamsDictionary, any, UpdateTestServiceResultReqBody, EditReqQuery>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { id } = req.params
+
+  const result = await testServiceServices.getTestServiceResult(id)
+
+  res.status(200).json({
+    message: APPOINTMENT_MESSAGES.GET_TEST_SERVICE_RESULT_SUCCESSFULLY,
+    result
+  })
+}

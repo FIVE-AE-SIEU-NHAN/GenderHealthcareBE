@@ -225,7 +225,8 @@ export const APPOINTMENT_MESSAGES = {
   UPDATE_TEST_SERVICE_RESULT_SUCCESSFULLY: 'Update test service result successfully',
   TEST_SERVICE_NOT_FOUND: 'Test service not found',
   TEST_DAY_MUST_BE_ISO8601: 'Test day must be ISO8601',
-  GET_CUSTOMER_TEST_SERVICE_APPOINTMENTS_SUCCESSFULLY: 'Get customer test service appointments successfully'
+  GET_CUSTOMER_TEST_SERVICE_APPOINTMENTS_SUCCESSFULLY: 'Get customer test service appointments successfully',
+  GET_TEST_SERVICE_RESULT_SUCCESSFULLY: 'Get test service result successfully'
 } as const
 
 export const BLOG_MESSAGES = {
@@ -330,5 +331,6 @@ export const CYCLE_MESSAGES = {
   GET_CYCLE_LOGS_DETAIL_SUCCESSFULLY: 'Get cycle logs detail successfully',
   CYCLE_LOG_NOT_FOUND: 'Cycle log not found',
   IS_CONTRACEPTIVE_PILL_REMINDER_MUST_BE_BOOLEAN: 'Is contraceptive pill reminder must be a boolean',
-  PILL_TAKEN_SUCCESSFULLY: 'Pill taken successfully'
+  PILL_TAKEN_SUCCESSFULLY: 'Pill taken successfully',
+  GET_TEST_SERVICE_RESULT_SUCCESSFULLY: 'Get test service result successfully'
 } as const
