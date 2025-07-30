@@ -77,9 +77,8 @@ app.use('/cycle', cycleRouter)
 // --------------------------- 🧪 API TEST ----------------------------- //
 app.get('/test', async (req, res) => {
   const user_id = 'e1fcedec-49c8-11f0-bfde-0242ac110002'
-  const log_date = addHours(new Date(), 7)
-  const result = await cycleServices.updatePillLogReminder(user_id, log_date.toISOString(), ReminderPillLogType.EightAM)
-  res.status(200).json({ message: 'Test API is working!', data: result, log_date })
+  // const result = await cycleServices.get(user_id)
+  // res.status(200).json({ message: 'Test API is working!', data: result })
 })
 // --------------------------- ERROR HANDLER --------------------------- //
 app.use(defaultErrorHandler)

@@ -15,6 +15,7 @@ import ReproductiveCycleRepository from '~/repositories/reproductiveCycle.reposi
 import { v4 as ObjectId } from 'uuid'
 import PillLogsRepository from '~/repositories/pilllogs.reposotory'
 import { ReminderPillLogType } from '~/constants/enums'
+import { addHours } from 'date-fns'
 class CycleServices {
   private reproductiveCycleRepository: ReproductiveCycleRepository
   private cyclePredictionRepository: CyclePredictionRepository
@@ -146,9 +147,19 @@ class CycleServices {
 
     const total = await this.cyclePredictionRepository.countAllPredictionsByUserId(user_id)
 
+    let havePillLog = true
+    const pillLog = await this.pillLogsRepository.getPillLogByUserIdAndDate(user_id, addHours(new Date(), 7))
+    if (!pillLog) {
+      havePillLog = false
+    }
+
     return {
       predictions: predictionsWithStatuses,
-      total
+      total,
+      pillLog: {
+        havePillLog,
+        taken: pillLog?.taken || false
+      }
     }
   }
 

@@ -158,7 +158,6 @@ cycleQueue.process('notification_contraceptive_pill_reminder_canceled', async (j
 
   // 2. Nếu có thì tạo PillLog cho ngày mai
   const next_day = addDays(log_date, 1)
-  next_day.setHours(0, 0, 0, 0)
   await cycleServices.createContraceptivePillReminder(user_id, next_day.toISOString())
 })
 
