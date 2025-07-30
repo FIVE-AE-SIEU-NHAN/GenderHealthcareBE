@@ -33,9 +33,9 @@ export default class TestResultRepository {
     })
   }
 
-  async getTestServiceResultById(id: string) {
+  async getTestServiceResultByAppointmentId(id: string) {
     return this.model.findMany({
-      where: { test_service_id: id }
+      where: { test_service_appointment_id: id }
     })
   }
 }

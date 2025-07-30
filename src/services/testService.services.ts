@@ -207,7 +207,7 @@ class TestServiceServices {
   }
 
   async getTestServiceResult(id: string) {
-    return this.testResultRepository.getTestServiceResultById(id)
+    return this.testResultRepository.getTestServiceResultByAppointmentId(id)
   }
 }
 
