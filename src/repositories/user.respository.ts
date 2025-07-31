@@ -359,6 +359,17 @@ class UserRepository {
   }) {
     return this.model.create({ data })
   }
+
+  async getUserById(user_id: string) {
+    return this.model.findUnique({
+      select: {
+        id: true,
+        email: true,
+        name: true
+      },
+      where: { id: user_id }
+    })
+  }
 }
 
 export default UserRepository

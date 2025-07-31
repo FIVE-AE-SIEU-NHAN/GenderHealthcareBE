@@ -4,6 +4,7 @@ import { APPOINTMENT_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
 import { GetAppointmentReqQuery } from '~/models/requests/appointment.requests'
 import AppointmentRepository from '~/repositories/appointment.repository'
+import usersServices from './users.services'
 
 class AppointmentServices {
   private appointmentRepository: AppointmentRepository
@@ -86,8 +87,19 @@ class AppointmentServices {
       status
     })
 
+    const appointmentsWithConsultant = await Promise.all(
+      appointments.map(async (appointment) => {
+        const consultant = await usersServices.getConsultantById(appointment.consultant_id)
+        const user = await usersServices.getUserById(consultant?.user_id as string)
+        return {
+          ...appointment,
+          consultantProfile: user
+        }
+      })
+    )
+
     return {
-      appointments,
+      appointments: appointmentsWithConsultant,
       total: appointments.length
     }
   }

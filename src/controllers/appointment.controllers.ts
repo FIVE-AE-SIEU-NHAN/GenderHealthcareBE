@@ -91,7 +91,7 @@ export const bookAppointmentController = async (
       orderCode: result.orderCode.toString()
     },
     {
-      delay: 1 * 30 * 1000,
+      delay: 15 * 60 * 1000,
       jobId: result.orderCode,
       removeOnComplete: true
     }

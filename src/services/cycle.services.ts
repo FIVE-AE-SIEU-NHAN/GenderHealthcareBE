@@ -155,11 +155,7 @@ class CycleServices {
 
     return {
       predictions: predictionsWithStatuses,
-      total,
-      pillLog: {
-        havePillLog,
-        taken: pillLog?.taken || false
-      }
+      total
     }
   }
 

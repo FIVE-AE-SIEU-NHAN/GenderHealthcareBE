@@ -697,6 +697,18 @@ class UsersServices {
     }
     return staff.id
   }
+
+  async getStaffById(staff_id: string) {
+    return this.staffRepository.getStaffsByStaffIds(staff_id)
+  }
+
+  async getUserById(user_id: string) {
+    return this.userRepository.getUserById(user_id)
+  }
+
+  async getConsultantById(consultant_id: string) {
+    return this.consultantRepository.getUserIdByConsultantId(consultant_id)
+  }
 }
 
 const usersServices = new UsersServices()

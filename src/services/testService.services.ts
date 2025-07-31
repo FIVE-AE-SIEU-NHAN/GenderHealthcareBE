@@ -10,6 +10,7 @@ import TestPackageRepository from '~/repositories/testPackage.repository'
 import TestResultRepository from '~/repositories/testResult.repository'
 import TestServicesRepository from '~/repositories/testService.repositoty'
 import TestServiceAppointmentsRepository from '~/repositories/testServiceAppoinment.repository'
+import usersServices from './users.services'
 
 class TestServiceServices {
   private testPackageRepository: TestPackageRepository
@@ -130,8 +131,19 @@ class TestServiceServices {
       status
     })
 
+    const appointmentsWithStaff = await Promise.all(
+      testServiceAppointments.map(async (appointment) => {
+        const staff = await usersServices.getStaffById(appointment.staff_id)
+        const user = await usersServices.getUserById(staff?.user_id as string)
+        return {
+          ...appointment,
+          staffProfile: user
+        }
+      })
+    )
+
     return {
-      testServiceAppointments,
+      testServiceAppointments: appointmentsWithStaff,
       total: testServiceAppointments.length
     }
   }

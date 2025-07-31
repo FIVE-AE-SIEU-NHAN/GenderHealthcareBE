@@ -304,4 +304,10 @@ export default class StaffProfileRepository {
       where: { user_id }
     })
   }
+
+  async getStaffsByStaffIds(staff_id: string) {
+    return this.model.findFirst({
+      where: { id: staff_id }
+    })
+  }
 }

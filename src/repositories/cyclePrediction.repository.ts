@@ -53,6 +53,7 @@ export default class CyclePredictionRepository {
     start_date: Date
     end_date: Date
   }) {
+    console.log(`Fetching cycle predictions for user: ${user_id} between ${start_date} and ${end_date}`)
     return await this.model.findMany({
       select: {
         id: true,
