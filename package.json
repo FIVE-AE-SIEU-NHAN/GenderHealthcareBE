@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "npx nodemon",
-    "worker": "ts-node src/bull/worker.ts",
+    "worker": "ts-node src/queues/worker.ts",
     "build": "rimraf ./dist && tsc && tsc-alias",
     "start": "node dist/index.js",
     "start-dev": "ts-node src/index.ts",

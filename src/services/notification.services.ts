@@ -2,7 +2,7 @@ import { NotificationType, TimeSlot } from '@prisma/client'
 import NotificationRepository from '~/repositories/notification.repository'
 import usersServices from './users.services'
 import { ErrorWithStatus } from '~/models/Errors'
-import { notificationQueue } from '~/bull/queue'
+import { notificationQueue } from '~/queues/queue'
 import { NOTIFICATIONS_MESSAGES } from '~/constants/messages'
 import HTTP_STATUS from '~/constants/httpStatus'
 

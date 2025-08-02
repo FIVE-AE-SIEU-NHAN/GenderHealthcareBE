@@ -30,9 +30,9 @@ import swaggerUi from 'swagger-ui-express'
 import * as YAML from 'yaml'
 
 // ---------------------------      BULL     --------------------------- //
-import './bull/worker'
+import './queues/worker'
 import cycleServices from './services/cycle.services'
-import { cycleQueue } from './bull/queue'
+import { cycleQueue } from './queues/queue'
 import { ReminderPillLogType } from './constants/enums'
 import { addDays, addHours } from 'date-fns'
 import { add } from 'lodash'

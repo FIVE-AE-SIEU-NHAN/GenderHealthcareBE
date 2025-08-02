@@ -2,9 +2,9 @@ import Bull from 'bull'
 
 const redisOptions = {
   redis: {
-    host: '159.65.128.97',
-    port: 6379,
-    password: 'Maihankiet.2004'
+    host: process.env.REDIS_HOST,
+    port: Number(process.env.REDIS_PORT),
+    password: process.env.REDIS_PASSWORD
   }
 }
 

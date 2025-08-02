@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { result } from 'lodash'
-import { paymentQueue } from '~/bull/queue'
+import { paymentQueue } from '~/queues/queue'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { APPOINTMENT_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'

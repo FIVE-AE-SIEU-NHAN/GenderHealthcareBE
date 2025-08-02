@@ -2,7 +2,7 @@ import { CycleLogStatus, CyclePredictionStatus, LogsDateStatus } from '@prisma/c
 import { addDays, addHours, subDays } from 'date-fns'
 import { NextFunction, Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
-import { cycleQueue } from '~/bull/queue'
+import { cycleQueue } from '~/queues/queue'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { CYCLE_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'

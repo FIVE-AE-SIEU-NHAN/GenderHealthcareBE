@@ -1,7 +1,7 @@
 import { BookingStatus, NotificationType } from '@prisma/client'
 import { NextFunction, Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
-import { paymentQueue } from '~/bull/queue'
+import { paymentQueue } from '~/queues/queue'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { APPOINTMENT_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
